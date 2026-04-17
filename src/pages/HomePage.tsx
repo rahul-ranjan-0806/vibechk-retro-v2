@@ -43,7 +43,7 @@ function SetupCard({ item, onNavigate }: { item: SetupItem; onNavigate: (p: Page
 
   return (
     <div className={`group p-3.5 border transition-all duration-150 ${cardBg}`}>
-      <div className="flex items-start justify-between gap-3">
+      <div className={`flex justify-between gap-3 ${item.status === "done" ? "items-center" : "items-start"}`}>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
             <div className={`w-1.5 h-1.5 rounded-full shrink-0 mt-0.5 ${dotColor}`} />
@@ -463,13 +463,18 @@ export function HomePage({ onNavigate }: { onNavigate: (p: Page) => void }) {
               </div>
             </div>
 
-            {/* Setup & config */}
+            {/* Setup & config — surface pending items first, done items at the bottom */}
             <div>
               <p className="text-[9px] font-pixel uppercase tracking-[0.15em] text-muted-foreground mb-2">Setup & config</p>
               <div className="flex flex-col gap-2">
-                {SETUP_ITEMS.map(item => (
-                  <SetupCard key={item.id} item={item} onNavigate={onNavigate} />
-                ))}
+                {[...SETUP_ITEMS]
+                  .sort((a, b) => {
+                    const rank = (s: SetupItem["status"]) => s === "warning" ? 0 : s === "pending" ? 1 : 2
+                    return rank(a.status) - rank(b.status)
+                  })
+                  .map(item => (
+                    <SetupCard key={item.id} item={item} onNavigate={onNavigate} />
+                  ))}
               </div>
             </div>
           </div>
