@@ -491,7 +491,7 @@ function InterviewConfigTab() {
 
 // ── Candidates Tab ────────────────────────────────────────────
 
-function CandidatesTab({ activeProfile, onProfileOpen, onProfileClose }: { activeProfile: string | null; onProfileOpen: (key: string) => void; onProfileClose: () => void }) {
+function CandidatesTab({ roleTitle, activeProfile, onProfileOpen, onProfileClose }: { roleTitle: string; activeProfile: string | null; onProfileOpen: (key: string) => void; onProfileClose: () => void }) {
   // TODO (review): threshold slider icon should move to the candidate column header alongside search/filter
   const [threshold, setThreshold] = useState(7)
   const [thresholdOpen, setThresholdOpen] = useState(false)
@@ -592,6 +592,17 @@ function CandidatesTab({ activeProfile, onProfileOpen, onProfileClose }: { activ
             </div>
           ) : (
             <div className="flex-1 overflow-y-auto"><div className="max-w-2xl mx-auto px-6 py-5">
+              {/* Candidate header — name + role */}
+              <div className="flex items-center gap-3 mb-5">
+                <div className={`w-11 h-11 flex items-center justify-center text-sm font-pixel font-medium text-white shrink-0 ${dotColors[selected.color]}`}>
+                  {selected.name.split(" ").map(p => p[0]).slice(0, 2).join("")}
+                </div>
+                <div className="min-w-0">
+                  <h2 className="text-base font-medium leading-tight truncate">{selected.name}</h2>
+                  <p className="text-[11px] font-pixel text-muted-foreground mt-0.5 truncate">{roleTitle}</p>
+                </div>
+              </div>
+
               {/* Score card */}
               <CollapsibleSection title="Score summary">
                 <div className="flex items-start gap-4 p-4 bg-muted/30 border border-border mb-4">
@@ -756,7 +767,7 @@ function RoleDetail({ role, activeProfile, onProfileOpen, onProfileClose }: { ro
       <div className="flex-1 overflow-hidden flex flex-col">
         {activeTab === "job-posting" && <JobPostingTab status={status} onStatusChange={setStatus} />}
         {activeTab === "interview-config" && <InterviewConfigTab />}
-        {activeTab === "candidates" && <CandidatesTab activeProfile={activeProfile} onProfileOpen={onProfileOpen} onProfileClose={onProfileClose} />}
+        {activeTab === "candidates" && <CandidatesTab roleTitle={role.title} activeProfile={activeProfile} onProfileOpen={onProfileOpen} onProfileClose={onProfileClose} />}
       </div>
     </div>
   )
