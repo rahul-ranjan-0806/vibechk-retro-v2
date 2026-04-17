@@ -28,6 +28,9 @@ export const ROLES: RoleMini[] = [
   { id: "r3", title: "Product Marketing Lead" },
 ]
 
+// Status reflects what Alt autonomously did: shortlisted = pushed to ATS,
+// rejected = filtered out, pending = dilemma / flagged for admin review.
+// Only altRec=review or low-confidence cases land as pending.
 export const CANDIDATES: CandidateMini[] = [
   {
     id: "c1",
@@ -38,7 +41,7 @@ export const CANDIDATES: CandidateMini[] = [
     confidence: "high",
     reasoning: "Strong systems thinking, concrete B2B examples — matches past shortlists cleanly.",
     completedAt: "2h ago",
-    status: "pending",
+    status: "shortlisted",
   },
   {
     id: "c2",
@@ -49,7 +52,7 @@ export const CANDIDATES: CandidateMini[] = [
     confidence: "high",
     reasoning: "Clear trade-off framing in every scenario. Profile similar to Arjun (shortlisted).",
     completedAt: "6h ago",
-    status: "pending",
+    status: "shortlisted",
   },
   {
     id: "c3",
@@ -60,7 +63,7 @@ export const CANDIDATES: CandidateMini[] = [
     confidence: "high",
     reasoning: "Ships fast, clear ownership stories. Past YC founding engineer.",
     completedAt: "3h ago",
-    status: "pending",
+    status: "shortlisted",
   },
   {
     id: "c4",
@@ -71,7 +74,7 @@ export const CANDIDATES: CandidateMini[] = [
     confidence: "high",
     reasoning: "Consumer-heavy background, struggled on B2B prompts. Below threshold.",
     completedAt: "3d ago",
-    status: "pending",
+    status: "rejected",
   },
   {
     id: "c5",
@@ -82,7 +85,7 @@ export const CANDIDATES: CandidateMini[] = [
     confidence: "high",
     reasoning: "Thin on positioning work. Couldn't articulate ICP in role-play.",
     completedAt: "1d ago",
-    status: "pending",
+    status: "rejected",
   },
   {
     id: "c6",
@@ -177,9 +180,9 @@ export const ALT_CHAT_RESPONSES: AltResponseRule[] = [
     match: /marcus/i,
     reply: {
       text:
-        "Marcus is the edge case in today's batch — 6/10, split profile. Strong execution, weak systems framing. You've passed on similar profiles 3 of 5 times this quarter, and the 2 you shortlisted (Arjun, Priya) both grew into strong ICs. Here's what I have on him:",
+        "Marcus is the one dilemma I couldn't resolve — 6/10, split profile. Strong execution, weak systems framing. You've passed on similar profiles 3 of 5 times this quarter, and the 2 you shortlisted (Arjun, Priya) both grew into strong ICs. Here's what I have on him:",
       parts: [
-        { kind: "candidate-ref", candidateId: "c6", note: "Applied via the public link 2 days ago." },
+        { kind: "candidate-ref", candidateId: "c6", note: "Applied via the public link 2 days ago. Held back from the ATS pending your call." },
         {
           kind: "evidence",
           quote:
@@ -189,8 +192,8 @@ export const ALT_CHAT_RESPONSES: AltResponseRule[] = [
         {
           kind: "cta-group",
           options: [
-            { label: "Shortlist Marcus", semantic: "success" },
-            { label: "Pass", semantic: "destructive" },
+            { label: "Push Marcus to ATS", semantic: "success" },
+            { label: "Reject", semantic: "destructive" },
             { label: "Open transcript", semantic: "neutral" },
           ],
         },
@@ -201,22 +204,22 @@ export const ALT_CHAT_RESPONSES: AltResponseRule[] = [
     match: /priorit|today|focus|morning/i,
     reply: {
       text:
-        "Three moves will clear most of your queue in about 20 minutes. Want me to walk through them as a checklist?",
+        "I've already handled most of the queue. Only Marcus is left for your call — should take about 10 minutes.",
       parts: [
         {
           kind: "checklist",
-          title: "Today's triage plan",
+          title: "Today's queue",
           items: [
-            { id: "s1", label: "Confirm 3 shortlists (Priya, Lena, Daniel)", description: "All high-confidence, above your threshold.", defaultChecked: true },
-            { id: "s2", label: "Bulk-reject Tom & Jamie", description: "Both clearly below threshold — no recent overrides at this level.", defaultChecked: true },
-            { id: "s3", label: "Spend 10 minutes on Marcus", description: "Edge case — worth your real attention.", defaultChecked: true },
+            { id: "s1", label: "3 pushed to ATS — Priya, Lena, Daniel", description: "High confidence, cleared autopilot.", defaultChecked: true },
+            { id: "s2", label: "2 filtered out — Tom, Jamie", description: "Clearly below threshold. No similar overrides in the last 30 days.", defaultChecked: true },
+            { id: "s3", label: "Spend 10 minutes on Marcus", description: "The one dilemma — I'd want your read before he moves either way.", defaultChecked: false },
           ],
-          submitLabel: "Run this plan",
+          submitLabel: "Open Marcus",
         },
         {
           kind: "toggle",
-          label: "Auto-apply high-confidence decisions going forward",
-          description: "I'll handle these without asking — you'll still see the undo toast.",
+          label: "Narrow the dilemma band",
+          description: "Fewer candidates will land in 'your call' — I'll commit harder on borderline scores.",
           defaultOn: false,
         },
       ],
@@ -226,12 +229,12 @@ export const ALT_CHAT_RESPONSES: AltResponseRule[] = [
     match: /priya/i,
     reply: {
       text:
-        "Priya scored a 9. My read is a clear shortlist — her trade-off framing maps cleanly onto the Arjun + Lena profiles you've already said yes to.",
+        "Priya scored a 9 and I've already pushed her to the ATS — her trade-off framing maps cleanly onto the Arjun + Lena profiles you've already said yes to.",
       parts: [
         {
           kind: "report",
           title: "Priya Sharma — score breakdown",
-          subtitle: "Sr. Product Designer · completed 2h ago",
+          subtitle: "Sr. Product Designer · completed 2h ago · pushed to ATS",
           rows: [
             { label: "Trade-off framing", value: "9 / 10", emphasis: "positive" },
             { label: "Systems thinking", value: "9 / 10", emphasis: "positive" },
@@ -247,7 +250,13 @@ export const ALT_CHAT_RESPONSES: AltResponseRule[] = [
           source: "Priya, interview transcript",
           date: "2h ago",
         },
-        { kind: "cta", label: "Shortlist Priya", semantic: "success" },
+        {
+          kind: "cta-group",
+          options: [
+            { label: "Open in ATS", semantic: "primary" },
+            { label: "Pull back from ATS", semantic: "destructive" },
+          ],
+        },
       ],
     },
   },
@@ -278,7 +287,7 @@ export const ALT_CHAT_RESPONSES: AltResponseRule[] = [
         {
           kind: "cta-group",
           options: [
-            { label: "Lower shortlist threshold", semantic: "info", hint: "40 → 35" },
+            { label: "Lower push-to-ATS threshold", semantic: "info", hint: "40 → 35" },
             { label: "Keep current threshold", semantic: "neutral" },
           ],
         },
@@ -356,13 +365,13 @@ export const ALT_CHAT_RESPONSES: AltResponseRule[] = [
     match: /shortlist|should i/i,
     reply: {
       text:
-        "Looking at past decisions at this score range, you shortlist ~75% of candidates with strong trade-off framing. If that's the signal you're weighing, my read is lean yes. Flagging that you've been stricter on systems-thinking the last two weeks.",
+        "Looking at past decisions at this score range, you push ~75% of candidates with strong trade-off framing to the ATS. If that's the signal you're weighing, my read is lean yes. Flagging that you've been stricter on systems-thinking the last two weeks.",
       parts: [
         {
           kind: "cta-group",
           options: [
-            { label: "Shortlist", semantic: "success" },
-            { label: "Pass", semantic: "destructive" },
+            { label: "Push to ATS", semantic: "success" },
+            { label: "Reject", semantic: "destructive" },
             { label: "Show me the comparisons", semantic: "neutral" },
           ],
         },

@@ -117,9 +117,9 @@ function StatusBadge({ status }: { status: string }) {
 }
 
 function CandStatusBadge({ status }: { status: string }) {
-  const s: any = { shortlisted: "bg-[#EAF3DE] text-[#3B6D11]", rejected: "bg-[#FCEBEB] text-[#A32D2D]", pending: "bg-muted text-muted-foreground" }
-  const l: any = { shortlisted: "Shortlisted", rejected: "Rejected", pending: "Pending" }
-  return <span className={`text-[10px] px-1.5 py-0.5 font-pixel font-medium ${s[status]||s.pending}`}>{l[status]||"Pending"}</span>
+  const s: any = { shortlisted: "bg-[#EAF3DE] text-[#3B6D11]", rejected: "bg-[#FCEBEB] text-[#A32D2D]", pending: "bg-[#FAEEDA] text-[#854F0B]" }
+  const l: any = { shortlisted: "Pushed to ATS", rejected: "Rejected", pending: "Your call" }
+  return <span className={`text-[10px] px-1.5 py-0.5 font-pixel font-medium ${s[status]||s.pending}`}>{l[status]||"Your call"}</span>
 }
 
 function RetroTag({ variant, children }: { variant: "jd"|"bp"|"neutral"; children: React.ReactNode }) {
@@ -501,13 +501,13 @@ function CandidatesTab({ roleTitle, activeProfile, onProfileOpen, onProfileClose
       {/* Threshold panel */}
       <div className={`shrink-0 border-b border-border bg-muted/30 overflow-hidden transition-all duration-200 ${thresholdOpen ? "max-h-20 py-3 px-4" : "max-h-0"}`}>
         <div className="flex items-center gap-3">
-          <span className="text-[10px] font-pixel text-muted-foreground whitespace-nowrap">Shortlist threshold</span>
+          <span className="text-[10px] font-pixel text-muted-foreground whitespace-nowrap">Push-to-ATS threshold</span>
           <input type="range" min={1} max={10} step={1} value={threshold} onChange={e => setThreshold(Number(e.target.value))} className="flex-1 accent-foreground h-1" />
           <span className="text-sm font-pixel font-medium w-4 text-center tabular-nums">{threshold}</span>
           <span className="text-[10px] font-pixel text-muted-foreground">/10</span>
         </div>
         <p className="text-[10px] font-pixel text-muted-foreground mt-1.5">
-          Candidates scoring <strong className="text-foreground">{threshold}+</strong> auto-shortlisted · below reviewed by agent
+          Candidates scoring <strong className="text-foreground">{threshold}+</strong> auto-pushed to ATS · Alt decides the rest (reject or flag for your call)
         </p>
       </div>
 
@@ -517,7 +517,7 @@ function CandidatesTab({ roleTitle, activeProfile, onProfileOpen, onProfileClose
           <div className="p-2.5 border-b border-border flex flex-col gap-2 shrink-0">
             <div className="flex items-center gap-2">
               <input placeholder="Search candidates..." className="flex-1 text-[11px] font-pixel border border-border px-2 py-1.5 bg-background outline-none placeholder:text-muted-foreground" />
-              <button onClick={() => setThresholdOpen(o => !o)} title="Shortlist threshold"
+              <button onClick={() => setThresholdOpen(o => !o)} title="Push-to-ATS threshold"
                 className={`p-1.5 border transition-colors ${thresholdOpen ? "border-foreground bg-muted text-foreground" : "border-border text-muted-foreground hover:text-foreground hover:border-foreground/40"}`}>
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                   <line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/>
@@ -694,7 +694,7 @@ function CandidatesTab({ roleTitle, activeProfile, onProfileOpen, onProfileClose
                   )}
                 </div>
                 <p className="text-[10px] font-pixel text-muted-foreground text-center mt-2">
-                  Manual shortlisting is off · <button className="underline hover:text-foreground transition-colors">Turn on in settings</button>
+                  Manual overrides pause Alt's autonomy for this role · <button className="underline hover:text-foreground transition-colors">Manage in settings</button>
                 </p>
               </CollapsibleSection>
             </div></div>

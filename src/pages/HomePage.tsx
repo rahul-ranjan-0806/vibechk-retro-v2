@@ -1,9 +1,8 @@
-import { useEffect, useMemo, useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { PixelSprite } from "@/components/PixelSprite"
 import { AltMessagePart } from "@/components/AltMessageParts"
 import {
   CANDIDATES as SEED_CANDIDATES,
-  computeTriage,
   matchAltResponse,
   roleTitle,
   type AltMsgPart,
@@ -72,9 +71,9 @@ function SetupCard({ item, onNavigate }: { item: SetupItem; onNavigate: (p: Page
 }
 
 function DecisionBadge({ d }: { d: string }) {
-  const s: Record<string, string> = { shortlisted: "bg-[#EAF3DE] text-[#3B6D11]", rejected: "bg-[#FCEBEB] text-[#A32D2D]", pending: "bg-muted text-muted-foreground" }
-  const l: Record<string, string> = { shortlisted: "Shortlisted", rejected: "Rejected", pending: "Pending" }
-  return <span className={`text-[10px] font-pixel px-1.5 py-0.5 ${s[d]||s.pending}`}>{l[d]||"Pending"}</span>
+  const s: Record<string, string> = { shortlisted: "bg-[#EAF3DE] text-[#3B6D11]", rejected: "bg-[#FCEBEB] text-[#A32D2D]", pending: "bg-[#FAEEDA] text-[#854F0B]" }
+  const l: Record<string, string> = { shortlisted: "Pushed to ATS", rejected: "Rejected", pending: "Your call" }
+  return <span className={`text-[10px] font-pixel px-1.5 py-0.5 ${s[d]||s.pending}`}>{l[d]||"Your call"}</span>
 }
 
 // ── Alt triage card ──────────────────────────────────────────
@@ -90,47 +89,35 @@ function AltTriageCard({ onNavigateToRoles, onOpenChat }: { onNavigateToRoles: (
   const [candidates, setCandidates] = useState<CandidateMini[]>(SEED_CANDIDATES)
   const [expanded, setExpanded] = useState(false)
   const [toast, setToast] = useState<{ message: string; prev: CandidateMini[] } | null>(null)
-  const triage = useMemo(() => computeTriage(candidates), [candidates])
 
-  const pending = candidates.filter(c => c.status === "pending")
-  const easyOnes = pending.filter(c => c.confidence === "high")
-  const edgeCase = pending.find(c => c.altRec === "review")
+  const pushed = candidates.filter(c => c.status === "shortlisted").length
+  const rejected = candidates.filter(c => c.status === "rejected").length
+  const dilemmas = candidates.filter(c => c.status === "pending")
 
   const summary = (() => {
-    if (triage.total === 0) return "Queue is clear — you're caught up."
-    const parts: string[] = []
-    parts.push(`${triage.total} candidate${triage.total !== 1 ? "s" : ""} across ${triage.rolesTouched} role${triage.rolesTouched !== 1 ? "s" : ""} since yesterday.`)
-    const counts: string[] = []
-    if (triage.shortlists) counts.push(`${triage.shortlists} likely shortlist${triage.shortlists !== 1 ? "s" : ""}`)
-    if (triage.rejects) counts.push(`${triage.rejects} likely reject${triage.rejects !== 1 ? "s" : ""}`)
-    if (triage.edgeCases) counts.push(`${triage.edgeCases} edge case${triage.edgeCases !== 1 ? "s" : ""}`)
-    parts.push(counts.join(", ") + ".")
-    if (edgeCase) parts.push(`${edgeCase.name} is the one I'd want your read on.`)
-    if (easyOnes.length) parts.push(`Handle the easy ones in 30 seconds?`)
-    return parts.join(" ")
+    const autoParts: string[] = []
+    if (pushed) autoParts.push(`pushed ${pushed} to the ATS`)
+    if (rejected) autoParts.push(`filtered ${rejected} out`)
+    const autoSentence = autoParts.length ? `I've ${autoParts.join(" and ")} since yesterday.` : ""
+    if (dilemmas.length === 0) {
+      return `${autoSentence} You're caught up — no dilemmas for you to weigh in on.`.trim()
+    }
+    const names = dilemmas.map(c => c.name).slice(0, 2).join(" and ")
+    const suffix = dilemmas.length === 1
+      ? `${names} is the one I couldn't decide on — want to take a look?`
+      : `${dilemmas.length} candidates — ${names}${dilemmas.length > 2 ? " and others" : ""} — are split calls I'd want your read on.`
+    return `${autoSentence} ${suffix}`.trim()
   })()
 
-  const applyEasyOnes = () => {
-    const prev = candidates
-    setCandidates(cs => cs.map(c => {
-      if (c.status !== "pending") return c
-      if (c.confidence !== "high") return c
-      return { ...c, status: c.altRec === "shortlist" ? "shortlisted" : "rejected" }
-    }))
-    setToast({ message: `${easyOnes.length} decision${easyOnes.length !== 1 ? "s" : ""} applied · ${pending.filter(c => c.altRec === "shortlist" && c.confidence === "high").length} shortlisted, ${pending.filter(c => c.altRec === "reject" && c.confidence === "high").length} rejected`, prev })
-  }
-
-  const applyOne = (id: string) => {
+  const overrideOne = (id: string, nextStatus: CandidateMini["status"]) => {
     const c = candidates.find(x => x.id === id)
     if (!c) return
     const prev = candidates
-    const nextStatus: CandidateMini["status"] = c.altRec === "shortlist" ? "shortlisted" : c.altRec === "reject" ? "rejected" : "pending"
-    if (nextStatus === "pending") return
     setCandidates(cs => cs.map(x => x.id === id ? { ...x, status: nextStatus } : x))
-    setToast({ message: `${c.name} ${nextStatus}`, prev })
+    const verb = nextStatus === "shortlisted" ? "pushed to ATS" : nextStatus === "rejected" ? "rejected" : "marked as your call"
+    setToast({ message: `${c.name} ${verb}`, prev })
   }
 
-  // 5s undo countdown
   useEffect(() => {
     if (!toast) return
     const t = setTimeout(() => setToast(null), 5000)
@@ -149,45 +136,33 @@ function AltTriageCard({ onNavigateToRoles, onOpenChat }: { onNavigateToRoles: (
         <div className="pt-0.5 shrink-0"><PixelSprite size={28} /></div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1.5">
-            <span className="text-[10px] font-pixel uppercase tracking-[0.12em] text-[#4466ff]">Alt suggests</span>
+            <span className="text-[10px] font-pixel uppercase tracking-[0.12em] text-[#4466ff]">Alt update</span>
             <span className="text-[10px] font-pixel text-muted-foreground">· Sashank's Alt · just now</span>
           </div>
           <p className="text-sm leading-relaxed text-foreground">{summary}</p>
 
-          {triage.total > 0 && (
-            <div className="flex items-center gap-2 mt-3 flex-wrap">
-              <button onClick={applyEasyOnes} disabled={easyOnes.length === 0}
-                className="text-[11px] font-pixel px-3 py-1.5 bg-[#4466ff] text-white hover:opacity-90 disabled:opacity-40 transition-opacity">
-                Handle {easyOnes.length} easy {easyOnes.length === 1 ? "one" : "ones"}
-              </button>
+          <div className="flex items-center gap-2 mt-3 flex-wrap">
+            {dilemmas.length > 0 && (
               <button onClick={() => setExpanded(!expanded)}
-                className="text-[11px] font-pixel px-3 py-1.5 border border-border text-muted-foreground hover:text-foreground hover:border-foreground/40 transition-colors">
-                {expanded ? "Hide breakdown" : "Show breakdown"}
+                className="text-[11px] font-pixel px-3 py-1.5 bg-[#4466ff] text-white hover:opacity-90 transition-opacity">
+                {expanded ? "Hide dilemmas" : `Review ${dilemmas.length} dilemma${dilemmas.length !== 1 ? "s" : ""}`}
               </button>
-              {edgeCase && (
-                <button onClick={onNavigateToRoles}
-                  className="text-[11px] font-pixel px-3 py-1.5 border border-border text-muted-foreground hover:text-foreground hover:border-foreground/40 transition-colors">
-                  Review {edgeCase.name} →
-                </button>
-              )}
-              <button onClick={onOpenChat}
-                className="text-[11px] font-pixel px-3 py-1.5 border border-[#4466ff] text-[#4466ff] hover:bg-[#4466ff] hover:text-white transition-colors flex items-center gap-1.5 ml-auto">
-                <span>Chat with Alt</span>
-                <span className="text-[9px] opacity-70">⌘K</span>
-              </button>
-            </div>
-          )}
+            )}
+            <button onClick={onOpenChat}
+              className="text-[11px] font-pixel px-3 py-1.5 border border-[#4466ff] text-[#4466ff] hover:bg-[#4466ff] hover:text-white transition-colors flex items-center gap-1.5 ml-auto">
+              <span>Chat with Alt</span>
+              <span className="text-[9px] opacity-70">⌘K</span>
+            </button>
+          </div>
 
-          {expanded && pending.length > 0 && (
+          {expanded && dilemmas.length > 0 && (
             <div className="mt-4 flex flex-col gap-1.5">
-              {pending.map(c => (
+              {dilemmas.map(c => (
                 <div key={c.id}
                   className="flex items-start gap-3 px-3 py-2.5 border border-border bg-background">
-                  <div className={`w-8 h-8 flex items-center justify-center text-sm font-medium shrink-0 ${
-                    c.altRec === "shortlist" ? "bg-[#EAF3DE] text-[#3B6D11]" :
-                    c.altRec === "reject" ? "bg-[#FCEBEB] text-[#A32D2D]" :
-                    "bg-[#FAEEDA] text-[#854F0B]"
-                  }`}>{c.score}</div>
+                  <div className="w-8 h-8 flex items-center justify-center text-sm font-medium shrink-0 bg-[#FAEEDA] text-[#854F0B]">
+                    {c.score}
+                  </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-0.5 flex-wrap">
                       <p className="text-sm font-medium">{c.name}</p>
@@ -196,17 +171,20 @@ function AltTriageCard({ onNavigateToRoles, onOpenChat }: { onNavigateToRoles: (
                     </div>
                     <p className="text-[11px] leading-relaxed text-muted-foreground">{c.reasoning}</p>
                   </div>
-                  {c.altRec !== "review" ? (
-                    <button onClick={() => applyOne(c.id)}
-                      className="text-[10px] font-pixel px-2.5 py-1 bg-foreground text-background hover:opacity-90 transition-opacity shrink-0 self-center">
-                      Confirm
+                  <div className="flex items-center gap-1.5 shrink-0 self-center">
+                    <button onClick={() => overrideOne(c.id, "shortlisted")}
+                      className="text-[10px] font-pixel px-2.5 py-1 bg-[#EAF3DE] text-[#3B6D11] hover:opacity-90 transition-opacity">
+                      Push to ATS
                     </button>
-                  ) : (
+                    <button onClick={() => overrideOne(c.id, "rejected")}
+                      className="text-[10px] font-pixel px-2.5 py-1 bg-[#FCEBEB] text-[#A32D2D] hover:opacity-90 transition-opacity">
+                      Reject
+                    </button>
                     <button onClick={onNavigateToRoles}
-                      className="text-[10px] font-pixel px-2.5 py-1 border border-border text-muted-foreground hover:text-foreground hover:border-foreground/40 transition-colors shrink-0 self-center">
+                      className="text-[10px] font-pixel px-2.5 py-1 border border-border text-muted-foreground hover:text-foreground hover:border-foreground/40 transition-colors">
                       Open →
                     </button>
-                  )}
+                  </div>
                 </div>
               ))}
             </div>
