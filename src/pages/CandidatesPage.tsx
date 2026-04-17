@@ -35,12 +35,12 @@ function StatusBadge({ status }: { status: CandidateMini["status"] }) {
   const s: Record<CandidateMini["status"], string> = {
     shortlisted: "bg-[#EAF3DE] text-[#3B6D11]",
     rejected: "bg-[#FCEBEB] text-[#A32D2D]",
-    pending: "bg-muted text-muted-foreground",
+    pending: "bg-[#FAEEDA] text-[#854F0B]",
   }
   const l: Record<CandidateMini["status"], string> = {
-    shortlisted: "Shortlisted",
+    shortlisted: "Pushed to ATS",
     rejected: "Rejected",
-    pending: "Pending",
+    pending: "Your call",
   }
   return <span className={`text-[10px] font-pixel font-medium px-1.5 py-0.5 ${s[status]}`}>{l[status]}</span>
 }
@@ -169,8 +169,8 @@ export function CandidatesPage() {
             <select value={statusFilter} onChange={e => setStatusFilter(e.target.value as StatusFilter)}
               className="text-[10px] font-pixel border border-border px-2 py-1.5 bg-background">
               <option value="all">All statuses</option>
-              <option value="pending">Pending</option>
-              <option value="shortlisted">Shortlisted</option>
+              <option value="pending">Your call</option>
+              <option value="shortlisted">Pushed to ATS</option>
               <option value="rejected">Rejected</option>
             </select>
             <select value={recFilter} onChange={e => setRecFilter(e.target.value as RecFilter)}
@@ -206,7 +206,7 @@ export function CandidatesPage() {
             </span>
             <button onClick={() => bulkApply("shortlisted")}
               className="text-[11px] font-pixel px-3 py-1.5 bg-[#EAF3DE] text-[#3B6D11] hover:opacity-90 transition-opacity">
-              Shortlist
+              Push to ATS
             </button>
             <button onClick={() => bulkApply("rejected")}
               className="text-[11px] font-pixel px-3 py-1.5 bg-[#FCEBEB] text-[#A32D2D] hover:opacity-90 transition-opacity">
@@ -214,7 +214,7 @@ export function CandidatesPage() {
             </button>
             <button onClick={() => bulkApply("pending")}
               className="text-[11px] font-pixel px-3 py-1.5 border border-border hover:bg-muted transition-colors">
-              Move to pending
+              Mark as your call
             </button>
             <button onClick={() => setSelectedIds(new Set())}
               className="ml-auto text-[10px] font-pixel text-muted-foreground hover:text-foreground">
@@ -346,8 +346,8 @@ export function CandidatesPage() {
                     { label: "Role", value: roleTitle(selected.roleId) },
                     { label: "Interviewed", value: selected.completedAt },
                     { label: "Alt confidence", value: selected.confidence.charAt(0).toUpperCase() + selected.confidence.slice(1) },
-                    { label: "Alt recommendation", value: selected.altRec === "shortlist" ? "Shortlist" : selected.altRec === "reject" ? "Pass" : "Needs your call" },
-                    { label: "Current status", value: selected.status.charAt(0).toUpperCase() + selected.status.slice(1) },
+                    { label: "Alt recommendation", value: selected.altRec === "shortlist" ? "Push to ATS" : selected.altRec === "reject" ? "Reject" : "Needs your call" },
+                    { label: "Current status", value: selected.status === "shortlisted" ? "Pushed to ATS" : selected.status === "rejected" ? "Rejected" : "Your call" },
                   ].map((row, i) => (
                     <div key={row.label} className={`flex items-center justify-between px-3 py-2 ${i > 0 ? "border-t border-border" : ""}`}>
                       <span className="text-[10px] font-pixel uppercase tracking-widest text-muted-foreground">{row.label}</span>
@@ -364,7 +364,7 @@ export function CandidatesPage() {
                   disabled={selected.status === "shortlisted"}
                   className="text-[11px] font-pixel px-3 py-1.5 bg-[#EAF3DE] text-[#3B6D11] disabled:opacity-40 hover:opacity-90 transition-opacity"
                 >
-                  Shortlist
+                  Push to ATS
                 </button>
                 <button
                   onClick={() => applyOne(selected.id, "rejected")}
@@ -378,7 +378,7 @@ export function CandidatesPage() {
                   disabled={selected.status === "pending"}
                   className="text-[11px] font-pixel px-3 py-1.5 border border-border disabled:opacity-40 hover:bg-muted transition-colors"
                 >
-                  Pending
+                  Your call
                 </button>
               </div>
             </div>
