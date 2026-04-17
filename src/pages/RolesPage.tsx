@@ -687,8 +687,11 @@ function CandidatesTab({ roleTitle, activeProfile, onProfileOpen, onProfileClose
               {/* ATS row */}
               <CollapsibleSection title="ATS actions">
                 <div className="flex items-center gap-2 p-3 bg-muted/30 border border-border">
-                  <CandStatusBadge status={getStatus(selected)} />
-                  {getStatus(selected) === "shortlisted" && <span className="text-[10px] font-pixel text-muted-foreground">· in ATS</span>}
+                  {getStatus(selected) === "shortlisted" ? (
+                    <span className="text-[10px] font-pixel font-medium px-1.5 py-0.5 bg-[#EAF3DE] text-[#3B6D11]">Shortlisted to ATS</span>
+                  ) : (
+                    <CandStatusBadge status={getStatus(selected)} />
+                  )}
                 </div>
                 <p className="text-[10px] font-pixel text-muted-foreground text-center mt-2">
                   Manual shortlisting is off · <button className="underline hover:text-foreground transition-colors">Turn on in settings</button>
