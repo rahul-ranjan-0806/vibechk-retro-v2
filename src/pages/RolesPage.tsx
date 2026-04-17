@@ -68,6 +68,51 @@ const AGENT_RESPONSES = [
 const scoreColors = { green: "text-[#3B6D11]", teal: "text-[#0F6E56]", amber: "text-[#854F0B]", red: "text-[#A32D2D]" }
 const dotColors = { green: "bg-[#639922]", teal: "bg-[#1D9E75]", amber: "bg-[#BA7517]", red: "bg-[#E24B4A]" }
 
+const scoreToColor = (s: number): keyof typeof scoreColors => s >= 8 ? "green" : s >= 7 ? "teal" : s >= 5 ? "amber" : "red"
+const scoreBucket = (s: number): "excellent"|"good"|"mixed"|"weak" => s >= 9 ? "excellent" : s >= 7 ? "good" : s >= 5 ? "mixed" : "weak"
+
+const RATIONALE_BANK: Record<string, Record<"excellent"|"good"|"mixed"|"weak", string>> = {
+  c1: {
+    excellent: "Frames trade-offs without prompting; walks through downstream effects before I ask.",
+    good: "Reaches systems framing when pushed, though default is happy-path first.",
+    mixed: "Can describe what shipped, but struggles to articulate why it was the right call.",
+    weak: "Answers stay on feature specs — no sign of thinking beyond the immediate ask.",
+  },
+  c2: {
+    excellent: "Concrete examples of shipping under constraints; iterates rather than perfecting.",
+    good: "Comfortable with ambiguity but defaults to thorough discovery before committing.",
+    mixed: "Wants more defined requirements than the role implies; speed is likely an issue.",
+    weak: "Portfolio shows long cycles — no evidence of rapid iteration.",
+  },
+  c3: {
+    excellent: "Specific stories about influencing eng and PM without authority; feedback flows both ways.",
+    good: "Collaborates well when aligned; hasn't had to navigate strong disagreement recently.",
+    mixed: "References team work but light on detail — hard to tell their actual contribution.",
+    weak: "Describes mostly solo work or hands-off collaboration; fit for this role is questionable.",
+  },
+  c4: {
+    excellent: "Understands enterprise adoption friction; real examples of power-user tooling.",
+    good: "Grasps the broad shape of B2B but lighter on specifics like permissions and density.",
+    mixed: "Consumer-leaning instincts; would need a ramp on B2B patterns.",
+    weak: "No meaningful B2B exposure — answers are generic or misapplied.",
+  },
+}
+
+// Deterministic small offset so per-criterion scores cluster around the overall but aren't identical
+function criterionScore(candidateId: number, criterionIndex: number, overall: number): number {
+  const offset = ((candidateId + criterionIndex * 2) % 3) - 1
+  return Math.max(1, Math.min(10, overall + offset))
+}
+
+interface AltScoreRow { criterionId: string; name: string; score: number; rationale: string }
+
+function getAltScoresFor(c: Candidate): AltScoreRow[] {
+  return CRITERIA.map((cr, i) => {
+    const score = criterionScore(c.id, i, c.score)
+    return { criterionId: cr.id, name: cr.name, score, rationale: RATIONALE_BANK[cr.id][scoreBucket(score)] }
+  })
+}
+
 function StatusBadge({ status }: { status: string }) {
   const s = { draft: "bg-[#FAEEDA] text-[#854F0B]", live: "bg-[#EAF3DE] text-[#3B6D11]", paused: "bg-muted text-muted-foreground" }
   return <span className={`text-[10px] px-1.5 py-0.5 font-pixel font-medium ${(s as any)[status] || s.paused}`}>{status.charAt(0).toUpperCase()+status.slice(1)}</span>
@@ -551,6 +596,24 @@ function CandidatesTab({ activeProfile, onProfileOpen, onProfileClose }: { activ
                       <span className="text-[10px] font-pixel text-muted-foreground">Interviewed {selected.time}</span>
                     </div>
                   </div>
+                </div>
+              </CollapsibleSection>
+
+              {/* Alt scores */}
+              <CollapsibleSection title="Alt scores">
+                <div className="border border-border mb-4">
+                  {getAltScoresFor(selected).map((row, i) => (
+                    <div key={row.criterionId} className={`flex items-start gap-3 px-3 py-2.5 bg-muted/30 ${i > 0 ? "border-t border-border" : ""}`}>
+                      <div className={`flex flex-col items-center w-8 shrink-0 ${scoreColors[scoreToColor(row.score)]}`}>
+                        <span className="text-base font-medium leading-none tabular-nums">{row.score}</span>
+                        <span className="text-[9px] font-pixel text-muted-foreground">/10</span>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-medium mb-0.5">{row.name}</p>
+                        <p className="text-[11px] font-pixel text-muted-foreground leading-relaxed">{row.rationale}</p>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </CollapsibleSection>
 
