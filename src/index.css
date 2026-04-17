@@ -1,0 +1,91 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 40 20% 98%;
+  --foreground: 30 12% 10%;
+  --card: 0 0% 100%;
+  --card-foreground: 30 12% 10%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 30 12% 10%;
+  --primary: 30 12% 10%;
+  --primary-foreground: 40 20% 98%;
+  --secondary: 40 10% 94%;
+  --secondary-foreground: 30 12% 10%;
+  --muted: 40 10% 94%;
+  --muted-foreground: 30 6% 44%;
+  --accent: 40 10% 94%;
+  --accent-foreground: 30 12% 10%;
+  --destructive: 0 72% 51%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 30 8% 86%;
+  --input: 30 8% 86%;
+  --ring: 30 12% 10%;
+  --radius: 0.25rem;
+  --retro-green: #00cc55;
+  --retro-yellow: #f5c518;
+  --retro-red: #ff4444;
+  --retro-blue: #4466ff;
+}
+
+* { border-color: hsl(var(--border)); }
+
+body {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  -webkit-font-smoothing: antialiased;
+  font-family: 'DM Sans', system-ui, sans-serif;
+}
+
+/* Retro pixel font for game elements */
+.font-pixel { font-family: 'DM Mono', monospace; letter-spacing: 0.04em; }
+
+@keyframes sprite-breathe {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-2px); }
+}
+@keyframes sprite-blink {
+  0%, 91%, 100% { opacity: 1; }
+  94% { opacity: 0; }
+}
+@keyframes pixel-glow {
+  0%, 100% { box-shadow: 0 0 4px rgba(0, 204, 85, 0.3); }
+  50% { box-shadow: 0 0 10px rgba(0, 204, 85, 0.6); }
+}
+@keyframes twinkle {
+  0%, 100% { opacity: 0.2; }
+  50% { opacity: 0.8; }
+}
+@keyframes scanline {
+  0% { background-position: 0 0; }
+  100% { background-position: 0 4px; }
+}
+
+.sprite-breathe { animation: sprite-breathe 3s ease-in-out infinite; }
+.sprite-blink { animation: sprite-blink 4s ease-in-out infinite; }
+.pixel-glow { animation: pixel-glow 2.5s ease-in-out infinite; }
+
+.retro-world {
+  background-color: #0d0d1a;
+  background-image: radial-gradient(ellipse at top, #1a1a3e 0%, #0d0d1a 60%);
+}
+.scanlines::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.06) 2px, rgba(0,0,0,0.06) 4px);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Retro input overrides for dark world */
+.retro-input {
+  background: transparent;
+  border: 1px solid #334;
+  color: #ccd;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+}
+.retro-input:focus { outline: none; border-color: var(--retro-green); }
+.retro-input::placeholder { color: #556; }
