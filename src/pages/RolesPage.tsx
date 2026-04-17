@@ -1,6 +1,4 @@
 import { useState, useRef, useEffect } from "react"
-import { usePanelRef } from "react-resizable-panels"
-import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable"
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/ui/collapsible"
 
 // ── Types ─────────────────────────────────────────────────────
@@ -281,7 +279,6 @@ function JobPostingTab({ status, onStatusChange }: { status: "draft"|"live"; onS
   const [input, setInput] = useState("")
   const [idx, setIdx] = useState(0)
   const bodyRef = useRef<HTMLDivElement>(null)
-  const agentPanelRef = usePanelRef()
 
   const send = () => {
     const msg = input.trim(); if (!msg) return
@@ -289,27 +286,28 @@ function JobPostingTab({ status, onStatusChange }: { status: "draft"|"live"; onS
     setTimeout(() => { setMsgs(p => [...p, { from: "agent", text: AGENT_RESPONSES[idx % AGENT_RESPONSES.length] }]); setIdx(i => i+1) }, 800)
   }
 
-  const openAgent = () => { agentPanelRef.current?.resize(35); setAgentOpen(true) }
-  const closeAgent = () => { agentPanelRef.current?.collapse(); setAgentOpen(false) }
+  const openAgent = () => setAgentOpen(true)
+  const closeAgent = () => setAgentOpen(false)
 
   useEffect(() => { if (bodyRef.current) bodyRef.current.scrollTop = bodyRef.current.scrollHeight }, [msgs])
 
   return (
-    <ResizablePanelGroup orientation="horizontal" className="flex-1 min-h-0">
+    <div className="flex flex-1 min-h-0">
 
       {/* Scrollable content column */}
-      <ResizablePanel defaultSize={100} minSize={30} className="overflow-hidden">
+      <div className="flex-1 min-w-0 overflow-hidden">
         <div className="h-full overflow-y-auto">
           <div className="max-w-3xl mx-auto px-8 py-6 flex flex-col gap-6">
 
             {/* JD */}
             <CollapsibleSection title="Job description">
-              <div className="relative bg-muted/40 border border-border p-4 text-sm leading-relaxed mb-3">
-                <div className="absolute top-2.5 right-2.5 flex items-center gap-1 text-[10px] text-muted-foreground font-pixel">
-                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                  Locked
-                </div>
-                <p className="mb-2">We're looking for a <strong>Senior Product Designer</strong> to join our growing product team. You'll own end-to-end design for our core hiring workflow — from discovery to shipped features — working directly with founders and engineers.</p>
+              <div className="relative bg-muted/40 border border-border p-4 text-sm leading-relaxed">
+                <button onClick={openAgent}
+                  className="absolute top-2.5 right-2.5 flex items-center gap-1.5 text-[10px] font-pixel px-2 py-1 border border-border bg-background text-muted-foreground hover:text-foreground hover:border-foreground/40 transition-colors">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                  Edit with agent
+                </button>
+                <p className="mb-2 pr-32">We're looking for a <strong>Senior Product Designer</strong> to join our growing product team. You'll own end-to-end design for our core hiring workflow — from discovery to shipped features — working directly with founders and engineers.</p>
                 <p className="mb-1 font-medium">What you'll do:</p>
                 <p className="mb-1">· Lead design for 2–3 product areas with full ownership of research, wireframes, and specs</p>
                 <p className="mb-1">· Run design crits and shape the design system alongside engineers</p>
@@ -320,10 +318,6 @@ function JobPostingTab({ status, onStatusChange }: { status: "draft"|"live"; onS
                 <p className="mb-1">· Comfortable with ambiguity and moving fast without sacrificing craft</p>
                 <p>· LinkedIn profile and a portfolio of shipped work required</p>
               </div>
-              <button onClick={openAgent} className="flex items-center gap-2 text-xs font-pixel px-3 py-1.5 border border-border hover:bg-muted transition-colors">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-                Edit with agent
-              </button>
             </CollapsibleSection>
 
             {/* Requirements */}
@@ -366,44 +360,31 @@ function JobPostingTab({ status, onStatusChange }: { status: "draft"|"live"; onS
 
           </div>
         </div>
-      </ResizablePanel>
+      </div>
 
-      {/* Draggable resize handle */}
-      <ResizableHandle withHandle />
-
-      {/* Agent panel — resizable, collapsible (closed by default) */}
-      <ResizablePanel
-        defaultSize={0}
-        minSize={20}
-        collapsible
-        collapsedSize={0}
-        panelRef={agentPanelRef}
-        onResize={(size) => setAgentOpen(size.asPercentage > 0)}
-        className="overflow-hidden"
-      >
-        {agentOpen && (
-          <div className="flex flex-col h-full border-l border-border">
-            <div className="flex items-center justify-between px-4 py-3 border-b border-border shrink-0">
-              <span className="text-xs font-pixel font-medium">Edit with agent</span>
-              <button onClick={closeAgent} className="text-muted-foreground hover:text-foreground text-sm leading-none">✕</button>
-            </div>
-            <div ref={bodyRef} className="flex-1 overflow-y-auto p-3 flex flex-col gap-2">
-              {msgs.map((m, i) => (
-                <div key={i} className={`text-[11px] font-pixel leading-relaxed px-2.5 py-2 ${m.from === "agent" ? "bg-muted/60 border border-border" : "bg-foreground text-background self-end max-w-[85%]"}`}>
-                  {m.text}
-                </div>
-              ))}
-            </div>
-            <div className="p-2.5 border-t border-border flex gap-2 shrink-0">
-              <input value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === "Enter" && send()} placeholder="Describe the change..."
-                className="flex-1 text-[11px] font-pixel bg-muted/40 border border-border px-2.5 py-1.5 outline-none placeholder:text-muted-foreground" />
-              <button onClick={send} className="text-[11px] font-pixel px-3 py-1.5 bg-foreground text-background hover:opacity-90">Send</button>
-            </div>
+      {/* Agent panel — fixed 30vw, closed by default */}
+      {agentOpen && (
+        <div className="w-[30vw] shrink-0 flex flex-col h-full border-l border-border overflow-hidden">
+          <div className="flex items-center justify-between px-4 py-3 border-b border-border shrink-0">
+            <span className="text-xs font-pixel font-medium">Edit with agent</span>
+            <button onClick={closeAgent} className="text-muted-foreground hover:text-foreground text-sm leading-none">✕</button>
           </div>
-        )}
-      </ResizablePanel>
+          <div ref={bodyRef} className="flex-1 overflow-y-auto p-3 flex flex-col gap-2">
+            {msgs.map((m, i) => (
+              <div key={i} className={`text-[11px] font-pixel leading-relaxed px-2.5 py-2 ${m.from === "agent" ? "bg-muted/60 border border-border" : "bg-foreground text-background self-end max-w-[85%]"}`}>
+                {m.text}
+              </div>
+            ))}
+          </div>
+          <div className="p-2.5 border-t border-border flex gap-2 shrink-0">
+            <input value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === "Enter" && send()} placeholder="Describe the change..."
+              className="flex-1 text-[11px] font-pixel bg-muted/40 border border-border px-2.5 py-1.5 outline-none placeholder:text-muted-foreground" />
+            <button onClick={send} className="text-[11px] font-pixel px-3 py-1.5 bg-foreground text-background hover:opacity-90">Send</button>
+          </div>
+        </div>
+      )}
 
-    </ResizablePanelGroup>
+    </div>
   )
 }
 
