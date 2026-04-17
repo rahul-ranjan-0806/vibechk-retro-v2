@@ -51,7 +51,9 @@ function SetupCard({ item, onNavigate }: { item: SetupItem; onNavigate: (p: Page
             <div className={`w-1.5 h-1.5 rounded-full shrink-0 mt-0.5 ${dotColor}`} />
             <p className="text-sm font-medium">{item.title}</p>
           </div>
-          <p className="text-[11px] text-muted-foreground leading-relaxed pl-3.5 pr-16">{item.description}</p>
+          {item.status !== "done" && (
+            <p className="text-[11px] text-muted-foreground leading-relaxed pl-3.5 pr-16">{item.description}</p>
+          )}
         </div>
         <span className={`text-[10px] font-pixel shrink-0 ${statusColor}`}>{statusLabel}</span>
       </div>

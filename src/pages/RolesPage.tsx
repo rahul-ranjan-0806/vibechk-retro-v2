@@ -417,6 +417,17 @@ function InterviewConfigTab() {
   return (
     <div className="overflow-y-auto flex-1"><div className="max-w-5xl mx-auto px-8 py-6 flex flex-col gap-6">
       <div>
+        <h3 className="text-xs font-pixel font-medium uppercase tracking-wider mb-2.5">Interviewing Alt</h3>
+        <div className="flex items-center gap-3 p-2.5 bg-muted/40 border border-border w-fit">
+          <div className="w-8 h-8 bg-blue-100 text-blue-700 flex items-center justify-center text-xs font-pixel font-medium">SG</div>
+          <div>
+            <p className="text-sm font-medium">Sashank's Alt</p>
+            <p className="text-[11px] font-pixel text-muted-foreground">Founder · Active</p>
+          </div>
+        </div>
+      </div>
+
+      <div>
         <div className="flex items-center justify-between mb-2.5">
           <h3 className="text-xs font-pixel font-medium uppercase tracking-wider">Eval criteria</h3>
           <span className="text-[10px] font-pixel text-muted-foreground">4 criteria · JD + best practices</span>
@@ -451,26 +462,24 @@ function InterviewConfigTab() {
       </div>
 
       <div>
-        <h3 className="text-xs font-pixel font-medium uppercase tracking-wider mb-2.5">Interviewing Alt</h3>
-        <div className="flex items-center gap-3 p-2.5 bg-muted/40 border border-border w-fit">
-          <div className="w-8 h-8 bg-blue-100 text-blue-700 flex items-center justify-center text-xs font-pixel font-medium">SG</div>
-          <div>
-            <p className="text-sm font-medium">Sashank's Alt</p>
-            <p className="text-[11px] font-pixel text-muted-foreground">Founder · Active</p>
-          </div>
-        </div>
-      </div>
-
-      <div>
         <div className="flex items-center justify-between mb-2.5">
           <h3 className="text-xs font-pixel font-medium uppercase tracking-wider">Interview flow</h3>
           <span className="text-[10px] font-pixel text-muted-foreground">~22 min</span>
         </div>
         <div className="flex flex-col gap-1.5">
-          {["Intro & warm-up (3 min)", "Role & experience walkthrough (5 min)", "Deep dive — product thinking (7 min)", "Cross-functional scenario (5 min)", "Candidate Q&A (2 min)"].map((step, i) => (
-            <div key={i} className="flex items-center gap-3 px-3 py-2 bg-muted/40 border border-border">
-              <div className="w-5 h-5 bg-border flex items-center justify-center text-[10px] font-pixel font-medium text-muted-foreground shrink-0">{i+1}</div>
-              <span className="text-sm">{step}</span>
+          {[
+            { label: "Intro & warm-up (3 min)", detail: "Alt introduces itself, confirms the role, and eases the candidate in with light conversational prompts." },
+            { label: "Role & experience walkthrough (5 min)", detail: "Candidate walks through recent roles. Alt probes for ownership, scope, and decisions they drove." },
+            { label: "Deep dive — product thinking (7 min)", detail: "Alt poses a product scenario and adapts follow-ups in real time to test structured reasoning and tradeoffs." },
+            { label: "Cross-functional scenario (5 min)", detail: "Alt presents a collaboration or conflict prompt (e.g. eng/design pushback) to gauge communication and stakeholder handling." },
+            { label: "Candidate Q&A (2 min)", detail: "Alt answers the candidate's questions about role, team, and culture using founder memories." },
+          ].map((step, i) => (
+            <div key={i} className="flex items-start gap-3 px-3 py-2.5 bg-muted/40 border border-border">
+              <div className="w-5 h-5 bg-border flex items-center justify-center text-[10px] font-pixel font-medium text-muted-foreground shrink-0 mt-0.5">{i+1}</div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm leading-snug">{step.label}</p>
+                <p className="text-[11px] font-pixel text-muted-foreground leading-relaxed mt-1">{step.detail}</p>
+              </div>
             </div>
           ))}
         </div>
@@ -488,8 +497,8 @@ function CandidatesTab({ activeProfile, onProfileOpen, onProfileClose }: { activ
   const [thresholdOpen, setThresholdOpen] = useState(false)
   const [sortBy, setSortBy] = useState<"score"|"time">("score")
   const [selectedId, setSelectedId] = useState<number|null>(null)
-  const [overrides, setOverrides] = useState<Record<number, string>>({})
-  const [detailTab, setDetailTab] = useState<"transcript"|"linkedin"|"notes">("transcript")
+  const [overrides] = useState<Record<number, string>>({})
+  const [detailTab, setDetailTab] = useState<"transcript"|"linkedin"|"notes">("linkedin")
 
   const getStatus = (c: Candidate) => overrides[c.id] || c.agentDecision
 
@@ -636,7 +645,7 @@ function CandidatesTab({ activeProfile, onProfileOpen, onProfileClose }: { activ
               {/* Detail tabs */}
               <CollapsibleSection title="Assessment detail">
                 <div className="flex border-b border-border mb-3">
-                  {(["transcript","linkedin","notes"] as const).map(t => (
+                  {(["linkedin","transcript","notes"] as const).map(t => (
                     <button key={t} onClick={() => setDetailTab(t)}
                       className={`text-[11px] font-pixel px-3 py-1.5 border-b-2 transition-colors ${detailTab === t ? "border-foreground text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"}`}>
                       {t === "linkedin" ? "LinkedIn analysis" : t.charAt(0).toUpperCase()+t.slice(1)}
