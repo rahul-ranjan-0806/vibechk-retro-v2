@@ -54,10 +54,14 @@ function SetupCard({ item, onNavigate }: { item: SetupItem; onNavigate: (p: Page
           )}
         </div>
         <div className="flex flex-col items-end gap-2 shrink-0">
-          <span className={`text-[10px] font-pixel ${statusColor}`}>{statusLabel}</span>
+          <span className={`text-[10px] font-pixel ${statusColor} ${item.status === "done" && item.ctaTarget ? "group-hover:hidden" : ""}`}>{statusLabel}</span>
           {item.ctaTarget && (
             <button onClick={() => onNavigate(item.ctaTarget!)}
-              className="text-[10px] font-pixel px-2.5 py-1 bg-foreground text-background opacity-0 group-hover:opacity-100 focus:opacity-100 hover:opacity-90 transition-opacity">
+              className={`text-[10px] font-pixel px-2.5 py-1 bg-foreground text-background transition-opacity hover:opacity-90 ${
+                item.status === "done"
+                  ? "hidden group-hover:block focus:block"
+                  : "opacity-0 group-hover:opacity-100 focus:opacity-100"
+              }`}>
               {item.cta}
             </button>
           )}
