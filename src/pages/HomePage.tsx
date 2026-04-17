@@ -10,7 +10,7 @@ import {
   type CandidateMini,
 } from "@/lib/mockData"
 
-type Page = "home" | "roles" | "alts" | "org" | "settings"
+type Page = "home" | "roles" | "candidates" | "alts" | "org" | "settings"
 
 interface SetupItem {
   id: string; title: string; description: string
