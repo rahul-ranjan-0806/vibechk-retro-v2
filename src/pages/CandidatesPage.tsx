@@ -53,8 +53,6 @@ function AltRecBadge({ rec, confidence }: { rec: CandidateMini["altRec"]; confid
 }
 
 export function CandidatesPage() {
-  const [candidates, setCandidates] = useState<CandidateMini[]>(SEED_CANDIDATES)
-  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
   const [openId, setOpenId] = useState<string | null>(null)
 
   const [search, setSearch] = useState("")
@@ -66,7 +64,7 @@ export function CandidatesPage() {
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase()
-    return candidates.filter(c => {
+    return SEED_CANDIDATES.filter(c => {
       if (q && !c.name.toLowerCase().includes(q) && !roleTitle(c.roleId).toLowerCase().includes(q)) return false
       if (roleFilter !== "all" && c.roleId !== roleFilter) return false
       if (statusFilter !== "all" && c.status !== statusFilter) return false
@@ -75,48 +73,9 @@ export function CandidatesPage() {
       if (!matchesTime(c.completedAt, timeFilter)) return false
       return true
     })
-  }, [candidates, search, roleFilter, statusFilter, recFilter, minScore, timeFilter])
+  }, [search, roleFilter, statusFilter, recFilter, minScore, timeFilter])
 
-  const visibleIds = filtered.map(c => c.id)
-  const allVisibleSelected = visibleIds.length > 0 && visibleIds.every(id => selectedIds.has(id))
-  const someVisibleSelected = visibleIds.some(id => selectedIds.has(id))
-
-  const toggleRow = (id: string) => {
-    setSelectedIds(prev => {
-      const next = new Set(prev)
-      if (next.has(id)) next.delete(id)
-      else next.add(id)
-      return next
-    })
-  }
-
-  const toggleAllVisible = () => {
-    if (allVisibleSelected) {
-      setSelectedIds(prev => {
-        const next = new Set(prev)
-        visibleIds.forEach(id => next.delete(id))
-        return next
-      })
-    } else {
-      setSelectedIds(prev => {
-        const next = new Set(prev)
-        visibleIds.forEach(id => next.add(id))
-        return next
-      })
-    }
-  }
-
-  const bulkApply = (status: CandidateMini["status"]) => {
-    if (selectedIds.size === 0) return
-    setCandidates(cs => cs.map(c => selectedIds.has(c.id) ? { ...c, status } : c))
-    setSelectedIds(new Set())
-  }
-
-  const selected = candidates.find(c => c.id === openId) ?? null
-
-  const applyOne = (id: string, status: CandidateMini["status"]) => {
-    setCandidates(cs => cs.map(c => c.id === id ? { ...c, status } : c))
-  }
+  const selected = SEED_CANDIDATES.find(c => c.id === openId) ?? null
 
   const resetFilters = () => {
     setSearch("")
@@ -141,10 +100,10 @@ export function CandidatesPage() {
       {/* Header */}
       <div className="border-b border-border shrink-0 bg-background">
         <div className="max-w-6xl mx-auto px-8 pt-5 pb-3">
-          <div className="flex items-baseline gap-3 mb-3">
+          <div className="flex items-baseline gap-3 mb-1">
             <h1 className="text-base font-medium">Candidates</h1>
             <span className="text-[10px] font-pixel text-muted-foreground">
-              {filtered.length} of {candidates.length} · across {ROLES.length} roles
+              {filtered.length} of {SEED_CANDIDATES.length} · across {ROLES.length} roles
             </span>
             {activeFilterCount > 0 && (
               <button onClick={resetFilters} className="ml-auto text-[10px] font-pixel text-muted-foreground hover:text-foreground underline">
@@ -152,6 +111,9 @@ export function CandidatesPage() {
               </button>
             )}
           </div>
+          <p className="text-[10px] font-pixel text-muted-foreground mb-3">
+            Read-only view. Alt handles shortlisting autonomously — dilemmas are flagged as <strong className="text-foreground">Your call</strong>; resolve them with Alt in chat.
+          </p>
 
           {/* Search + filter row */}
           <div className="flex items-center gap-2 flex-wrap">
@@ -197,33 +159,6 @@ export function CandidatesPage() {
         </div>
       </div>
 
-      {/* Bulk action bar */}
-      {selectedIds.size > 0 && (
-        <div className="shrink-0 border-b border-border bg-[#4466ff]/[0.04]">
-          <div className="max-w-6xl mx-auto px-8 py-2 flex items-center gap-3">
-            <span className="text-[11px] font-pixel">
-              <strong className="tabular-nums">{selectedIds.size}</strong> selected
-            </span>
-            <button onClick={() => bulkApply("shortlisted")}
-              className="text-[11px] font-pixel px-3 py-1.5 bg-[#EAF3DE] text-[#3B6D11] hover:opacity-90 transition-opacity">
-              Push to ATS
-            </button>
-            <button onClick={() => bulkApply("rejected")}
-              className="text-[11px] font-pixel px-3 py-1.5 bg-[#FCEBEB] text-[#A32D2D] hover:opacity-90 transition-opacity">
-              Reject
-            </button>
-            <button onClick={() => bulkApply("pending")}
-              className="text-[11px] font-pixel px-3 py-1.5 border border-border hover:bg-muted transition-colors">
-              Mark as your call
-            </button>
-            <button onClick={() => setSelectedIds(new Set())}
-              className="ml-auto text-[10px] font-pixel text-muted-foreground hover:text-foreground">
-              Clear selection
-            </button>
-          </div>
-        </div>
-      )}
-
       {/* Body */}
       <div className="flex-1 overflow-hidden flex">
         <div className="flex-1 min-w-0 overflow-y-auto">
@@ -238,10 +173,6 @@ export function CandidatesPage() {
               <div className="border border-border overflow-hidden">
                 {/* Header row */}
                 <div className="flex items-center gap-3 px-3 py-2 bg-muted/40 border-b border-border">
-                  <input type="checkbox" checked={allVisibleSelected} onChange={toggleAllVisible}
-                    aria-label="Select all visible"
-                    ref={el => { if (el) el.indeterminate = !allVisibleSelected && someVisibleSelected }}
-                    className="w-3.5 h-3.5 accent-foreground cursor-pointer" />
                   <div className="w-10 shrink-0">
                     <span className="text-[9px] font-pixel uppercase tracking-widest text-muted-foreground">Score</span>
                   </div>
@@ -264,19 +195,13 @@ export function CandidatesPage() {
 
                 {filtered.map((c, i) => {
                   const isOpen = openId === c.id
-                  const isSelected = selectedIds.has(c.id)
                   return (
                     <div key={c.id}
                       className={`flex items-center gap-3 px-3 py-2.5 border-b border-border last:border-b-0 cursor-pointer transition-colors ${
-                        isOpen ? "bg-muted/50" : isSelected ? "bg-[#4466ff]/[0.04]" : i % 2 ? "bg-muted/10" : ""
+                        isOpen ? "bg-muted/50" : i % 2 ? "bg-muted/10" : ""
                       } hover:bg-muted/40`}
                       onClick={() => setOpenId(c.id)}
                     >
-                      <input type="checkbox" checked={isSelected}
-                        onClick={e => e.stopPropagation()}
-                        onChange={() => toggleRow(c.id)}
-                        aria-label={`Select ${c.name}`}
-                        className="w-3.5 h-3.5 accent-foreground cursor-pointer" />
                       <div className="w-10 shrink-0">
                         <span className={`text-base font-medium tabular-nums ${scoreColor(c.score)}`}>{c.score}</span>
                         <span className="text-[9px] font-pixel text-muted-foreground">/10</span>
@@ -357,30 +282,6 @@ export function CandidatesPage() {
                 </div>
               </div>
 
-              {/* Actions */}
-              <div className="shrink-0 border-t border-border px-5 py-3 flex items-center gap-2">
-                <button
-                  onClick={() => applyOne(selected.id, "shortlisted")}
-                  disabled={selected.status === "shortlisted"}
-                  className="text-[11px] font-pixel px-3 py-1.5 bg-[#EAF3DE] text-[#3B6D11] disabled:opacity-40 hover:opacity-90 transition-opacity"
-                >
-                  Push to ATS
-                </button>
-                <button
-                  onClick={() => applyOne(selected.id, "rejected")}
-                  disabled={selected.status === "rejected"}
-                  className="text-[11px] font-pixel px-3 py-1.5 bg-[#FCEBEB] text-[#A32D2D] disabled:opacity-40 hover:opacity-90 transition-opacity"
-                >
-                  Reject
-                </button>
-                <button
-                  onClick={() => applyOne(selected.id, "pending")}
-                  disabled={selected.status === "pending"}
-                  className="text-[11px] font-pixel px-3 py-1.5 border border-border disabled:opacity-40 hover:bg-muted transition-colors"
-                >
-                  Your call
-                </button>
-              </div>
             </div>
           )}
         </div>

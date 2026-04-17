@@ -85,14 +85,12 @@ function AltRecPill({ rec, confidence }: { rec: CandidateMini["altRec"]; confide
   return <span className={`${base} bg-[#FAEEDA] text-[#854F0B]`}>{confidence === "low" ? "Alt: Your call" : "Alt: Review"}</span>
 }
 
-function AltTriageCard({ onNavigateToRoles, onOpenChat }: { onNavigateToRoles: () => void; onOpenChat: () => void }) {
-  const [candidates, setCandidates] = useState<CandidateMini[]>(SEED_CANDIDATES)
+function AltTriageCard({ onNavigate, onOpenChat }: { onNavigate: (p: Page) => void; onOpenChat: () => void }) {
   const [expanded, setExpanded] = useState(false)
-  const [toast, setToast] = useState<{ message: string; prev: CandidateMini[] } | null>(null)
 
-  const pushed = candidates.filter(c => c.status === "shortlisted").length
-  const rejected = candidates.filter(c => c.status === "rejected").length
-  const dilemmas = candidates.filter(c => c.status === "pending")
+  const pushed = SEED_CANDIDATES.filter(c => c.status === "shortlisted").length
+  const rejected = SEED_CANDIDATES.filter(c => c.status === "rejected").length
+  const dilemmas = SEED_CANDIDATES.filter(c => c.status === "pending")
 
   const summary = (() => {
     const autoParts: string[] = []
@@ -108,27 +106,6 @@ function AltTriageCard({ onNavigateToRoles, onOpenChat }: { onNavigateToRoles: (
       : `${dilemmas.length} candidates — ${names}${dilemmas.length > 2 ? " and others" : ""} — are split calls I'd want your read on.`
     return `${autoSentence} ${suffix}`.trim()
   })()
-
-  const overrideOne = (id: string, nextStatus: CandidateMini["status"]) => {
-    const c = candidates.find(x => x.id === id)
-    if (!c) return
-    const prev = candidates
-    setCandidates(cs => cs.map(x => x.id === id ? { ...x, status: nextStatus } : x))
-    const verb = nextStatus === "shortlisted" ? "pushed to ATS" : nextStatus === "rejected" ? "rejected" : "marked as your call"
-    setToast({ message: `${c.name} ${verb}`, prev })
-  }
-
-  useEffect(() => {
-    if (!toast) return
-    const t = setTimeout(() => setToast(null), 5000)
-    return () => clearTimeout(t)
-  }, [toast])
-
-  const undo = () => {
-    if (!toast) return
-    setCandidates(toast.prev)
-    setToast(null)
-  }
 
   return (
     <div className="relative border-2 border-dashed border-[#4466ff] bg-[#4466ff]/[0.035] p-4 mb-6">
@@ -148,8 +125,20 @@ function AltTriageCard({ onNavigateToRoles, onOpenChat }: { onNavigateToRoles: (
                 {expanded ? "Hide dilemmas" : `Review ${dilemmas.length} dilemma${dilemmas.length !== 1 ? "s" : ""}`}
               </button>
             )}
+            <button onClick={() => onNavigate("candidates")}
+              className="text-[11px] font-pixel px-3 py-1.5 border border-border text-muted-foreground hover:text-foreground hover:border-foreground/40 transition-colors">
+              All candidates →
+            </button>
+            <button onClick={() => onNavigate("roles")}
+              className="text-[11px] font-pixel px-3 py-1.5 border border-border text-muted-foreground hover:text-foreground hover:border-foreground/40 transition-colors">
+              Tune thresholds
+            </button>
+            <button onClick={() => onNavigate("alts")}
+              className="text-[11px] font-pixel px-3 py-1.5 border border-border text-muted-foreground hover:text-foreground hover:border-foreground/40 transition-colors">
+              Teach Alt a memory
+            </button>
             <button onClick={onOpenChat}
-              className="text-[11px] font-pixel px-3 py-1.5 border border-[#4466ff] text-[#4466ff] hover:bg-[#4466ff] hover:text-white transition-colors flex items-center gap-1.5 ml-auto">
+              className="text-[11px] font-pixel px-3 py-1.5 bg-foreground text-background hover:opacity-90 transition-opacity flex items-center gap-1.5 ml-auto">
               <span>Chat with Alt</span>
               <span className="text-[9px] opacity-70">⌘K</span>
             </button>
@@ -172,15 +161,11 @@ function AltTriageCard({ onNavigateToRoles, onOpenChat }: { onNavigateToRoles: (
                     <p className="text-[11px] leading-relaxed text-muted-foreground">{c.reasoning}</p>
                   </div>
                   <div className="flex items-center gap-1.5 shrink-0 self-center">
-                    <button onClick={() => overrideOne(c.id, "shortlisted")}
-                      className="text-[10px] font-pixel px-2.5 py-1 bg-[#EAF3DE] text-[#3B6D11] hover:opacity-90 transition-opacity">
-                      Push to ATS
+                    <button onClick={onOpenChat}
+                      className="text-[10px] font-pixel px-2.5 py-1 bg-[#4466ff] text-white hover:opacity-90 transition-opacity">
+                      Discuss with Alt
                     </button>
-                    <button onClick={() => overrideOne(c.id, "rejected")}
-                      className="text-[10px] font-pixel px-2.5 py-1 bg-[#FCEBEB] text-[#A32D2D] hover:opacity-90 transition-opacity">
-                      Reject
-                    </button>
-                    <button onClick={onNavigateToRoles}
+                    <button onClick={() => onNavigate("candidates")}
                       className="text-[10px] font-pixel px-2.5 py-1 border border-border text-muted-foreground hover:text-foreground hover:border-foreground/40 transition-colors">
                       Open →
                     </button>
@@ -191,13 +176,6 @@ function AltTriageCard({ onNavigateToRoles, onOpenChat }: { onNavigateToRoles: (
           )}
         </div>
       </div>
-
-      {toast && (
-        <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 translate-y-full flex items-center gap-3 px-3 py-2 bg-foreground text-background shadow-lg z-10 min-w-[320px]">
-          <span className="text-[11px] font-pixel flex-1">{toast.message}</span>
-          <button onClick={undo} className="text-[11px] font-pixel underline hover:opacity-90">Undo</button>
-        </div>
-      )}
     </div>
   )
 }
@@ -395,7 +373,7 @@ export function HomePage({ onNavigate }: { onNavigate: (p: Page) => void }) {
           </div>
 
           {/* Alt triage card — morning brief */}
-          <AltTriageCard onNavigateToRoles={() => onNavigate("roles")} onOpenChat={openChatSlide} />
+          <AltTriageCard onNavigate={onNavigate} onOpenChat={openChatSlide} />
 
           {/* Stats */}
           <div className="grid grid-cols-4 gap-3 mb-6">
