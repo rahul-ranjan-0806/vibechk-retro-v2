@@ -36,15 +36,13 @@ const ACTIVITY = [
 // ── Setup card ───────────────────────────────────────────────
 
 function SetupCard({ item, onNavigate }: { item: SetupItem; onNavigate: (p: Page) => void }) {
-  const [hovered, setHovered] = useState(false)
   const dotColor = item.status === "done" ? "bg-[#639922]" : item.status === "warning" ? "bg-[#BA7517]" : "bg-border"
   const statusLabel = item.status === "done" ? "Done" : item.status === "warning" ? "Needs attention" : "Not started"
   const statusColor = item.status === "done" ? "text-[#3B6D11]" : item.status === "warning" ? "text-[#854F0B]" : "text-muted-foreground"
   const cardBg = item.status === "warning" ? "border-[#F0C070] bg-[#FFFBF2]" : "border-border bg-card hover:bg-muted/20"
 
   return (
-    <div onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}
-      className={`relative p-3.5 border transition-all duration-150 min-h-[72px] ${cardBg}`}>
+    <div className={`group p-3.5 border transition-all duration-150 ${cardBg}`}>
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
@@ -55,14 +53,16 @@ function SetupCard({ item, onNavigate }: { item: SetupItem; onNavigate: (p: Page
             <p className="text-[11px] text-muted-foreground leading-relaxed pl-3.5 pr-16">{item.description}</p>
           )}
         </div>
-        <span className={`text-[10px] font-pixel shrink-0 ${statusColor}`}>{statusLabel}</span>
+        <div className="flex flex-col items-end gap-2 shrink-0">
+          <span className={`text-[10px] font-pixel ${statusColor}`}>{statusLabel}</span>
+          {item.ctaTarget && (
+            <button onClick={() => onNavigate(item.ctaTarget!)}
+              className="text-[10px] font-pixel px-2.5 py-1 bg-foreground text-background opacity-0 group-hover:opacity-100 focus:opacity-100 hover:opacity-90 transition-opacity">
+              {item.cta}
+            </button>
+          )}
+        </div>
       </div>
-      {hovered && item.ctaTarget && (
-        <button onClick={() => onNavigate(item.ctaTarget!)}
-          className="absolute bottom-2.5 right-3 text-[10px] font-pixel px-2.5 py-1 bg-foreground text-background hover:opacity-90 transition-opacity">
-          {item.cta}
-        </button>
-      )}
     </div>
   )
 }
