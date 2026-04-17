@@ -3,9 +3,10 @@ import { Agentation } from "agentation"
 import { RolesPage } from "./pages/RolesPage"
 import { AltsPage } from "./pages/AltsPage"
 import { HomePage } from "./pages/HomePage"
+import { OrgPage } from "./pages/OrgPage"
 import { SettingsPage } from "./pages/SettingsPage"
 
-type Page = "home" | "roles" | "alts" | "settings"
+type Page = "home" | "roles" | "alts" | "org" | "settings"
 
 export default function App() {
   const [page, setPage] = useState<Page>("home")
@@ -27,6 +28,8 @@ export default function App() {
             icon: <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg> },
           { id: "alts" as Page, label: "Alts",
             icon: <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 1 0-16 0"/></svg> },
+          { id: "org" as Page, label: "Org",
+            icon: <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/><path d="M9 9h0M9 12h0M9 15h0M9 18h0"/></svg> },
         ].map(item => (
           <button key={item.id} onClick={() => setPage(item.id)}
             className={`w-full flex items-center gap-2.5 px-3 py-2 text-sm transition-colors text-left font-pixel ${
@@ -66,6 +69,7 @@ export default function App() {
         {page === "home" && <HomePage onNavigate={setPage} />}
         {page === "roles" && <RolesPage />}
         {page === "alts" && <AltsPage />}
+        {page === "org" && <OrgPage />}
         {page === "settings" && <SettingsPage />}
       </main>
     </div>
