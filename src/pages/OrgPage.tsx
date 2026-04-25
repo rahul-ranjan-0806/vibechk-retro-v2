@@ -11,6 +11,24 @@ const PERKS = [
   { icon: "●", label: "Gear", detail: "$2,500 home office budget in your first 60 days." },
 ]
 
+const ORG_ALTS = [
+  { name: "Sashank's Alt", owner: "Sashank Gondala", role: "Co-founder", status: "active" as const, completeness: 85, interviews: 36, memories: 20 },
+  { name: "Kinnari's Alt", owner: "Kinnari Gilganchi", role: "Product Lead", status: "setup" as const, completeness: 40, interviews: 0, memories: 3 },
+  { name: "Abhishek's Alt", owner: "Abhishek Madan", role: "Co-founder", status: "setup" as const, completeness: 15, interviews: 0, memories: 1 },
+]
+
+const OFFICES = [
+  { city: "San Francisco", type: "HQ", address: "548 Market St, Suite 300", timezone: "PT (UTC-8)", hiringHere: true },
+  { city: "New York", type: "Office", address: "28 Liberty St, Floor 6", timezone: "ET (UTC-5)", hiringHere: true },
+  { city: "Bangalore", type: "Remote hub", address: "WeWork Embassy Golf Links", timezone: "IST (UTC+5:30)", hiringHere: false },
+]
+
+const HIRING_LOCATIONS = [
+  { region: "United States", locations: ["San Francisco, CA", "New York, NY", "Remote (PT ±4h)"], activeRoles: 3 },
+  { region: "Europe", locations: ["London, UK", "Berlin, DE", "Remote (CET ±2h)"], activeRoles: 0 },
+  { region: "India", locations: ["Bangalore", "Remote"], activeRoles: 1 },
+]
+
 export function OrgPage() {
   return (
     <div className="h-full overflow-y-auto">
@@ -78,6 +96,95 @@ export function OrgPage() {
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium mb-0.5">{p.label}</p>
                   <p className="text-[11px] text-muted-foreground leading-relaxed">{p.detail}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Organisation Alts */}
+        <section>
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-[9px] font-pixel uppercase tracking-[0.15em] text-muted-foreground">Alts</p>
+            <span className="text-[10px] font-pixel text-muted-foreground">{ORG_ALTS.filter(a => a.status === "active").length} active · {ORG_ALTS.length} total</span>
+          </div>
+          <div className="border border-border overflow-hidden">
+            {ORG_ALTS.map((alt, i) => (
+              <div key={alt.name} className={`flex items-center gap-3 px-4 py-3 ${i > 0 ? "border-t border-border" : ""}`}>
+                <div className="relative shrink-0">
+                  <div className="w-9 h-9 bg-foreground flex items-center justify-center text-[10px] font-pixel font-medium text-background">
+                    {alt.owner.split(" ").map(p => p[0]).join("")}
+                  </div>
+                  <div className={`absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2 border-background ${alt.status === "active" ? "bg-[#639922]" : "bg-muted-foreground/40"}`} />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <p className="text-sm font-medium">{alt.name}</p>
+                    <span className={`text-[10px] font-pixel px-1.5 py-0.5 ${alt.status === "active" ? "bg-[#EAF3DE] text-[#3B6D11]" : "bg-muted text-muted-foreground"}`}>
+                      {alt.status === "active" ? "Active" : "Setup"}
+                    </span>
+                  </div>
+                  <p className="text-[11px] font-pixel text-muted-foreground">{alt.owner} · {alt.role}</p>
+                </div>
+                <div className="flex items-center gap-4 shrink-0">
+                  <div className="text-right">
+                    <p className="text-xs font-medium tabular-nums">{alt.interviews}</p>
+                    <p className="text-[9px] font-pixel text-muted-foreground">interviews</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-xs font-medium tabular-nums">{alt.memories}</p>
+                    <p className="text-[9px] font-pixel text-muted-foreground">memories</p>
+                  </div>
+                  <div className="w-16">
+                    <div className="flex items-center gap-1.5">
+                      <div className="flex-1 h-1.5 bg-muted overflow-hidden">
+                        <div className="h-full bg-foreground" style={{ width: `${alt.completeness}%` }} />
+                      </div>
+                      <span className="text-[9px] font-pixel text-muted-foreground tabular-nums">{alt.completeness}%</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Offices & locations */}
+        <section>
+          <p className="text-[9px] font-pixel uppercase tracking-[0.15em] text-muted-foreground mb-2">Offices</p>
+          <div className="grid grid-cols-3 gap-3">
+            {OFFICES.map(o => (
+              <div key={o.city} className="p-3.5 border border-border bg-card">
+                <div className="flex items-center gap-2 mb-2">
+                  <p className="text-sm font-medium">{o.city}</p>
+                  <span className="text-[10px] font-pixel px-1.5 py-0.5 bg-muted text-muted-foreground">{o.type}</span>
+                </div>
+                <p className="text-[11px] text-muted-foreground leading-relaxed mb-1">{o.address}</p>
+                <p className="text-[10px] font-pixel text-muted-foreground">{o.timezone}</p>
+                {o.hiringHere && (
+                  <span className="inline-block mt-2 text-[10px] font-pixel px-1.5 py-0.5 bg-[#EAF3DE] text-[#3B6D11]">Hiring here</span>
+                )}
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Hiring locations */}
+        <section>
+          <p className="text-[9px] font-pixel uppercase tracking-[0.15em] text-muted-foreground mb-2">Hiring locations</p>
+          <div className="border border-border overflow-hidden">
+            {HIRING_LOCATIONS.map((h, i) => (
+              <div key={h.region} className={`flex items-start gap-4 px-4 py-3 ${i > 0 ? "border-t border-border" : ""}`}>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium mb-1">{h.region}</p>
+                  <p className="text-[11px] font-pixel text-muted-foreground">{h.locations.join(" · ")}</p>
+                </div>
+                <div className="shrink-0 text-right">
+                  {h.activeRoles > 0 ? (
+                    <span className="text-[10px] font-pixel px-1.5 py-0.5 bg-[#EAF3DE] text-[#3B6D11]">{h.activeRoles} active role{h.activeRoles !== 1 ? "s" : ""}</span>
+                  ) : (
+                    <span className="text-[10px] font-pixel text-muted-foreground">No open roles</span>
+                  )}
                 </div>
               </div>
             ))}

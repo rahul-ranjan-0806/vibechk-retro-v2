@@ -306,6 +306,14 @@ export function PromptTemplate({ template, onChange, onSend, onCancel, onSwitchA
   const handleTrailingBackspace = (e: React.KeyboardEvent) => {
     if (e.key === "Backspace" && extraText === "") {
       e.preventDefault()
+
+      // If no segments left, cancel the template entirely
+      const interactiveSegments = template.segments.filter(s => s.type !== "text")
+      if (interactiveSegments.length === 0 && template.segments.length <= 1) {
+        onCancel()
+        return
+      }
+
       if (highlighted !== null) {
         removeSegment(highlighted)
       } else {
@@ -314,6 +322,9 @@ export function PromptTemplate({ template, onChange, onSend, onCancel, onSwitchA
           // No text left — highlight last interactive element
           if (lastInteractiveIdx >= 0) {
             setHighlighted(lastInteractiveIdx)
+          } else {
+            // No interactive elements left — cancel
+            onCancel()
           }
         }
       }

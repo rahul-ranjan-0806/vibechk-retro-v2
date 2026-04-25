@@ -8,6 +8,7 @@ import { OrgPage } from "./pages/OrgPage"
 import { CandidatesPage } from "./pages/CandidatesPage"
 import { SettingsPage } from "./pages/SettingsPage"
 import { ChatPage } from "./pages/ChatPage"
+import { GitGraphOverlay } from "./devtools/GitGraphOverlay"
 
 type Page = "home" | "roles" | "candidates" | "alts" | "chat" | "org" | "settings"
 
@@ -135,6 +136,7 @@ export default function App() {
         />
       </>
     )}
+    {import.meta.env.DEV && <GitGraphOverlay />}
     </>
   )
 }
