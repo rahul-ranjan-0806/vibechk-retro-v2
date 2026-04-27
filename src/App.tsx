@@ -8,7 +8,6 @@ import { OrgPage } from "./pages/OrgPage"
 import { CandidatesPage } from "./pages/CandidatesPage"
 import { SettingsPage } from "./pages/SettingsPage"
 import { ChatPage } from "./pages/ChatPage"
-import { GitGraphOverlay } from "./devtools/GitGraphOverlay"
 
 type Page = "home" | "roles" | "candidates" | "alts" | "chat" | "org" | "settings"
 
@@ -16,7 +15,7 @@ function NavTooltip({ label, description, children }: { label: string; descripti
   return (
     <div className="relative group/nav">
       {children}
-      <div className="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2.5 py-1.5 bg-foreground text-background text-[10px] font-pixel rounded-md whitespace-nowrap opacity-0 group-hover/nav:opacity-100 pointer-events-none z-50 transition-opacity delay-100">
+      <div className="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2.5 py-1.5 bg-foreground text-background text-[10px] rounded-md whitespace-nowrap opacity-0 group-hover/nav:opacity-100 pointer-events-none z-50 transition-opacity delay-100">
         <p className="font-medium text-[11px]">{label}</p>
         <p className="text-background/60 text-[9px]">{description}</p>
         <span className="absolute right-full top-1/2 -translate-y-1/2 border-4 border-transparent border-r-foreground" />
@@ -51,7 +50,7 @@ export default function App() {
           }
         </div>
 
-        {!navCollapsed && <p className="text-[9px] font-pixel uppercase tracking-[0.15em] px-5 mb-1 text-muted-foreground">Manage</p>}
+        {!navCollapsed && <p className="text-[10px] uppercase tracking-wider font-medium px-5 mb-1 text-muted-foreground">Manage</p>}
 
         {[
           { id: "chat" as Page, label: "Chat", description: "Talk to your Alt",
@@ -69,7 +68,7 @@ export default function App() {
         ].map(item => {
           const btn = (
             <button key={item.id} onClick={() => setPage(item.id)}
-              className={`w-full flex items-center ${navCollapsed ? "justify-center px-0" : "gap-2.5 px-5"} py-2 text-sm transition-colors text-left font-pixel ${
+              className={`w-full flex items-center ${navCollapsed ? "justify-center px-0" : "gap-2.5 px-5"} py-2 text-sm transition-colors text-left rounded-md ${
                 page === item.id ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground hover:bg-accent"
               }`}>
               <span className="shrink-0">{item.icon}</span>
@@ -86,11 +85,11 @@ export default function App() {
             : btn
         })}
 
-        {!navCollapsed && <p className="text-[9px] font-pixel uppercase tracking-[0.15em] px-5 mb-1 mt-3 text-muted-foreground">Configure</p>}
+        {!navCollapsed && <p className="text-[10px] uppercase tracking-wider font-medium px-5 mb-1 mt-3 text-muted-foreground">Configure</p>}
         {(() => {
           const settingsBtn = (
             <button onClick={() => setPage("settings")}
-              className={`w-full flex items-center ${navCollapsed ? "justify-center px-0 mt-2" : "gap-2.5 px-5"} py-2 text-sm transition-colors text-left font-pixel ${
+              className={`w-full flex items-center ${navCollapsed ? "justify-center px-0 mt-2" : "gap-2.5 px-5"} py-2 text-sm transition-colors text-left rounded-md ${
                 page === "settings" ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground hover:bg-accent"
               }`}>
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
@@ -103,11 +102,11 @@ export default function App() {
         <div className="mt-auto flex flex-col gap-1">
           <div className="pt-2 border-t border-border">
             <div className={`flex items-center ${navCollapsed ? "justify-center px-0" : "gap-2 px-5"} py-1.5`}>
-              <div className="w-6 h-6 rounded-full bg-foreground flex items-center justify-center text-[10px] font-pixel font-medium text-background shrink-0">SG</div>
+              <div className="w-6 h-6 rounded-full bg-foreground flex items-center justify-center text-[10px] font-medium text-background shrink-0">SG</div>
               {!navCollapsed && (
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs font-pixel truncate">Sashank G.</p>
-                  <p className="text-[10px] font-pixel text-muted-foreground truncate">Alt Inc</p>
+                  <p className="text-xs font-medium truncate">Sashank G.</p>
+                  <p className="text-[10px] text-muted-foreground truncate">Alt Inc</p>
                 </div>
               )}
             </div>
@@ -136,7 +135,6 @@ export default function App() {
         />
       </>
     )}
-    {import.meta.env.DEV && <GitGraphOverlay />}
     </>
   )
 }

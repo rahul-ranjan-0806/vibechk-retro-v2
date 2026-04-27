@@ -100,14 +100,14 @@ export function ActionAutocomplete({ input, onAccept, onDismiss, visible }: Acti
                   <span className="text-muted-foreground">{typedPart}</span>
                   <span className="font-semibold text-foreground">{remainingPart}</span>
                 </p>
-                <p className="text-[10px] font-pixel text-muted-foreground">{s.description}</p>
+                <p className="text-[10px] text-muted-foreground">{s.description}</p>
               </div>
               {i === activeIndex && (
                 <div className="flex items-center gap-1.5 shrink-0">
-                  <span className="text-[9px] font-pixel text-muted-foreground px-1.5 py-0.5 border border-border rounded">tab</span>
-                  <span className="text-[9px] font-pixel text-muted-foreground/50">·</span>
-                  <span className="text-[9px] font-pixel text-muted-foreground/60 px-1.5 py-0.5 border border-border/50 rounded">tab tab</span>
-                  <span className="text-[8px] font-pixel text-muted-foreground/50">fill details</span>
+                  <span className="text-[9px] text-muted-foreground px-1.5 py-0.5 border border-border rounded">tab</span>
+                  <span className="text-[9px] text-muted-foreground/50">·</span>
+                  <span className="text-[9px] text-muted-foreground/60 px-1.5 py-0.5 border border-border/50 rounded">tab tab</span>
+                  <span className="text-[8px] text-muted-foreground/50">fill details</span>
                 </div>
               )}
             </button>

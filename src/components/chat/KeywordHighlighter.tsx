@@ -135,7 +135,7 @@ export function HighlightedText({ text }: { text: string }) {
               {t.text}
             </span>
             {t.tooltip && (
-              <span className="absolute left-1/2 -translate-x-1/2 px-2 py-1 bg-foreground text-background text-[9px] font-pixel rounded-md whitespace-nowrap opacity-0 group-hover/token:opacity-100 transition-opacity pointer-events-none z-[100] bottom-full mb-1.5">
+              <span className="absolute left-1/2 -translate-x-1/2 px-2 py-1 bg-foreground text-background text-[9px] rounded-md whitespace-nowrap opacity-0 group-hover/token:opacity-100 transition-opacity pointer-events-none z-[100] bottom-full mb-1.5">
                 {t.tooltip}
                 <span className="absolute top-full left-1/2 -translate-x-1/2 -mt-px border-4 border-transparent border-t-foreground" />
               </span>

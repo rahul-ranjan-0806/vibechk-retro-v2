@@ -41,6 +41,28 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        "status-success": {
+          DEFAULT: "hsl(var(--status-success))",
+          foreground: "hsl(var(--status-success-fg))",
+          dot: "hsl(var(--status-success-dot))",
+        },
+        "status-warning": {
+          DEFAULT: "hsl(var(--status-warning))",
+          foreground: "hsl(var(--status-warning-fg))",
+          dot: "hsl(var(--status-warning-dot))",
+        },
+        "status-danger": {
+          DEFAULT: "hsl(var(--status-danger))",
+          foreground: "hsl(var(--status-danger-fg))",
+          dot: "hsl(var(--status-danger-dot))",
+        },
+        "status-info": {
+          foreground: "hsl(var(--status-info-fg))",
+        },
+        "accent-blue": {
+          DEFAULT: "hsl(var(--accent-blue))",
+        },
+        link: "hsl(var(--link))",
       },
       borderRadius: {
         lg: "var(--radius)",

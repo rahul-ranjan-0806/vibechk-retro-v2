@@ -63,8 +63,8 @@ const AGENT_RESPONSES = [
 ]
 // ── Helpers ───────────────────────────────────────────────────
 
-const scoreColors = { green: "text-[#3B6D11]", teal: "text-[#0F6E56]", amber: "text-[#854F0B]", red: "text-[#A32D2D]" }
-const dotColors = { green: "bg-[#639922]", teal: "bg-[#1D9E75]", amber: "bg-[#BA7517]", red: "bg-[#E24B4A]" }
+const scoreColors = { green: "text-status-success-foreground", teal: "text-status-info-foreground", amber: "text-status-warning-foreground", red: "text-status-danger-foreground" }
+const dotColors = { green: "bg-status-success-dot", teal: "bg-status-info-foreground", amber: "bg-status-warning-dot", red: "bg-status-danger-dot" }
 
 const scoreToColor = (s: number): keyof typeof scoreColors => s >= 8 ? "green" : s >= 7 ? "teal" : s >= 5 ? "amber" : "red"
 const scoreBucket = (s: number): "excellent"|"good"|"mixed"|"weak" => s >= 9 ? "excellent" : s >= 7 ? "good" : s >= 5 ? "mixed" : "weak"
@@ -112,19 +112,19 @@ function getAltScoresFor(c: Candidate): AltScoreRow[] {
 }
 
 function StatusBadge({ status }: { status: string }) {
-  const s = { draft: "bg-[#FAEEDA] text-[#854F0B]", live: "bg-[#EAF3DE] text-[#3B6D11]", paused: "bg-muted text-muted-foreground" }
-  return <span className={`text-[10px] px-1.5 py-0.5 font-pixel font-medium ${(s as any)[status] || s.paused}`}>{status.charAt(0).toUpperCase()+status.slice(1)}</span>
+  const s = { draft: "bg-status-warning text-status-warning-foreground", live: "bg-status-success text-status-success-foreground", paused: "bg-muted text-muted-foreground" }
+  return <span className={`text-[10px] rounded-md px-1.5 py-0.5 font-medium ${(s as any)[status] || s.paused}`}>{status.charAt(0).toUpperCase()+status.slice(1)}</span>
 }
 
 function CandStatusBadge({ status }: { status: string }) {
-  const s: any = { shortlisted: "bg-[#EAF3DE] text-[#3B6D11]", rejected: "bg-[#FCEBEB] text-[#A32D2D]", pending: "bg-[#FAEEDA] text-[#854F0B]" }
+  const s: any = { shortlisted: "bg-status-success text-status-success-foreground", rejected: "bg-status-danger text-status-danger-foreground", pending: "bg-status-warning text-status-warning-foreground" }
   const l: any = { shortlisted: "Pushed to ATS", rejected: "Rejected", pending: "Your call" }
-  return <span className={`text-[10px] px-1.5 py-0.5 font-pixel font-medium ${s[status]||s.pending}`}>{l[status]||"Your call"}</span>
+  return <span className={`text-[10px] rounded-md px-1.5 py-0.5 font-medium ${s[status]||s.pending}`}>{l[status]||"Your call"}</span>
 }
 
 function RetroTag({ variant, children }: { variant: "jd"|"bp"|"neutral"; children: React.ReactNode }) {
-  const s = { jd: "bg-[#EAF3DE] text-[#3B6D11] border border-[#C0DD97]", bp: "bg-[#E6F1FB] text-[#185FA5] border border-[#B5D4F4]", neutral: "bg-muted text-muted-foreground border border-border" }
-  return <span className={`text-[9px] px-1.5 py-0.5 font-pixel font-medium ${s[variant]}`}>{children}</span>
+  const s = { jd: "bg-status-success text-status-success-foreground border border-status-success-dot/30", bp: "bg-accent-blue/10 text-accent-blue border border-accent-blue/20", neutral: "bg-muted text-muted-foreground border border-border" }
+  return <span className={`text-[10px] rounded-md px-1.5 py-0.5 font-medium ${s[variant]}`}>{children}</span>
 }
 
 // ── Profile Panel ────────────────────────────────────────────
@@ -139,8 +139,8 @@ function ProfilePanel({ profileKey, onClose }: { profileKey: string; onClose: ()
     <div className="flex flex-col h-full border-l border-border">
       <div className="flex items-center justify-between px-4 py-3 border-b border-border shrink-0">
         <div className="flex items-center gap-2">
-          <div className="w-5 h-5 flex items-center justify-center text-[8px] font-pixel font-bold text-white shrink-0" style={{ background: profile.bg }}>{profile.short}</div>
-          <span className="text-xs font-pixel font-medium">{profile.label}</span>
+          <div className="w-5 h-5 flex items-center justify-center text-[8px] font-bold text-white shrink-0" style={{ background: profile.bg }}>{profile.short}</div>
+          <span className="text-xs font-medium">{profile.label}</span>
         </div>
         <button onClick={onClose} className="text-muted-foreground hover:text-foreground text-sm leading-none">✕</button>
       </div>
@@ -148,43 +148,43 @@ function ProfilePanel({ profileKey, onClose }: { profileKey: string; onClose: ()
       <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-4">
         {/* TLDR */}
         <div>
-          <p className="text-[9px] font-pixel uppercase tracking-[0.12em] text-muted-foreground mb-2">TL;DR</p>
-          <p className="text-[11px] font-pixel leading-relaxed text-foreground bg-muted/40 border border-border p-3">{profile.tldr}</p>
+          <p className="text-[9px] uppercase tracking-[0.12em] text-muted-foreground mb-2">TL;DR</p>
+          <p className="text-[11px] leading-relaxed text-foreground bg-muted/40 border border-border p-3">{profile.tldr}</p>
         </div>
 
         {isResume ? (
           <>
             {/* Mock PDF preview */}
             <div>
-              <p className="text-[9px] font-pixel uppercase tracking-[0.12em] text-muted-foreground mb-2">Resume preview</p>
-              <div className="border border-border bg-white text-foreground p-5 flex flex-col gap-3 shadow-sm">
+              <p className="text-[9px] uppercase tracking-[0.12em] text-muted-foreground mb-2">Resume preview</p>
+              <div className="border border-border bg-card text-foreground p-5 flex flex-col gap-3 shadow-sm">
                 <div className="border-b border-border/40 pb-3">
                   <p className="text-sm font-medium">Priya Sharma</p>
-                  <p className="text-[10px] font-pixel text-muted-foreground">Senior Product Designer · San Francisco, CA</p>
-                  <p className="text-[10px] font-pixel text-muted-foreground">priya.sharma@email.com · (555) 123-4567</p>
+                  <p className="text-[10px] text-muted-foreground">Senior Product Designer · San Francisco, CA</p>
+                  <p className="text-[10px] text-muted-foreground">priya.sharma@email.com · (555) 123-4567</p>
                 </div>
                 <div>
-                  <p className="text-[9px] font-pixel font-medium uppercase tracking-wider mb-1">Experience</p>
+                  <p className="text-[9px] font-medium uppercase tracking-wider mb-1">Experience</p>
                   <div className="mb-2">
                     <p className="text-[11px] font-medium">Senior Product Designer — Finova (Series B)</p>
-                    <p className="text-[10px] font-pixel text-muted-foreground">Jan 2023 – Present</p>
+                    <p className="text-[10px] text-muted-foreground">Jan 2023 – Present</p>
                     <p className="text-[10px] leading-relaxed mt-0.5">· Led redesign of onboarding flow — 40% improvement in activation rate</p>
                     <p className="text-[10px] leading-relaxed">· Shipped 3 major features in 6 months, working directly with CEO</p>
                   </div>
                   <div className="mb-2">
                     <p className="text-[11px] font-medium">Product Designer — Atlassian</p>
-                    <p className="text-[10px] font-pixel text-muted-foreground">Mar 2020 – Dec 2022</p>
+                    <p className="text-[10px] text-muted-foreground">Mar 2020 – Dec 2022</p>
                     <p className="text-[10px] leading-relaxed mt-0.5">· Owned Jira workflow builder for teams of 50–500</p>
                     <p className="text-[10px] leading-relaxed">· Built and maintained design system serving 12 product teams</p>
                   </div>
                 </div>
                 <div>
-                  <p className="text-[9px] font-pixel font-medium uppercase tracking-wider mb-1">Education</p>
+                  <p className="text-[9px] font-medium uppercase tracking-wider mb-1">Education</p>
                   <p className="text-[10px]">BFA Interaction Design — School of Visual Arts, NYC (2019)</p>
                 </div>
               </div>
             </div>
-            <button className="flex items-center justify-center gap-2 text-[11px] font-pixel px-3 py-2 border border-border hover:bg-muted transition-colors">
+            <button className="flex items-center justify-center gap-2 text-[11px] px-3 py-2 border border-border hover:bg-muted transition-colors">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
               Download resume (PDF)
             </button>
@@ -193,9 +193,9 @@ function ProfilePanel({ profileKey, onClose }: { profileKey: string; onClose: ()
           /* Source link for non-resume profiles */
           profile.url && (
             <div>
-              <p className="text-[9px] font-pixel uppercase tracking-[0.12em] text-muted-foreground mb-2">Source</p>
+              <p className="text-[9px] uppercase tracking-[0.12em] text-muted-foreground mb-2">Source</p>
               <a href={profile.url} target="_blank" rel="noopener noreferrer"
-                className="flex items-center gap-2 text-[11px] font-pixel px-3 py-2 border border-border hover:bg-muted transition-colors text-blue-600">
+                className="flex items-center gap-2 text-[11px] px-3 py-2 border border-border hover:bg-muted transition-colors text-link">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
                 {profile.url}
               </a>
@@ -216,13 +216,13 @@ function RoleList({ selectedId, onSelect, collapsed }: { selectedId: string; onS
     return (
       <div className="w-12 shrink-0 border-r border-border flex flex-col overflow-hidden transition-all duration-200">
         <div className="p-2 border-b border-border flex items-center justify-center">
-          <span className="text-[9px] font-pixel font-medium text-muted-foreground">▦</span>
+          <span className="text-[9px] font-medium text-muted-foreground">▦</span>
         </div>
         <div className="flex-1 overflow-y-auto flex flex-col">
           {ROLES.map(role => (
             <button key={role.id} onClick={() => onSelect(role.id)} title={role.title}
               className={`w-full flex items-center justify-center py-3 border-b border-border transition-colors hover:bg-muted/50 border-l-2 ${selectedId === role.id ? "bg-muted/60 border-l-foreground" : "border-l-transparent"}`}>
-              <span className={`text-[9px] font-pixel font-bold ${selectedId === role.id ? "text-foreground" : "text-muted-foreground"}`}>
+              <span className={`text-[9px] font-bold ${selectedId === role.id ? "text-foreground" : "text-muted-foreground"}`}>
                 {ROLE_INITIALS[role.id] || role.id.toUpperCase()}
               </span>
             </button>
@@ -235,8 +235,8 @@ function RoleList({ selectedId, onSelect, collapsed }: { selectedId: string; onS
   return (
     <div className="w-56 shrink-0 border-r border-border flex flex-col overflow-hidden transition-all duration-200">
       <div className="p-4 border-b border-border flex items-center justify-between">
-        <h2 className="text-xs font-pixel font-medium uppercase tracking-wider">All roles</h2>
-        <button className="text-[10px] font-pixel text-muted-foreground hover:text-foreground border border-border px-2 py-1 transition-colors">+ New</button>
+        <h2 className="text-xs font-medium uppercase tracking-wider">All roles</h2>
+        <button className="text-[10px] text-muted-foreground hover:text-foreground border border-border px-2 py-1 transition-colors">+ New</button>
       </div>
       <div className="flex-1 overflow-y-auto">
         {ROLES.map(role => (
@@ -246,7 +246,7 @@ function RoleList({ selectedId, onSelect, collapsed }: { selectedId: string; onS
               <p className="text-sm font-medium leading-snug">{role.title}</p>
               <StatusBadge status={role.status} />
             </div>
-            <p className="text-[11px] text-muted-foreground font-pixel">{role.department} · {role.candidateCount} candidates</p>
+            <p className="text-[11px] text-muted-foreground">{role.department} · {role.candidateCount} candidates</p>
           </button>
         ))}
       </div>
@@ -262,8 +262,8 @@ function CollapsibleSection({ title, defaultOpen = true, children }: { title: st
     <Collapsible open={open} onOpenChange={setOpen}>
       <CollapsibleTrigger asChild>
         <button className="w-full flex items-center justify-between py-1.5 group">
-          <p className="text-[9px] font-pixel uppercase tracking-[0.12em] text-muted-foreground group-hover:text-foreground transition-colors">{title}</p>
-          <span className={`text-[9px] font-pixel text-muted-foreground transition-transform ${open ? "rotate-90" : ""}`}>▶</span>
+          <p className="text-[9px] uppercase tracking-[0.12em] text-muted-foreground group-hover:text-foreground transition-colors">{title}</p>
+          <span className={`text-[9px] text-muted-foreground transition-transform ${open ? "rotate-90" : ""}`}>▶</span>
         </button>
       </CollapsibleTrigger>
       <CollapsibleContent>{children}</CollapsibleContent>
@@ -303,7 +303,7 @@ function JobPostingTab({ status, onStatusChange }: { status: "draft"|"live"; onS
             <CollapsibleSection title="Job description">
               <div className="relative bg-muted/40 border border-border p-4 text-sm leading-relaxed">
                 <button onClick={openAgent}
-                  className="absolute top-2.5 right-2.5 flex items-center gap-1.5 text-[10px] font-pixel px-2 py-1 border border-border bg-background text-muted-foreground hover:text-foreground hover:border-foreground/40 transition-colors">
+                  className="absolute top-2.5 right-2.5 flex items-center gap-1.5 text-[10px] px-2 py-1 border border-border bg-background text-muted-foreground hover:text-foreground hover:border-foreground/40 transition-colors">
                   <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
                   Edit with agent
                 </button>
@@ -326,10 +326,10 @@ function JobPostingTab({ status, onStatusChange }: { status: "draft"|"live"; onS
                 {[{ short: "in", label: "LinkedIn", color: "#0A66C2" }, { short: "gh", label: "GitHub", color: "#24292e" }].map((r, i) => (
                   <div key={r.label} className={`flex items-center justify-between px-3 py-2.5 ${i > 0 ? "border-t border-border" : ""}`}>
                     <div className="flex items-center gap-2 text-sm">
-                      <span className="text-[9px] font-pixel font-bold px-1 py-0.5 text-white" style={{ background: r.color }}>{r.short}</span>
+                      <span className="text-[9px] font-bold px-1 py-0.5 text-white" style={{ background: r.color }}>{r.short}</span>
                       {r.label}
                     </div>
-                    <select className="text-[10px] font-pixel border border-border px-2 py-1 bg-background text-foreground">
+                    <select className="text-[10px] border border-border px-2 py-1 bg-background text-foreground">
                       <option>Required</option><option>Optional</option><option>Off</option>
                     </select>
                   </div>
@@ -340,8 +340,8 @@ function JobPostingTab({ status, onStatusChange }: { status: "draft"|"live"; onS
             {/* Share with candidates */}
             <CollapsibleSection title="Share with candidates">
               <div className="flex items-center gap-2 bg-muted/40 border border-border px-3 py-2.5">
-                <span className="text-xs font-pixel text-muted-foreground flex-1 overflow-hidden text-ellipsis whitespace-nowrap">alt.inc/apply/senior-product-designer</span>
-                <button className="text-[10px] font-pixel border border-border px-2 py-1 bg-background text-muted-foreground hover:text-foreground transition-colors shrink-0">Copy</button>
+                <span className="text-xs text-muted-foreground flex-1 overflow-hidden text-ellipsis whitespace-nowrap">alt.inc/apply/senior-product-designer</span>
+                <button className="text-[10px] border border-border px-2 py-1 bg-background text-muted-foreground hover:text-foreground transition-colors shrink-0">Copy</button>
               </div>
             </CollapsibleSection>
 
@@ -350,11 +350,11 @@ function JobPostingTab({ status, onStatusChange }: { status: "draft"|"live"; onS
               <div className="flex flex-col gap-2">
                 {[{ i: "SG", n: "Sashank G." }, { i: "KG", n: "Kinnari G." }].map(c => (
                   <div key={c.i} className="flex items-center gap-2.5 px-3 py-2 border border-border bg-muted/20">
-                    <div className="w-6 h-6 bg-blue-100 text-blue-700 flex items-center justify-center text-[9px] font-pixel font-medium shrink-0">{c.i}</div>
+                    <div className="w-6 h-6 bg-accent-blue/10 text-accent-blue flex items-center justify-center text-[9px] font-medium shrink-0">{c.i}</div>
                     <span className="text-sm">{c.n}</span>
                   </div>
                 ))}
-                <button className="text-[10px] font-pixel text-blue-600 text-left hover:underline mt-0.5">+ Add collaborator</button>
+                <button className="text-[10px] text-link text-left hover:underline mt-0.5">+ Add collaborator</button>
               </div>
             </CollapsibleSection>
 
@@ -366,20 +366,20 @@ function JobPostingTab({ status, onStatusChange }: { status: "draft"|"live"; onS
       {agentOpen && (
         <div className="w-[30vw] shrink-0 flex flex-col h-full border-l border-border overflow-hidden">
           <div className="flex items-center justify-between px-4 py-3 border-b border-border shrink-0">
-            <span className="text-xs font-pixel font-medium">Edit with agent</span>
+            <span className="text-xs font-medium">Edit with agent</span>
             <button onClick={closeAgent} className="text-muted-foreground hover:text-foreground text-sm leading-none">✕</button>
           </div>
           <div ref={bodyRef} className="flex-1 overflow-y-auto p-3 flex flex-col gap-2">
             {msgs.map((m, i) => (
-              <div key={i} className={`text-[11px] font-pixel leading-relaxed px-2.5 py-2 ${m.from === "agent" ? "bg-muted/60 border border-border" : "bg-foreground text-background self-end max-w-[85%]"}`}>
+              <div key={i} className={`text-[11px] leading-relaxed px-2.5 py-2 ${m.from === "agent" ? "bg-muted/60 border border-border" : "bg-foreground text-background self-end max-w-[85%]"}`}>
                 {m.text}
               </div>
             ))}
           </div>
           <div className="p-2.5 border-t border-border flex gap-2 shrink-0">
             <input value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === "Enter" && send()} placeholder="Describe the change..."
-              className="flex-1 text-[11px] font-pixel bg-muted/40 border border-border px-2.5 py-1.5 outline-none placeholder:text-muted-foreground" />
-            <button onClick={send} className="text-[11px] font-pixel px-3 py-1.5 bg-foreground text-background hover:opacity-90">Send</button>
+              className="flex-1 text-[11px] bg-muted/40 border border-border px-2.5 py-1.5 outline-none placeholder:text-muted-foreground" />
+            <button onClick={send} className="text-[11px] px-3 py-1.5 bg-foreground text-background hover:opacity-90">Send</button>
           </div>
         </div>
       )}
@@ -398,26 +398,26 @@ function InterviewConfigTab() {
   return (
     <div className="overflow-y-auto flex-1"><div className="max-w-5xl mx-auto px-8 py-6 flex flex-col gap-6">
       <div>
-        <h3 className="text-xs font-pixel font-medium uppercase tracking-wider mb-2.5">Interviewing Alt</h3>
+        <h3 className="text-xs font-medium uppercase tracking-wider mb-2.5">Interviewing Alt</h3>
         <div className="flex items-center gap-3 p-2.5 bg-muted/40 border border-border w-fit">
-          <div className="w-8 h-8 bg-blue-100 text-blue-700 flex items-center justify-center text-xs font-pixel font-medium">SG</div>
+          <div className="w-8 h-8 bg-accent-blue/10 text-accent-blue flex items-center justify-center text-xs font-medium">SG</div>
           <div>
             <p className="text-sm font-medium">Sashank's Alt</p>
-            <p className="text-[11px] font-pixel text-muted-foreground">Founder · Active</p>
+            <p className="text-[11px] text-muted-foreground">Founder · Active</p>
           </div>
         </div>
       </div>
 
       <div>
         <div className="flex items-center justify-between mb-2.5">
-          <h3 className="text-xs font-pixel font-medium uppercase tracking-wider">Eval criteria</h3>
-          <span className="text-[10px] font-pixel text-muted-foreground">4 criteria · JD + best practices</span>
+          <h3 className="text-xs font-medium uppercase tracking-wider">Eval criteria</h3>
+          <span className="text-[10px] text-muted-foreground">4 criteria · JD + best practices</span>
         </div>
         <div className="border border-border overflow-hidden">
           {CRITERIA.map((c, i) => (
             <div key={c.id} className={i > 0 ? "border-t border-border" : ""}>
               <button onClick={() => toggleExpand(c.id)} className="w-full flex items-center gap-2 px-3 py-2.5 text-left hover:bg-muted/40 transition-colors">
-                <span className={`text-[9px] font-pixel text-muted-foreground transition-transform inline-block ${expanded[c.id] ? "rotate-90" : ""}`}>▶</span>
+                <span className={`text-[9px] text-muted-foreground transition-transform inline-block ${expanded[c.id] ? "rotate-90" : ""}`}>▶</span>
                 <span className="text-sm font-medium flex-1">{c.name}</span>
                 <RetroTag variant={c.source === "jd" ? "jd" : "bp"}>{c.source === "jd" ? "JD" : "Best practice"}</RetroTag>
                 <RetroTag variant="bp" >{c.testedBy === "questions" ? "Questions" : "Inferred"}</RetroTag>
@@ -427,11 +427,11 @@ function InterviewConfigTab() {
                   <p className="text-xs leading-relaxed text-foreground mt-2.5 mb-2.5">{c.description}</p>
                   <div className="grid grid-cols-2 gap-3 mb-2.5">
                     <div>
-                      <p className="text-[9px] font-pixel uppercase tracking-widest text-muted-foreground mb-1">Source</p>
+                      <p className="text-[9px] uppercase tracking-widest text-muted-foreground mb-1">Source</p>
                       <p className="text-xs leading-relaxed">{c.sourceDetail}</p>
                     </div>
                     <div>
-                      <p className="text-[9px] font-pixel uppercase tracking-widest text-muted-foreground mb-1">How tested</p>
+                      <p className="text-[9px] uppercase tracking-widest text-muted-foreground mb-1">How tested</p>
                       <p className="text-xs leading-relaxed">{c.howTested}</p>
                     </div>
                   </div>
@@ -444,8 +444,8 @@ function InterviewConfigTab() {
 
       <div>
         <div className="flex items-center justify-between mb-2.5">
-          <h3 className="text-xs font-pixel font-medium uppercase tracking-wider">Interview flow</h3>
-          <span className="text-[10px] font-pixel text-muted-foreground">~22 min</span>
+          <h3 className="text-xs font-medium uppercase tracking-wider">Interview flow</h3>
+          <span className="text-[10px] text-muted-foreground">~22 min</span>
         </div>
         <div className="flex flex-col gap-1.5">
           {[
@@ -456,10 +456,10 @@ function InterviewConfigTab() {
             { label: "Candidate Q&A (2 min)", detail: "Alt answers the candidate's questions about role, team, and culture using founder memories." },
           ].map((step, i) => (
             <div key={i} className="flex items-start gap-3 px-3 py-2.5 bg-muted/40 border border-border">
-              <div className="w-5 h-5 bg-border flex items-center justify-center text-[10px] font-pixel font-medium text-muted-foreground shrink-0 mt-0.5">{i+1}</div>
+              <div className="w-5 h-5 bg-border flex items-center justify-center text-[10px] font-medium text-muted-foreground shrink-0 mt-0.5">{i+1}</div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm leading-snug">{step.label}</p>
-                <p className="text-[11px] font-pixel text-muted-foreground leading-relaxed mt-1">{step.detail}</p>
+                <p className="text-[11px] text-muted-foreground leading-relaxed mt-1">{step.detail}</p>
               </div>
             </div>
           ))}
@@ -501,12 +501,12 @@ function CandidatesTab({ roleTitle, activeProfile, onProfileOpen, onProfileClose
       {/* Threshold panel */}
       <div className={`shrink-0 border-b border-border bg-muted/30 overflow-hidden transition-all duration-200 ${thresholdOpen ? "max-h-20 py-3 px-4" : "max-h-0"}`}>
         <div className="flex items-center gap-3">
-          <span className="text-[10px] font-pixel text-muted-foreground whitespace-nowrap">Push-to-ATS threshold</span>
+          <span className="text-[10px] text-muted-foreground whitespace-nowrap">Push-to-ATS threshold</span>
           <input type="range" min={1} max={10} step={1} value={threshold} onChange={e => setThreshold(Number(e.target.value))} className="flex-1 accent-foreground h-1" />
-          <span className="text-sm font-pixel font-medium w-4 text-center tabular-nums">{threshold}</span>
-          <span className="text-[10px] font-pixel text-muted-foreground">/10</span>
+          <span className="text-sm font-medium w-4 text-center tabular-nums">{threshold}</span>
+          <span className="text-[10px] text-muted-foreground">/10</span>
         </div>
-        <p className="text-[10px] font-pixel text-muted-foreground mt-1.5">
+        <p className="text-[10px] text-muted-foreground mt-1.5">
           Candidates scoring <strong className="text-foreground">{threshold}+</strong> auto-pushed to ATS · Alt decides the rest (reject or flag for your call)
         </p>
       </div>
@@ -516,7 +516,7 @@ function CandidatesTab({ roleTitle, activeProfile, onProfileOpen, onProfileClose
         <div className="w-72 shrink-0 border-r border-border flex flex-col overflow-hidden">
           <div className="p-2.5 border-b border-border flex flex-col gap-2 shrink-0">
             <div className="flex items-center gap-2">
-              <input placeholder="Search candidates..." className="flex-1 text-[11px] font-pixel border border-border px-2 py-1.5 bg-background outline-none placeholder:text-muted-foreground" />
+              <input placeholder="Search candidates..." className="flex-1 text-[11px] border border-border px-2 py-1.5 bg-background outline-none placeholder:text-muted-foreground" />
               <button onClick={() => setThresholdOpen(o => !o)} title="Push-to-ATS threshold"
                 className={`p-1.5 border transition-colors ${thresholdOpen ? "border-foreground bg-muted text-foreground" : "border-border text-muted-foreground hover:text-foreground hover:border-foreground/40"}`}>
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
@@ -529,16 +529,16 @@ function CandidatesTab({ roleTitle, activeProfile, onProfileOpen, onProfileClose
               </button>
             </div>
             <div className="flex items-center gap-1.5">
-              <span className="text-[10px] font-pixel text-muted-foreground">Sort:</span>
+              <span className="text-[10px] text-muted-foreground">Sort:</span>
               {(["score","time"] as const).map(s => (
-                <button key={s} onClick={() => setSortBy(s)} className={`text-[10px] font-pixel px-2 py-0.5 border transition-colors ${sortBy === s ? "bg-foreground text-background border-foreground" : "border-border text-muted-foreground"}`}>
+                <button key={s} onClick={() => setSortBy(s)} className={`text-[10px] px-2 py-0.5 border transition-colors ${sortBy === s ? "bg-foreground text-background border-foreground" : "border-border text-muted-foreground"}`}>
                   {s === "score" ? "Score ↓" : "Time ↓"}
                 </button>
               ))}
             </div>
             <div className="flex gap-1.5">
-              <input placeholder='Filter: e.g. "5+ yrs, Figma"' className="flex-1 text-[10px] font-pixel border border-border px-2 py-1 bg-background outline-none placeholder:text-muted-foreground" />
-              <button className="text-[10px] font-pixel px-2 py-1 border border-border hover:bg-muted transition-colors">↗</button>
+              <input placeholder='Filter: e.g. "5+ yrs, Figma"' className="flex-1 text-[10px] border border-border px-2 py-1 bg-background outline-none placeholder:text-muted-foreground" />
+              <button className="text-[10px] px-2 py-1 border border-border hover:bg-muted transition-colors">↗</button>
             </div>
           </div>
           <div className="flex-1 overflow-y-auto">
@@ -549,11 +549,11 @@ function CandidatesTab({ roleTitle, activeProfile, onProfileOpen, onProfileClose
                   className={`w-full flex items-center gap-2.5 px-3 py-2.5 border-b border-border text-left transition-colors hover:bg-muted/40 border-l-2 ${selectedId === c.id ? "bg-muted/50 border-l-foreground" : "border-l-transparent"}`}>
                   <div className={`flex flex-col items-center w-8 shrink-0 ${scoreColors[c.color]}`}>
                     <span className="text-base font-medium leading-none tabular-nums">{c.score}</span>
-                    <span className="text-[9px] font-pixel text-muted-foreground">/10</span>
+                    <span className="text-[9px] text-muted-foreground">/10</span>
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium truncate">{c.name}</p>
-                    <p className="text-[10px] font-pixel text-muted-foreground">{c.time}</p>
+                    <p className="text-[10px] text-muted-foreground">{c.time}</p>
                   </div>
                   <div className="flex flex-col items-end gap-1 shrink-0">
                     <CandStatusBadge status={status} />
@@ -569,18 +569,18 @@ function CandidatesTab({ roleTitle, activeProfile, onProfileOpen, onProfileClose
         <div className="flex-1 overflow-hidden flex flex-col">
           {!selected ? (
             <div className="flex-1 flex items-center justify-center">
-              <p className="text-xs font-pixel text-muted-foreground">Select a candidate to review</p>
+              <p className="text-xs text-muted-foreground">Select a candidate to review</p>
             </div>
           ) : (
             <div className="flex-1 overflow-y-auto"><div className="max-w-2xl mx-auto px-6 py-5">
               {/* Candidate header — name + role */}
               <div className="flex items-center gap-3 mb-5">
-                <div className={`w-11 h-11 flex items-center justify-center text-sm font-pixel font-medium text-white shrink-0 ${dotColors[selected.color]}`}>
+                <div className={`w-11 h-11 flex items-center justify-center text-sm font-medium text-white shrink-0 ${dotColors[selected.color]}`}>
                   {selected.name.split(" ").map(p => p[0]).slice(0, 2).join("")}
                 </div>
                 <div className="min-w-0">
                   <h2 className="text-base font-medium leading-tight truncate">{selected.name}</h2>
-                  <p className="text-[11px] font-pixel text-muted-foreground mt-0.5 truncate">{roleTitle}</p>
+                  <p className="text-[11px] text-muted-foreground mt-0.5 truncate">{roleTitle}</p>
                 </div>
               </div>
 
@@ -594,7 +594,7 @@ function CandidatesTab({ roleTitle, activeProfile, onProfileOpen, onProfileClose
                     <p className="text-xs leading-relaxed mb-2">Strong systems thinker with clear communication. Showed good instinct for trade-offs. Slightly thin on B2B SaaS specifics — worth probing in final interview.</p>
                     <div className="flex items-center gap-2">
                       <CandStatusBadge status={getStatus(selected)} />
-                      <span className="text-[10px] font-pixel text-muted-foreground">Interviewed {selected.time}</span>
+                      <span className="text-[10px] text-muted-foreground">Interviewed {selected.time}</span>
                     </div>
                   </div>
                 </div>
@@ -607,11 +607,11 @@ function CandidatesTab({ roleTitle, activeProfile, onProfileOpen, onProfileClose
                     <div key={row.criterionId} className={`flex items-start gap-3 px-3 py-2.5 bg-muted/30 ${i > 0 ? "border-t border-border" : ""}`}>
                       <div className={`flex flex-col items-center w-8 shrink-0 ${scoreColors[scoreToColor(row.score)]}`}>
                         <span className="text-base font-medium leading-none tabular-nums">{row.score}</span>
-                        <span className="text-[9px] font-pixel text-muted-foreground">/10</span>
+                        <span className="text-[9px] text-muted-foreground">/10</span>
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-xs font-medium mb-0.5">{row.name}</p>
-                        <p className="text-[11px] font-pixel text-muted-foreground leading-relaxed">{row.rationale}</p>
+                        <p className="text-[11px] text-muted-foreground leading-relaxed">{row.rationale}</p>
                       </div>
                     </div>
                   ))}
@@ -624,10 +624,10 @@ function CandidatesTab({ roleTitle, activeProfile, onProfileOpen, onProfileClose
                   {PROFILE_LINKS.map(p => (
                     <button key={p.key} onClick={() => p.provided && onProfileOpen(p.key)} disabled={!p.provided}
                       className={`flex items-center gap-2 p-2.5 border text-left transition-colors ${!p.provided ? "border-border opacity-40 cursor-not-allowed" : activeProfile === p.key ? "border-foreground bg-muted/60" : "border-border hover:bg-muted/40 cursor-pointer"}`}>
-                      <div className="w-6 h-6 flex items-center justify-center text-[9px] font-pixel font-bold text-white shrink-0" style={{ background: p.bg }}>{p.short}</div>
+                      <div className="w-6 h-6 flex items-center justify-center text-[9px] font-bold text-white shrink-0" style={{ background: p.bg }}>{p.short}</div>
                       <div>
                         <p className="text-xs font-medium">{p.label}</p>
-                        <p className="text-[10px] font-pixel text-muted-foreground">{p.sub}</p>
+                        <p className="text-[10px] text-muted-foreground">{p.sub}</p>
                       </div>
                     </button>
                   ))}
@@ -639,7 +639,7 @@ function CandidatesTab({ roleTitle, activeProfile, onProfileOpen, onProfileClose
                 <div className="flex border-b border-border mb-3">
                   {(["linkedin","transcript","notes"] as const).map(t => (
                     <button key={t} onClick={() => setDetailTab(t)}
-                      className={`text-[11px] font-pixel px-3 py-1.5 border-b-2 transition-colors ${detailTab === t ? "border-foreground text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"}`}>
+                      className={`text-[11px] px-3 py-1.5 border-b-2 transition-colors ${detailTab === t ? "border-foreground text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"}`}>
                       {t === "linkedin" ? "LinkedIn analysis" : t.charAt(0).toUpperCase()+t.slice(1)}
                     </button>
                   ))}
@@ -654,7 +654,7 @@ function CandidatesTab({ roleTitle, activeProfile, onProfileOpen, onProfileClose
                       { from: "You", text: "There was friction. I had to present the data twice and get the CEO involved. But the retention numbers made the case — it's now a principle in our design system docs." },
                     ].map((b, i) => (
                       <div key={i} className="flex gap-2">
-                        <span className="text-[9px] font-pixel text-muted-foreground w-6 shrink-0 pt-1.5">{b.from}</span>
+                        <span className="text-[9px] text-muted-foreground w-6 shrink-0 pt-1.5">{b.from}</span>
                         <div className="flex-1 text-[11px] leading-relaxed bg-muted/40 border border-border px-2.5 py-2">{b.text}</div>
                       </div>
                     ))}
@@ -672,15 +672,15 @@ function CandidatesTab({ roleTitle, activeProfile, onProfileOpen, onProfileClose
                       { l: "Avg engagement", v: "~140 likes per post", good: null },
                     ].map(s => (
                       <div key={s.l} className="flex justify-between items-start p-2 bg-muted/30 border border-border">
-                        <span className="text-[11px] font-pixel text-muted-foreground">{s.l}</span>
-                        <span className={`text-[11px] font-pixel text-right max-w-[200px] ${s.good === true ? "text-[#3B6D11]" : s.good === false ? "text-[#A32D2D]" : "text-foreground"}`}>{s.v}</span>
+                        <span className="text-[11px] text-muted-foreground">{s.l}</span>
+                        <span className={`text-[11px] text-right max-w-[200px] ${s.good === true ? "text-status-success-foreground" : s.good === false ? "text-status-danger-foreground" : "text-foreground"}`}>{s.v}</span>
                       </div>
                     ))}
                   </div>
                 )}
 
                 {detailTab === "notes" && (
-                  <textarea className="w-full border border-border p-2.5 text-[11px] font-pixel bg-background outline-none placeholder:text-muted-foreground min-h-[70px] resize-none leading-relaxed" placeholder="Add a private note about this candidate..." />
+                  <textarea className="w-full border border-border p-2.5 text-[11px] bg-background outline-none placeholder:text-muted-foreground min-h-[70px] resize-none leading-relaxed" placeholder="Add a private note about this candidate..." />
                 )}
               </CollapsibleSection>
 
@@ -688,12 +688,12 @@ function CandidatesTab({ roleTitle, activeProfile, onProfileOpen, onProfileClose
               <CollapsibleSection title="ATS actions">
                 <div className="flex items-center gap-2 p-3 bg-muted/30 border border-border">
                   {getStatus(selected) === "shortlisted" ? (
-                    <span className="text-[10px] font-pixel font-medium px-1.5 py-0.5 bg-[#EAF3DE] text-[#3B6D11]">Shortlisted to ATS</span>
+                    <span className="text-[10px] font-medium px-1.5 py-0.5 bg-status-success text-status-success-foreground">Shortlisted to ATS</span>
                   ) : (
                     <CandStatusBadge status={getStatus(selected)} />
                   )}
                 </div>
-                <p className="text-[10px] font-pixel text-muted-foreground text-center mt-2">
+                <p className="text-[10px] text-muted-foreground text-center mt-2">
                   Manual overrides pause Alt's autonomy for this role · <button className="underline hover:text-foreground transition-colors">Manage in settings</button>
                 </p>
               </CollapsibleSection>
@@ -731,15 +731,15 @@ function RoleDetail({ role, activeProfile, onProfileOpen, onProfileClose }: { ro
           <div className="flex items-center gap-3 mb-1 mt-2">
             <h1 className="text-base font-medium">{role.title}</h1>
             <div className="flex border border-border overflow-hidden">
-              <button onClick={() => setStatus("draft")} className={`text-[10px] font-pixel px-2.5 py-1 transition-colors ${status === "draft" ? "bg-[#FAEEDA] text-[#854F0B]" : "text-muted-foreground hover:text-foreground"}`}>Draft</button>
-              <button onClick={() => setStatus("live")} className={`text-[10px] font-pixel px-2.5 py-1 transition-colors ${status === "live" ? "bg-[#EAF3DE] text-[#3B6D11]" : "text-muted-foreground hover:text-foreground"}`}>Live</button>
+              <button onClick={() => setStatus("draft")} className={`text-[10px] rounded-md px-2.5 py-1 transition-colors ${status === "draft" ? "bg-status-warning text-status-warning-foreground" : "text-muted-foreground hover:text-foreground"}`}>Draft</button>
+              <button onClick={() => setStatus("live")} className={`text-[10px] rounded-md px-2.5 py-1 transition-colors ${status === "live" ? "bg-status-success text-status-success-foreground" : "text-muted-foreground hover:text-foreground"}`}>Live</button>
             </div>
           </div>
-          <p className="text-[10px] font-pixel text-muted-foreground mb-3">{role.department} · Created {role.createdAt}</p>
+          <p className="text-[10px] text-muted-foreground mb-3">{role.department} · Created {role.createdAt}</p>
           <div className="flex items-center">
             {tabs.map(t => (
               <button key={t.id} onClick={() => setActiveTab(t.id)}
-                className={`flex items-center gap-1.5 px-3.5 py-2 text-xs font-pixel border-b-2 transition-colors -mb-px ${activeTab === t.id ? "border-foreground text-foreground font-medium" : "border-transparent text-muted-foreground hover:text-foreground"}`}>
+                className={`flex items-center gap-1.5 px-3.5 py-2 text-xs border-b-2 transition-colors -mb-px ${activeTab === t.id ? "border-foreground text-foreground font-medium" : "border-transparent text-muted-foreground hover:text-foreground"}`}>
                 {t.label}
                 {t.badge !== undefined && <span className="text-[9px] px-1.5 py-0.5 bg-muted text-muted-foreground">{t.badge}</span>}
               </button>

@@ -165,16 +165,16 @@ export function ActionDropdown({ items, onSelect, onClose, visible, filter }: Ac
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium truncate">{item.label}</p>
               {item.detail && (
-                <p className="text-[10px] font-pixel text-muted-foreground truncate">{item.detail}</p>
+                <p className="text-[10px] text-muted-foreground truncate">{item.detail}</p>
               )}
             </div>
             {i === activeIndex && (
-              <span className="text-[9px] font-pixel text-muted-foreground shrink-0">↵</span>
+              <span className="text-[9px] text-muted-foreground shrink-0">↵</span>
             )}
           </button>
         ))}
       </div>
-      <div className="px-3 py-1.5 border-t border-border bg-muted/20 flex items-center gap-3 text-[9px] font-pixel text-muted-foreground">
+      <div className="px-3 py-1.5 border-t border-border bg-muted/20 flex items-center gap-3 text-[9px] text-muted-foreground">
         <span>↑↓ navigate</span>
         <span>↵ select</span>
         <span>esc dismiss</span>

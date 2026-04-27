@@ -10,8 +10,6 @@ type StatusFilter = "all" | "pending" | "shortlisted" | "rejected"
 type RecFilter = "all" | "shortlist" | "reject" | "review"
 type TimeFilter = "all" | "today" | "week"
 
-// Maps completedAt relative labels to a rough bucket so time filter works
-// against the mock data. "today" covers <24h, "week" covers <=7d.
 function matchesTime(completed: string, bucket: TimeFilter): boolean {
   if (bucket === "all") return true
   const m = completed.match(/(\d+)\s*(h|d|w|min)/i)
@@ -25,31 +23,31 @@ function matchesTime(completed: string, bucket: TimeFilter): boolean {
 }
 
 function scoreColor(s: number): string {
-  if (s >= 8) return "text-[#3B6D11]"
-  if (s >= 7) return "text-[#0F6E56]"
-  if (s >= 5) return "text-[#854F0B]"
-  return "text-[#A32D2D]"
+  if (s >= 8) return "text-status-success-foreground"
+  if (s >= 7) return "text-status-info-foreground"
+  if (s >= 5) return "text-status-warning-foreground"
+  return "text-status-danger-foreground"
 }
 
 function StatusBadge({ status }: { status: CandidateMini["status"] }) {
   const s: Record<CandidateMini["status"], string> = {
-    shortlisted: "bg-[#EAF3DE] text-[#3B6D11]",
-    rejected: "bg-[#FCEBEB] text-[#A32D2D]",
-    pending: "bg-[#FAEEDA] text-[#854F0B]",
+    shortlisted: "bg-status-success text-status-success-foreground",
+    rejected: "bg-status-danger text-status-danger-foreground",
+    pending: "bg-status-warning text-status-warning-foreground",
   }
   const l: Record<CandidateMini["status"], string> = {
     shortlisted: "Pushed to ATS",
     rejected: "Rejected",
     pending: "Your call",
   }
-  return <span className={`text-[10px] font-pixel font-medium px-1.5 py-0.5 ${s[status]}`}>{l[status]}</span>
+  return <span className={`text-[10px] font-medium rounded-md px-1.5 py-0.5 ${s[status]}`}>{l[status]}</span>
 }
 
 function AltRecBadge({ rec, confidence }: { rec: CandidateMini["altRec"]; confidence: CandidateMini["confidence"] }) {
-  const base = "text-[10px] font-pixel px-1.5 py-0.5"
-  if (rec === "shortlist") return <span className={`${base} bg-[#EAF3DE] text-[#3B6D11]`}>Alt: Shortlist ↑</span>
-  if (rec === "reject") return <span className={`${base} bg-[#FCEBEB] text-[#A32D2D]`}>Alt: Pass ↓</span>
-  return <span className={`${base} bg-[#FAEEDA] text-[#854F0B]`}>{confidence === "low" ? "Alt: Your call" : "Alt: Review"}</span>
+  const base = "text-[10px] rounded-md px-1.5 py-0.5"
+  if (rec === "shortlist") return <span className={`${base} bg-status-success text-status-success-foreground`}>Alt: Shortlist ↑</span>
+  if (rec === "reject") return <span className={`${base} bg-status-danger text-status-danger-foreground`}>Alt: Pass ↓</span>
+  return <span className={`${base} bg-status-warning text-status-warning-foreground`}>{confidence === "low" ? "Alt: Your call" : "Alt: Review"}</span>
 }
 
 export function CandidatesPage() {
@@ -102,16 +100,16 @@ export function CandidatesPage() {
         <div className="max-w-6xl mx-auto px-8 pt-5 pb-3">
           <div className="flex items-baseline gap-3 mb-1">
             <h1 className="text-base font-medium">Candidates</h1>
-            <span className="text-[10px] font-pixel text-muted-foreground">
+            <span className="text-[10px] text-muted-foreground">
               {filtered.length} of {SEED_CANDIDATES.length} · across {ROLES.length} roles
             </span>
             {activeFilterCount > 0 && (
-              <button onClick={resetFilters} className="ml-auto text-[10px] font-pixel text-muted-foreground hover:text-foreground underline">
+              <button onClick={resetFilters} className="ml-auto text-[10px] text-muted-foreground hover:text-foreground underline">
                 Clear {activeFilterCount} filter{activeFilterCount !== 1 ? "s" : ""}
               </button>
             )}
           </div>
-          <p className="text-[10px] font-pixel text-muted-foreground mb-3">
+          <p className="text-[10px] text-muted-foreground mb-3">
             Read-only view. Alt handles shortlisting autonomously — dilemmas are flagged as <strong className="text-foreground">Your call</strong>; resolve them with Alt in chat.
           </p>
 
@@ -121,34 +119,34 @@ export function CandidatesPage() {
               value={search}
               onChange={e => setSearch(e.target.value)}
               placeholder="Search name or role..."
-              className="text-xs font-pixel border border-border px-3 py-1.5 bg-background outline-none placeholder:text-muted-foreground w-56 focus:border-foreground/40"
+              className="text-xs border border-border rounded-md px-3 py-1.5 bg-background outline-none placeholder:text-muted-foreground w-56 focus:border-foreground/40"
             />
             <select value={roleFilter} onChange={e => setRoleFilter(e.target.value)}
-              className="text-[10px] font-pixel border border-border px-2 py-1.5 bg-background">
+              className="text-[10px] border border-border rounded-md px-2 py-1.5 bg-background">
               <option value="all">All roles</option>
               {ROLES.map(r => <option key={r.id} value={r.id}>{r.title}</option>)}
             </select>
             <select value={statusFilter} onChange={e => setStatusFilter(e.target.value as StatusFilter)}
-              className="text-[10px] font-pixel border border-border px-2 py-1.5 bg-background">
+              className="text-[10px] border border-border rounded-md px-2 py-1.5 bg-background">
               <option value="all">All statuses</option>
               <option value="pending">Your call</option>
               <option value="shortlisted">Pushed to ATS</option>
               <option value="rejected">Rejected</option>
             </select>
             <select value={recFilter} onChange={e => setRecFilter(e.target.value as RecFilter)}
-              className="text-[10px] font-pixel border border-border px-2 py-1.5 bg-background">
+              className="text-[10px] border border-border rounded-md px-2 py-1.5 bg-background">
               <option value="all">All Alt recs</option>
               <option value="shortlist">Shortlist</option>
               <option value="reject">Pass</option>
               <option value="review">Review</option>
             </select>
             <select value={timeFilter} onChange={e => setTimeFilter(e.target.value as TimeFilter)}
-              className="text-[10px] font-pixel border border-border px-2 py-1.5 bg-background">
+              className="text-[10px] border border-border rounded-md px-2 py-1.5 bg-background">
               <option value="all">Any time</option>
               <option value="today">Last 24h</option>
               <option value="week">Last 7 days</option>
             </select>
-            <div className="flex items-center gap-2 text-[10px] font-pixel">
+            <div className="flex items-center gap-2 text-[10px]">
               <span className="text-muted-foreground">Score ≥</span>
               <input type="range" min={1} max={10} step={1} value={minScore}
                 onChange={e => setMinScore(Number(e.target.value))}
@@ -164,32 +162,32 @@ export function CandidatesPage() {
         <div className="flex-1 min-w-0 overflow-y-auto">
           <div className="max-w-6xl mx-auto px-8 py-4">
             {filtered.length === 0 ? (
-              <div className="border border-border p-8 text-center">
-                <p className="text-xs font-pixel text-muted-foreground">
+              <div className="border border-border rounded-lg p-8 text-center">
+                <p className="text-xs text-muted-foreground">
                   No candidates match these filters.
                 </p>
               </div>
             ) : (
-              <div className="border border-border overflow-hidden">
+              <div className="border border-border rounded-lg overflow-hidden">
                 {/* Header row */}
                 <div className="flex items-center gap-3 px-3 py-2 bg-muted/40 border-b border-border">
                   <div className="w-10 shrink-0">
-                    <span className="text-[9px] font-pixel uppercase tracking-widest text-muted-foreground">Score</span>
+                    <span className="text-[10px] uppercase tracking-wider text-muted-foreground">Score</span>
                   </div>
                   <div className="flex-1">
-                    <span className="text-[9px] font-pixel uppercase tracking-widest text-muted-foreground">Candidate</span>
+                    <span className="text-[10px] uppercase tracking-wider text-muted-foreground">Candidate</span>
                   </div>
                   <div className="w-44 shrink-0">
-                    <span className="text-[9px] font-pixel uppercase tracking-widest text-muted-foreground">Role</span>
+                    <span className="text-[10px] uppercase tracking-wider text-muted-foreground">Role</span>
                   </div>
                   <div className="w-28 shrink-0">
-                    <span className="text-[9px] font-pixel uppercase tracking-widest text-muted-foreground">Alt</span>
+                    <span className="text-[10px] uppercase tracking-wider text-muted-foreground">Alt</span>
                   </div>
                   <div className="w-24 shrink-0">
-                    <span className="text-[9px] font-pixel uppercase tracking-widest text-muted-foreground">Status</span>
+                    <span className="text-[10px] uppercase tracking-wider text-muted-foreground">Status</span>
                   </div>
                   <div className="w-16 shrink-0 text-right">
-                    <span className="text-[9px] font-pixel uppercase tracking-widest text-muted-foreground">Time</span>
+                    <span className="text-[10px] uppercase tracking-wider text-muted-foreground">Time</span>
                   </div>
                 </div>
 
@@ -204,14 +202,14 @@ export function CandidatesPage() {
                     >
                       <div className="w-10 shrink-0">
                         <span className={`text-base font-medium tabular-nums ${scoreColor(c.score)}`}>{c.score}</span>
-                        <span className="text-[9px] font-pixel text-muted-foreground">/10</span>
+                        <span className="text-[9px] text-muted-foreground">/10</span>
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium truncate">{c.name}</p>
                         <p className="text-[11px] text-muted-foreground leading-snug truncate">{c.reasoning}</p>
                       </div>
                       <div className="w-44 shrink-0">
-                        <p className="text-[11px] font-pixel text-muted-foreground truncate">{roleTitle(c.roleId)}</p>
+                        <p className="text-[11px] text-muted-foreground truncate">{roleTitle(c.roleId)}</p>
                       </div>
                       <div className="w-28 shrink-0">
                         <AltRecBadge rec={c.altRec} confidence={c.confidence} />
@@ -220,7 +218,7 @@ export function CandidatesPage() {
                         <StatusBadge status={c.status} />
                       </div>
                       <div className="w-16 shrink-0 text-right">
-                        <span className="text-[10px] font-pixel text-muted-foreground">{c.completedAt}</span>
+                        <span className="text-[10px] text-muted-foreground">{c.completedAt}</span>
                       </div>
                     </div>
                   )
@@ -235,24 +233,24 @@ export function CandidatesPage() {
           {selected && (
             <div className="h-full flex flex-col">
               <div className="flex items-center justify-between px-5 py-3.5 border-b border-border shrink-0">
-                <span className="text-xs font-pixel font-medium">Candidate detail</span>
+                <span className="text-xs font-medium">Candidate detail</span>
                 <button onClick={() => setOpenId(null)}
                   className="text-muted-foreground hover:text-foreground text-base leading-none px-1" aria-label="Close">✕</button>
               </div>
               <div className="flex-1 overflow-y-auto px-5 py-4">
                 {/* Identity */}
                 <div className="flex items-center gap-3 mb-4">
-                  <div className={`w-11 h-11 flex items-center justify-center text-sm font-pixel font-medium text-white shrink-0 bg-foreground`}>
+                  <div className="w-11 h-11 rounded-lg flex items-center justify-center text-sm font-medium text-background shrink-0 bg-foreground">
                     {selected.name.split(" ").map(p => p[0]).slice(0, 2).join("")}
                   </div>
                   <div className="min-w-0">
                     <h2 className="text-base font-medium leading-tight truncate">{selected.name}</h2>
-                    <p className="text-[11px] font-pixel text-muted-foreground truncate">{roleTitle(selected.roleId)} · {selected.completedAt}</p>
+                    <p className="text-[11px] text-muted-foreground truncate">{roleTitle(selected.roleId)} · {selected.completedAt}</p>
                   </div>
                 </div>
 
                 {/* Score + status */}
-                <div className="flex items-start gap-4 p-4 bg-muted/30 border border-border mb-4">
+                <div className="flex items-start gap-4 p-4 rounded-lg bg-muted/30 border border-border mb-4">
                   <div className={`text-4xl font-medium leading-none tabular-nums ${scoreColor(selected.score)}`}>
                     {selected.score}<span className="text-sm text-muted-foreground">/10</span>
                   </div>
@@ -266,7 +264,7 @@ export function CandidatesPage() {
                 </div>
 
                 {/* Metadata */}
-                <div className="border border-border mb-4">
+                <div className="border border-border rounded-lg overflow-hidden mb-4">
                   {[
                     { label: "Role", value: roleTitle(selected.roleId) },
                     { label: "Interviewed", value: selected.completedAt },
@@ -275,7 +273,7 @@ export function CandidatesPage() {
                     { label: "Current status", value: selected.status === "shortlisted" ? "Pushed to ATS" : selected.status === "rejected" ? "Rejected" : "Your call" },
                   ].map((row, i) => (
                     <div key={row.label} className={`flex items-center justify-between px-3 py-2 ${i > 0 ? "border-t border-border" : ""}`}>
-                      <span className="text-[10px] font-pixel uppercase tracking-widest text-muted-foreground">{row.label}</span>
+                      <span className="text-[10px] uppercase tracking-wider text-muted-foreground">{row.label}</span>
                       <span className="text-xs font-medium">{row.value}</span>
                     </div>
                   ))}

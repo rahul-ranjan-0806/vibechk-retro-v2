@@ -484,7 +484,7 @@ export function ChatPage() {
                   </div>
                   <div>
                     <h1 className="text-lg font-medium">What can I help with?</h1>
-                    <p className="text-xs text-muted-foreground font-pixel">Sashank's Alt · trained on your decisions</p>
+                    <p className="text-xs text-muted-foreground">Sashank's Alt · trained on your decisions</p>
                   </div>
                 </div>
 
@@ -541,7 +541,7 @@ export function ChatPage() {
                       )}
                     </div>
                     <div className="flex items-center justify-between px-4 py-2 border-t border-border/50">
-                      <div className="flex items-center gap-2 text-[10px] font-pixel text-muted-foreground">
+                      <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
                         {readyToExpand ? (
                           <span className="px-1.5 py-0.5 border border-foreground/30 rounded text-foreground/70 animate-pulse">tab again to fill details</span>
                         ) : (
@@ -549,7 +549,7 @@ export function ChatPage() {
                         )}
                       </div>
                       <button onClick={promptTemplate ? handleTemplateSend : () => send()} disabled={promptTemplate ? false : (!input.trim() || isTyping)}
-                        className="text-[10px] font-pixel px-3 py-1.5 bg-foreground text-background rounded-md hover:opacity-90 disabled:opacity-30 transition-opacity">
+                        className="text-[10px] px-3 py-1.5 bg-foreground text-background rounded-md hover:opacity-90 disabled:opacity-30 transition-opacity">
                         Send
                       </button>
                     </div>
@@ -560,7 +560,7 @@ export function ChatPage() {
                 <div className="flex flex-wrap gap-2 justify-center">
                   {SUGGESTIONS.map(s => (
                     <button key={s} onClick={() => send(s)}
-                      className="text-[11px] font-pixel px-3 py-1.5 border border-border rounded-lg text-muted-foreground hover:text-foreground hover:border-foreground/40 transition-colors">
+                      className="text-[11px] px-3 py-1.5 border border-border rounded-lg text-muted-foreground hover:text-foreground hover:border-foreground/40 transition-colors">
                       {s}
                     </button>
                   ))}
@@ -599,15 +599,15 @@ export function ChatPage() {
                                   <div className="flex items-start gap-2 px-3 py-2">
                                     <span className={`shrink-0 mt-0.5 ${tc.status === "running" ? "animate-spin" : ""}`}>
                                       {tc.status === "running" ? (
-                                        <span className="inline-block w-3 h-3 border-2 border-[#4466ff]/30 border-t-[#4466ff] rounded-full" />
+                                        <span className="inline-block w-3 h-3 border-2 border-accent-blue/30 border-t-accent-blue rounded-full" />
                                       ) : (
-                                        <span className="text-[#3B6D11]">✓</span>
+                                        <span className="text-status-success-foreground">✓</span>
                                       )}
                                     </span>
                                     <div className="flex-1 min-w-0">
-                                      <span className="font-pixel font-medium">{tc.name}</span>
+                                      <span className="font-medium">{tc.name}</span>
                                       {tc.status === "complete" && tc.result && (
-                                        <p className="text-muted-foreground font-pixel mt-0.5">{tc.result}</p>
+                                        <p className="text-muted-foreground mt-0.5">{tc.result}</p>
                                       )}
                                     </div>
                                   </div>
@@ -619,7 +619,7 @@ export function ChatPage() {
                                             ? null
                                             : { id: `${m.id}-tool-${ti}`, from: "assistant", text: tc.name, editableData: tc.editableData }
                                         )}
-                                        className={`text-[10px] font-pixel px-2 py-1 rounded-md transition-colors ${
+                                        className={`text-[10px] px-2 py-1 rounded-md transition-colors ${
                                           editSidebar?.id === `${m.id}-tool-${ti}`
                                             ? "bg-foreground text-background"
                                             : "border border-border text-muted-foreground hover:text-foreground hover:border-foreground/40"
@@ -650,13 +650,13 @@ export function ChatPage() {
                                   <button key={ai}
                                     onClick={() => handleAction(m, a)}
                                     disabled={isActed}
-                                    className={`text-[11px] font-pixel px-3 py-1.5 rounded-lg transition-all ${
+                                    className={`text-[11px] px-3 py-1.5 rounded-lg transition-all ${
                                       isActed
                                         ? "opacity-40 cursor-not-allowed border border-border text-muted-foreground"
                                         : a.semantic === "primary"
                                         ? "bg-foreground text-background hover:opacity-90"
                                         : a.semantic === "destructive"
-                                        ? "border border-[#C03030]/30 text-[#A32D2D] hover:bg-[#FCEBEB]"
+                                        ? "border border-destructive/30 text-status-danger-foreground hover:bg-status-danger"
                                         : "border border-border text-muted-foreground hover:text-foreground hover:border-foreground/40"
                                     }`}
                                   >
@@ -679,7 +679,7 @@ export function ChatPage() {
                         <div className="w-1.5 h-1.5 bg-muted-foreground/40 rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
                         <div className="w-1.5 h-1.5 bg-muted-foreground/40 rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
                       </div>
-                      <span className="text-[10px] font-pixel">Alt is thinking...</span>
+                      <span className="text-[10px]">Alt is thinking...</span>
                     </div>
                   )}
                 </ConversationContent>
@@ -741,12 +741,12 @@ export function ChatPage() {
                       </div>
                       {readyToExpand && !promptTemplate && (
                         <div className="px-3 pb-1.5">
-                          <span className="text-[9px] font-pixel text-foreground/50 animate-pulse">tab again to fill details</span>
+                          <span className="text-[9px] text-foreground/50 animate-pulse">tab again to fill details</span>
                         </div>
                       )}
                     </div>
                     <button onClick={promptTemplate ? handleTemplateSend : () => send()} disabled={promptTemplate ? false : (!input.trim() || isTyping)}
-                      className="text-sm font-pixel px-4 py-2 bg-foreground text-background rounded-lg hover:opacity-90 disabled:opacity-30 transition-opacity shrink-0">
+                      className="text-sm px-4 py-2 bg-foreground text-background rounded-lg hover:opacity-90 disabled:opacity-30 transition-opacity shrink-0">
                       ↑
                     </button>
                   </div>
@@ -791,7 +791,7 @@ export function ChatPage() {
                     const isStatus = keyLower === "status"
                     return (
                       <div key={key}>
-                        <label className="text-[9px] font-pixel uppercase tracking-widest text-muted-foreground mb-1 block">{key}</label>
+                        <label className="text-[9px] uppercase tracking-widest text-muted-foreground mb-1 block">{key}</label>
                         <select
                           value={isStatus ? roleStatus : undefined}
                           defaultValue={isStatus ? undefined : val}
@@ -808,13 +808,13 @@ export function ChatPage() {
                     return (
                       <div key={key}>
                         <div className="flex items-center justify-between mb-1">
-                          <label className="text-[9px] font-pixel uppercase tracking-widest text-muted-foreground">{key}</label>
-                          <span className="text-[9px] font-pixel text-muted-foreground/60">with sources</span>
+                          <label className="text-[9px] uppercase tracking-widest text-muted-foreground">{key}</label>
+                          <span className="text-[9px] text-muted-foreground/60">with sources</span>
                         </div>
                         <textarea defaultValue={val} rows={12}
                           className="w-full text-sm border border-border rounded-lg px-3 py-2.5 bg-background outline-none focus:border-foreground/40 resize-none leading-relaxed" />
                         <div className="mt-2 flex flex-col gap-1">
-                          <p className="text-[9px] font-pixel uppercase tracking-widest text-muted-foreground">Sources used</p>
+                          <p className="text-[9px] uppercase tracking-widest text-muted-foreground">Sources used</p>
                           {[
                             { label: "Slack #hiring-product", icon: "#", color: "#4A154B" },
                             { label: "LinkedIn job template", icon: "in", color: "#0A66C2" },
@@ -824,7 +824,7 @@ export function ChatPage() {
                               <div className="w-4 h-4 flex items-center justify-center text-[7px] font-bold text-white rounded shrink-0" style={{ background: src.color }}>
                                 {src.icon}
                               </div>
-                              <span className="text-[10px] font-pixel text-muted-foreground">{src.label}</span>
+                              <span className="text-[10px] text-muted-foreground">{src.label}</span>
                             </div>
                           ))}
                         </div>
@@ -834,7 +834,7 @@ export function ChatPage() {
 
                   return (
                     <div key={key}>
-                      <label className="text-[9px] font-pixel uppercase tracking-widest text-muted-foreground mb-1 block">{key}</label>
+                      <label className="text-[9px] uppercase tracking-widest text-muted-foreground mb-1 block">{key}</label>
                       <input defaultValue={val} className="w-full text-sm border border-border rounded-lg px-3 py-2 bg-background outline-none focus:border-foreground/40" />
                     </div>
                   )
@@ -845,15 +845,15 @@ export function ChatPage() {
                   return (
                     <>
                       <div className="flex items-center justify-between px-5 py-3.5 border-b border-border shrink-0">
-                        <span className="text-xs font-pixel font-medium">Edit details</span>
+                        <span className="text-xs font-medium">Edit details</span>
                         <button onClick={() => setEditSidebar(null)} className="text-muted-foreground hover:text-foreground text-sm leading-none">✕</button>
                       </div>
                       <div className="flex-1 overflow-y-auto px-5 py-4 flex flex-col gap-3">
                         {Object.entries(data).map(([k, v]) => renderField(k, v))}
                       </div>
                       <div className="shrink-0 border-t border-border px-5 py-3 flex gap-2">
-                        <button className="flex-1 text-[11px] font-pixel px-3 py-2 bg-foreground text-background rounded-lg hover:opacity-90">Save changes</button>
-                        <button onClick={() => setEditSidebar(null)} className="text-[11px] font-pixel px-3 py-2 border border-border rounded-lg text-muted-foreground hover:text-foreground">Cancel</button>
+                        <button className="flex-1 text-[11px] px-3 py-2 bg-foreground text-background rounded-lg hover:opacity-90">Save changes</button>
+                        <button onClick={() => setEditSidebar(null)} className="text-[11px] px-3 py-2 border border-border rounded-lg text-muted-foreground hover:text-foreground">Cancel</button>
                       </div>
                     </>
                   )
@@ -868,7 +868,7 @@ export function ChatPage() {
                   <>
                     {/* Header */}
                     <div className="flex items-center justify-between px-5 py-3.5 border-b border-border shrink-0">
-                      <span className="text-xs font-pixel font-medium">{data["Title"] || "New role"}</span>
+                      <span className="text-xs font-medium">{data["Title"] || "New role"}</span>
                       <button onClick={() => setEditSidebar(null)} className="text-muted-foreground hover:text-foreground text-sm leading-none">✕</button>
                     </div>
 
@@ -876,7 +876,7 @@ export function ChatPage() {
                     <div className="border-b border-border shrink-0 px-5 flex">
                       {(["role", "interview", "candidates"] as const).map(t => (
                         <button key={t} onClick={() => setSidebarTab(t)}
-                          className={`text-xs font-pixel px-4 py-2.5 border-b-2 capitalize transition-colors ${
+                          className={`text-xs px-4 py-2.5 border-b-2 capitalize transition-colors ${
                             sidebarTab === t ? "border-foreground text-foreground font-medium" : "border-transparent text-muted-foreground hover:text-foreground"
                           }`}>
                           {t === "interview" ? "Interview Config" : t === "candidates" ? "Candidates" : "Role"}
@@ -903,14 +903,14 @@ export function ChatPage() {
                         <>
                           {/* Alt assignment */}
                           <div>
-                            <p className="text-[9px] font-pixel uppercase tracking-[0.15em] text-muted-foreground mb-2">Assigned Alt</p>
+                            <p className="text-[9px] uppercase tracking-[0.15em] text-muted-foreground mb-2">Assigned Alt</p>
                             <div className="flex items-center gap-3 px-3 py-2.5 border border-border rounded-lg bg-card">
-                              <div className="w-8 h-8 rounded-full bg-foreground flex items-center justify-center text-[10px] font-pixel font-medium text-background">SG</div>
+                              <div className="w-8 h-8 rounded-full bg-foreground flex items-center justify-center text-[10px] font-medium text-background">SG</div>
                               <div className="flex-1 min-w-0">
                                 <p className="text-sm font-medium">Sashank's Alt</p>
-                                <p className="text-[10px] font-pixel text-muted-foreground">Active · 85% trained</p>
+                                <p className="text-[10px] text-muted-foreground">Active · 85% trained</p>
                               </div>
-                              <select defaultValue="sashank" className="text-[11px] font-pixel border border-border rounded-md px-2 py-1 bg-background">
+                              <select defaultValue="sashank" className="text-[11px] border border-border rounded-md px-2 py-1 bg-background">
                                 <option value="sashank">Sashank's Alt</option>
                                 <option value="kinnari">Kinnari's Alt</option>
                               </select>
@@ -919,26 +919,26 @@ export function ChatPage() {
 
                           {/* Interview duration */}
                           <div>
-                            <label className="text-[9px] font-pixel uppercase tracking-widest text-muted-foreground mb-1 block">Interview duration</label>
+                            <label className="text-[9px] uppercase tracking-widest text-muted-foreground mb-1 block">Interview duration</label>
                             <div className="w-full text-sm border border-border rounded-lg px-3 py-2 bg-muted/20 text-muted-foreground">{data["Interview duration"] || "~22 min"}</div>
                           </div>
 
                           {/* Interview flow */}
                           <div>
-                            <p className="text-[9px] font-pixel uppercase tracking-[0.15em] text-muted-foreground mb-2">Interview flow</p>
+                            <p className="text-[9px] uppercase tracking-[0.15em] text-muted-foreground mb-2">Interview flow</p>
                             <div className="flex flex-col gap-1.5">
                               {interviewFlow ? (
                                 Object.entries(interviewFlow).map(([step, desc], i) => (
                                   <div key={step} className="flex items-center gap-2.5 group">
                                     <div className="flex flex-col items-center shrink-0">
-                                      <div className="w-6 h-6 rounded-full border-2 border-foreground/20 bg-background flex items-center justify-center text-[9px] font-pixel font-medium text-muted-foreground">{i + 1}</div>
+                                      <div className="w-6 h-6 rounded-full border-2 border-foreground/20 bg-background flex items-center justify-center text-[9px] font-medium text-muted-foreground">{i + 1}</div>
                                       {i < Object.keys(interviewFlow).length - 1 && <div className="w-px h-3 bg-border" />}
                                     </div>
                                     <input defaultValue={desc} className="flex-1 text-sm border border-border rounded-lg px-3 py-2 bg-background outline-none focus:border-foreground/40" />
                                   </div>
                                 ))
                               ) : (
-                                <div className="text-xs text-muted-foreground font-pixel px-3 py-2 border border-border rounded-lg bg-muted/20">No interview flow configured</div>
+                                <div className="text-xs text-muted-foreground px-3 py-2 border border-border rounded-lg bg-muted/20">No interview flow configured</div>
                               )}
                             </div>
                           </div>
@@ -946,8 +946,8 @@ export function ChatPage() {
                           {/* Eval criteria */}
                           <div>
                             <div className="flex items-center justify-between mb-2">
-                              <p className="text-[9px] font-pixel uppercase tracking-[0.15em] text-muted-foreground">Eval criteria</p>
-                              <span className="text-[9px] font-pixel text-muted-foreground/60">{evalCriteria ? Object.keys(evalCriteria).length : 0} criteria</span>
+                              <p className="text-[9px] uppercase tracking-[0.15em] text-muted-foreground">Eval criteria</p>
+                              <span className="text-[9px] text-muted-foreground/60">{evalCriteria ? Object.keys(evalCriteria).length : 0} criteria</span>
                             </div>
                             <div className="flex flex-col gap-1.5">
                               {evalCriteria ? (
@@ -955,7 +955,7 @@ export function ChatPage() {
                                   <div key={key} className="flex items-center gap-2 px-3 py-2.5 border border-border rounded-lg bg-card group">
                                     <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-muted-foreground/40 shrink-0 cursor-grab"><path d="M8 6h.01M8 12h.01M8 18h.01M12 6h.01M12 12h.01M12 18h.01"/></svg>
                                     <input defaultValue={val} className="flex-1 text-sm bg-transparent outline-none" />
-                                    <select defaultValue="must" className="text-[9px] font-pixel border border-border rounded-md px-1.5 py-1 bg-background text-muted-foreground">
+                                    <select defaultValue="must" className="text-[9px] border border-border rounded-md px-1.5 py-1 bg-background text-muted-foreground">
                                       <option value="must">Must-have</option>
                                       <option value="good">Good-to-have</option>
                                       <option value="nice">Nice-to-have</option>
@@ -963,7 +963,7 @@ export function ChatPage() {
                                   </div>
                                 ))
                               ) : (
-                                <div className="text-xs text-muted-foreground font-pixel px-3 py-2 border border-border rounded-lg bg-muted/20">No eval criteria generated</div>
+                                <div className="text-xs text-muted-foreground px-3 py-2 border border-border rounded-lg bg-muted/20">No eval criteria generated</div>
                               )}
                             </div>
                           </div>
@@ -971,13 +971,13 @@ export function ChatPage() {
                           {/* Leniency */}
                           <div>
                             <div className="flex items-center justify-between mb-1.5">
-                              <p className="text-[9px] font-pixel uppercase tracking-[0.15em] text-muted-foreground">Leniency</p>
-                              <span className="text-[9px] font-pixel text-muted-foreground">Balanced</span>
+                              <p className="text-[9px] uppercase tracking-[0.15em] text-muted-foreground">Leniency</p>
+                              <span className="text-[9px] text-muted-foreground">Balanced</span>
                             </div>
                             <input type="range" min="0" max="100" defaultValue="50" className="w-full accent-foreground" />
                             <div className="flex justify-between mt-1">
-                              <span className="text-[8px] font-pixel text-muted-foreground">Strict</span>
-                              <span className="text-[8px] font-pixel text-muted-foreground">Full trust</span>
+                              <span className="text-[8px] text-muted-foreground">Strict</span>
+                              <span className="text-[8px] text-muted-foreground">Full trust</span>
                             </div>
                           </div>
                         </>
@@ -989,17 +989,17 @@ export function ChatPage() {
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-muted-foreground"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
                           </div>
                           <p className="text-sm font-medium mb-1">No candidates yet</p>
-                          <p className="text-xs text-muted-foreground font-pixel max-w-[240px]">Candidates will appear here once the role is live and interviews start coming in.</p>
+                          <p className="text-xs text-muted-foreground max-w-[240px]">Candidates will appear here once the role is live and interviews start coming in.</p>
                         </div>
                       )}
                     </div>
 
                     {/* Footer */}
                     <div className="shrink-0 border-t border-border px-5 py-3 flex gap-2">
-                      <button onClick={handleSaveRole} className="flex-1 text-[11px] font-pixel px-3 py-2 bg-foreground text-background rounded-lg hover:opacity-90">
+                      <button onClick={handleSaveRole} className="flex-1 text-[11px] px-3 py-2 bg-foreground text-background rounded-lg hover:opacity-90">
                         {roleStatus === "Live" ? "Push to live roles" : roleStatus === "Paused" ? "Save as paused" : "Save to drafts"}
                       </button>
-                      <button onClick={() => setEditSidebar(null)} className="text-[11px] font-pixel px-3 py-2 border border-border rounded-lg text-muted-foreground hover:text-foreground">Cancel</button>
+                      <button onClick={() => setEditSidebar(null)} className="text-[11px] px-3 py-2 border border-border rounded-lg text-muted-foreground hover:text-foreground">Cancel</button>
                     </div>
                   </>
                 )
@@ -1032,11 +1032,11 @@ export function ChatPage() {
               </p>
               <div className="flex gap-2">
                 <button onClick={confirmAndClose}
-                  className="flex-1 text-[11px] font-pixel px-3 py-2 bg-foreground text-background rounded-lg hover:opacity-90">
+                  className="flex-1 text-[11px] px-3 py-2 bg-foreground text-background rounded-lg hover:opacity-90">
                   Confirm
                 </button>
                 <button onClick={cancelConfirm}
-                  className="flex-1 text-[11px] font-pixel px-3 py-2 border border-border rounded-lg text-muted-foreground hover:text-foreground">
+                  className="flex-1 text-[11px] px-3 py-2 border border-border rounded-lg text-muted-foreground hover:text-foreground">
                   Cancel
                 </button>
               </div>

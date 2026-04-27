@@ -96,7 +96,7 @@ export function SlashCommandPalette({ query, onSelect, onClose, visible }: Slash
       {Object.entries(grouped).map(([cat, commands]) => (
         <div key={cat}>
           <div className="px-3 py-1.5 bg-muted/40 border-b border-border">
-            <span className="text-[9px] font-pixel uppercase tracking-widest text-muted-foreground">
+            <span className="text-[9px] uppercase tracking-widest text-muted-foreground">
               {CATEGORY_LABELS[cat] || cat}
             </span>
           </div>
@@ -113,7 +113,7 @@ export function SlashCommandPalette({ query, onSelect, onClose, visible }: Slash
                   isActive ? "bg-muted/60" : "hover:bg-muted/30"
                 }`}
               >
-                <span className="w-5 h-5 flex items-center justify-center text-[10px] font-pixel text-muted-foreground shrink-0">
+                <span className="w-5 h-5 flex items-center justify-center text-[10px] text-muted-foreground shrink-0">
                   {cmd.icon}
                 </span>
                 <div className="flex-1 min-w-0">
@@ -121,7 +121,7 @@ export function SlashCommandPalette({ query, onSelect, onClose, visible }: Slash
                     <span className="text-xs font-medium">{cmd.command}</span>
                     <span className="text-[10px] text-muted-foreground">{cmd.label}</span>
                   </div>
-                  <p className="text-[10px] font-pixel text-muted-foreground truncate">{cmd.description}</p>
+                  <p className="text-[10px] text-muted-foreground truncate">{cmd.description}</p>
                 </div>
               </button>
             )

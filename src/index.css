@@ -22,11 +22,65 @@
   --border: 30 8% 86%;
   --input: 30 8% 86%;
   --ring: 30 12% 10%;
-  --radius: 0.25rem;
+  --radius: 0.625rem;
+
   --retro-green: #00cc55;
   --retro-yellow: #f5c518;
   --retro-red: #ff4444;
   --retro-blue: #4466ff;
+
+  --status-success: 90 40% 90%;
+  --status-success-fg: 100 60% 25%;
+  --status-success-dot: 90 55% 37%;
+  --status-warning: 40 80% 92%;
+  --status-warning-fg: 35 80% 30%;
+  --status-warning-dot: 35 70% 40%;
+  --status-danger: 0 70% 95%;
+  --status-danger-fg: 0 55% 40%;
+  --status-danger-dot: 0 70% 55%;
+  --status-info-fg: 165 65% 25%;
+  --accent-blue: 230 100% 64%;
+  --link: 220 80% 50%;
+}
+
+.dark {
+  --background: 224 20% 6%;
+  --foreground: 210 20% 96%;
+  --card: 224 18% 8%;
+  --card-foreground: 210 20% 96%;
+  --popover: 224 18% 8%;
+  --popover-foreground: 210 20% 96%;
+  --primary: 210 20% 96%;
+  --primary-foreground: 224 20% 6%;
+  --secondary: 220 14% 14%;
+  --secondary-foreground: 210 20% 96%;
+  --muted: 220 14% 14%;
+  --muted-foreground: 220 10% 56%;
+  --accent: 220 14% 14%;
+  --accent-foreground: 210 20% 96%;
+  --destructive: 0 72% 51%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 220 12% 18%;
+  --input: 220 12% 18%;
+  --ring: 210 20% 96%;
+
+  --retro-green: #33ff77;
+  --retro-yellow: #ffd84d;
+  --retro-red: #ff6b6b;
+  --retro-blue: #6688ff;
+
+  --status-success: 120 30% 12%;
+  --status-success-fg: 120 50% 65%;
+  --status-success-dot: 120 50% 50%;
+  --status-warning: 35 40% 12%;
+  --status-warning-fg: 40 70% 65%;
+  --status-warning-dot: 35 60% 50%;
+  --status-danger: 0 40% 12%;
+  --status-danger-fg: 0 60% 65%;
+  --status-danger-dot: 0 60% 55%;
+  --status-info-fg: 165 50% 60%;
+  --accent-blue: 230 100% 72%;
+  --link: 220 80% 70%;
 }
 
 * { border-color: hsl(var(--border)); }
@@ -89,3 +143,94 @@ body {
 }
 .retro-input:focus { outline: none; border-color: var(--retro-green); }
 .retro-input::placeholder { color: #556; }
+
+/* ── Theme transition: 60° directional wipe ────────────────── */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.45s;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Mask wipe: left → right */
+
+::view-transition-new(root) {
+  animation-name: theme-mask-lr;
+  mix-blend-mode: normal;
+}
+
+::view-transition-old(root) {
+  animation: none;
+}
+
+@keyframes theme-mask-lr {
+  from { clip-path: inset(0 100% 0 0); }
+  to   { clip-path: inset(0 0 0 0); }
+}
+
+/* ── Memory modal pop ──────────────────────────────────────── */
+
+@keyframes modal-backdrop-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes modal-backdrop-out {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+@keyframes modal-pop-in {
+  0%   { opacity: 0; transform: scale(0.97) translateY(6px); filter: blur(2px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); filter: blur(0px); }
+}
+@keyframes modal-pop-out {
+  0%   { opacity: 1; transform: scale(1) translateY(0); filter: blur(0px); }
+  100% { opacity: 0; transform: scale(0.98) translateY(4px); filter: blur(2px); }
+}
+
+.modal-backdrop-enter { animation: modal-backdrop-in 0.25s ease-out forwards; }
+.modal-backdrop-exit  { animation: modal-backdrop-out 0.18s ease-in forwards; }
+.modal-pop-enter      { animation: modal-pop-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.modal-pop-exit       { animation: modal-pop-out 0.18s ease-in forwards; }
+
+/* ── Add memory input overlay ──────────────────────────────── */
+
+@keyframes memory-input-backdrop-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes memory-input-backdrop-out {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+@keyframes memory-input-in {
+  0%   { opacity: 0; transform: translateY(8px) scale(0.98); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes memory-input-out {
+  0%   { opacity: 1; transform: translateY(0) scale(1); }
+  100% { opacity: 0; transform: translateY(6px) scale(0.98); }
+}
+
+.memory-input-backdrop-enter { animation: memory-input-backdrop-in 0.2s ease-out forwards; }
+.memory-input-backdrop-exit  { animation: memory-input-backdrop-out 0.15s ease-in forwards; }
+.memory-input-enter          { animation: memory-input-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.memory-input-exit           { animation: memory-input-out 0.15s ease-in forwards; }
+
+/* ── Link pill shimmer ─────────────────────────────────────── */
+
+@keyframes shimmer-sweep {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.link-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+.link-shimmer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.25) 50%, transparent 100%);
+  animation: shimmer-sweep 1.5s ease-in-out infinite;
+}

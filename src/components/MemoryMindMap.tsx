@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from "react"
+import { cn } from "@/lib/utils"
 import {
   forceSimulation,
   forceLink,
@@ -79,9 +80,10 @@ interface MemoryMindMapProps {
   edges: MemoryEdge[]
   onNodeClick?: (memory: MemoryNode) => void
   selectedId?: string | null
+  className?: string
 }
 
-export function MemoryMindMap({ memories, edges, onNodeClick, selectedId }: MemoryMindMapProps) {
+export function MemoryMindMap({ memories, edges, onNodeClick, selectedId, className }: MemoryMindMapProps) {
   const svgRef = useRef<SVGSVGElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const [nodes, setNodes] = useState<SimNode[]>([])
@@ -184,23 +186,23 @@ export function MemoryMindMap({ memories, edges, onNodeClick, selectedId }: Memo
   }, [])
 
   return (
-    <div ref={containerRef} className="w-full h-full relative bg-[#f8f9fc] rounded-lg border border-border overflow-hidden">
+    <div ref={containerRef} className={cn("w-full h-full relative bg-muted/30 rounded-lg border border-border overflow-hidden", className)}>
       {/* Legend */}
       <div className="absolute top-3 left-3 z-10 flex flex-col gap-1">
-        <p className="text-[8px] font-pixel uppercase tracking-widest text-muted-foreground mb-0.5">Sources</p>
+        <p className="text-[8px] uppercase tracking-widest text-muted-foreground mb-0.5">Sources</p>
         {Object.entries(SOURCE_COLORS).map(([key, color]) => (
           <div key={key} className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full" style={{ background: color }} />
-            <span className="text-[9px] font-pixel text-muted-foreground">{SOURCE_LABELS[key as MemorySource]}</span>
+            <span className="text-[9px] text-muted-foreground">{SOURCE_LABELS[key as MemorySource]}</span>
           </div>
         ))}
       </div>
 
       {/* Category labels */}
       <div className="absolute top-3 right-3 z-10 flex flex-col gap-1 items-end">
-        <p className="text-[8px] font-pixel uppercase tracking-widest text-muted-foreground mb-0.5">Categories</p>
+        <p className="text-[8px] uppercase tracking-widest text-muted-foreground mb-0.5">Categories</p>
         {Object.entries(CATEGORY_LABELS).map(([key, label]) => (
-          <span key={key} className="text-[9px] font-pixel text-muted-foreground">{label}</span>
+          <span key={key} className="text-[9px] text-muted-foreground">{label}</span>
         ))}
       </div>
 
@@ -225,7 +227,7 @@ export function MemoryMindMap({ memories, edges, onNodeClick, selectedId }: Memo
               x={g.x / g.count}
               y={g.y / g.count - 35}
               textAnchor="middle"
-              className="font-pixel fill-muted-foreground pointer-events-none select-none"
+              className="fill-muted-foreground pointer-events-none select-none"
               fontSize={8}
               opacity={0.5}
             >
@@ -288,7 +290,7 @@ export function MemoryMindMap({ memories, edges, onNodeClick, selectedId }: Memo
               <text
                 y={r + 14}
                 textAnchor="middle"
-                className="font-pixel fill-foreground"
+                className="fill-foreground"
                 fontSize={9}
                 opacity={isHovered || isSelected ? 1 : 0.6}
               >
@@ -305,7 +307,7 @@ export function MemoryMindMap({ memories, edges, onNodeClick, selectedId }: Memo
                 >
                   <div className="bg-foreground text-background text-[10px] px-2.5 py-2 rounded-lg shadow-lg leading-relaxed">
                     <p className="font-medium mb-0.5">{node.label}</p>
-                    <p className="opacity-70 text-[9px] font-pixel">{CATEGORY_LABELS[node.category]} · {SOURCE_LABELS[node.source]} · {node.createdAt}</p>
+                    <p className="opacity-70 text-[9px]">{CATEGORY_LABELS[node.category]} · {SOURCE_LABELS[node.source]} · {node.createdAt}</p>
                   </div>
                 </foreignObject>
               )}

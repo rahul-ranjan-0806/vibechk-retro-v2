@@ -10,16 +10,16 @@ import {
 // ─── Semantic button styling ──────────────────────────────────
 
 const CTA_BASE =
-  "text-[11px] font-pixel px-3 py-1.5 transition-colors inline-flex items-center gap-1.5 whitespace-nowrap"
+  "text-[11px] px-3 py-1.5 transition-colors inline-flex items-center gap-1.5 whitespace-nowrap"
 
 const CTA_VARIANTS: Record<CtaSemantic, string> = {
   primary: "bg-foreground text-background hover:opacity-90",
   neutral:
     "border border-border text-muted-foreground hover:text-foreground hover:border-foreground/40",
-  success: "bg-[#3B6D11] text-white hover:opacity-90",
-  destructive: "bg-[#A32D2D] text-white hover:opacity-90",
-  warning: "bg-[#854F0B] text-white hover:opacity-90",
-  info: "bg-[#4466ff] text-white hover:opacity-90",
+  success: "bg-status-success-dot text-white hover:opacity-90",
+  destructive: "bg-status-danger-dot text-white hover:opacity-90",
+  warning: "bg-status-warning-dot text-white hover:opacity-90",
+  info: "bg-accent-blue text-white hover:opacity-90",
 }
 
 const DONE_STYLE = "bg-muted text-muted-foreground cursor-default"
@@ -87,14 +87,14 @@ function TogglePart({ label, description, defaultOn = false }: { label: string; 
   return (
     <div className="flex items-center justify-between gap-4 px-3 py-2.5 border border-border bg-background">
       <div className="flex-1 min-w-0">
-        <p className="text-[11px] font-pixel font-medium">{label}</p>
-        {description && <p className="text-[10px] font-pixel text-muted-foreground mt-0.5 leading-relaxed">{description}</p>}
+        <p className="text-[11px] font-medium">{label}</p>
+        {description && <p className="text-[10px] text-muted-foreground mt-0.5 leading-relaxed">{description}</p>}
       </div>
       <button
         onClick={() => setOn(v => !v)}
         role="switch"
         aria-checked={on}
-        className={`relative shrink-0 w-9 h-4 border border-border transition-colors ${on ? "bg-[#4466ff]" : "bg-muted"}`}
+        className={`relative shrink-0 w-9 h-4 border border-border transition-colors ${on ? "bg-accent-blue" : "bg-muted"}`}
       >
         <span
           className={`absolute top-0 bottom-0 w-[14px] transition-all ${
@@ -110,9 +110,9 @@ function TogglePart({ label, description, defaultOn = false }: { label: string; 
 
 function fileTypeTint(t: string) {
   const l = t.toLowerCase()
-  if (l.includes("pdf")) return "bg-[#FCEBEB] text-[#A32D2D]"
-  if (l.includes("csv") || l.includes("xls")) return "bg-[#EAF3DE] text-[#3B6D11]"
-  if (l.includes("md") || l.includes("markdown")) return "bg-[#FAEEDA] text-[#854F0B]"
+  if (l.includes("pdf")) return "bg-status-danger text-status-danger-foreground"
+  if (l.includes("csv") || l.includes("xls")) return "bg-status-success text-status-success-foreground"
+  if (l.includes("md") || l.includes("markdown")) return "bg-status-warning text-status-warning-foreground"
   return "bg-muted text-muted-foreground"
 }
 
@@ -120,13 +120,13 @@ function DocumentPart({ title, filetype, size, note }: { title: string; filetype
   const [downloaded, setDownloaded] = useState(false)
   return (
     <div className="flex items-start gap-3 px-3 py-2.5 border border-border bg-background">
-      <div className={`w-10 h-12 flex items-center justify-center text-[9px] font-pixel font-bold shrink-0 ${fileTypeTint(filetype)}`}>
+      <div className={`w-10 h-12 flex items-center justify-center text-[9px] font-bold shrink-0 ${fileTypeTint(filetype)}`}>
         {filetype.slice(0, 4).toUpperCase()}
       </div>
       <div className="flex-1 min-w-0">
-        <p className="text-[11px] font-pixel font-medium truncate">{title}</p>
-        <p className="text-[10px] font-pixel text-muted-foreground">{filetype} · {size}</p>
-        {note && <p className="text-[10px] font-pixel text-muted-foreground mt-1 leading-relaxed">{note}</p>}
+        <p className="text-[11px] font-medium truncate">{title}</p>
+        <p className="text-[10px] text-muted-foreground">{filetype} · {size}</p>
+        {note && <p className="text-[10px] text-muted-foreground mt-1 leading-relaxed">{note}</p>}
       </div>
       <button
         disabled={downloaded}
@@ -151,21 +151,21 @@ function ReportPart({
   rows: { label: string; value: string; emphasis?: "positive" | "negative" | "neutral" }[]
 }) {
   const emphasisColor = (e?: "positive" | "negative" | "neutral") => {
-    if (e === "positive") return "text-[#3B6D11]"
-    if (e === "negative") return "text-[#A32D2D]"
+    if (e === "positive") return "text-status-success-foreground"
+    if (e === "negative") return "text-status-danger-foreground"
     return "text-foreground"
   }
   return (
     <div className="border border-border bg-background">
       <div className="px-3 py-2 border-b border-border bg-muted/30">
-        <p className="text-[10px] font-pixel uppercase tracking-[0.12em] text-muted-foreground">{title}</p>
-        {subtitle && <p className="text-[10px] font-pixel text-muted-foreground mt-0.5">{subtitle}</p>}
+        <p className="text-[10px] uppercase tracking-[0.12em] text-muted-foreground">{title}</p>
+        {subtitle && <p className="text-[10px] text-muted-foreground mt-0.5">{subtitle}</p>}
       </div>
       <div>
         {rows.map((r, i) => (
           <div key={i} className={`flex items-center justify-between px-3 py-2 ${i > 0 ? "border-t border-border" : ""}`}>
-            <span className="text-[11px] font-pixel text-muted-foreground">{r.label}</span>
-            <span className={`text-[11px] font-pixel tabular-nums ${emphasisColor(r.emphasis)}`}>{r.value}</span>
+            <span className="text-[11px] text-muted-foreground">{r.label}</span>
+            <span className={`text-[11px] tabular-nums ${emphasisColor(r.emphasis)}`}>{r.value}</span>
           </div>
         ))}
       </div>
@@ -179,9 +179,9 @@ function CandidateRefPart({ candidateId, note }: { candidateId: string; note?: s
   const c = useMemo(() => CANDIDATES.find(x => x.id === candidateId), [candidateId])
   if (!c) return null
   const scoreBg =
-    c.altRec === "shortlist" ? "bg-[#EAF3DE] text-[#3B6D11]" :
-    c.altRec === "reject" ? "bg-[#FCEBEB] text-[#A32D2D]" :
-    "bg-[#FAEEDA] text-[#854F0B]"
+    c.altRec === "shortlist" ? "bg-status-success text-status-success-foreground" :
+    c.altRec === "reject" ? "bg-status-danger text-status-danger-foreground" :
+    "bg-status-warning text-status-warning-foreground"
   return (
     <div className="flex items-start gap-3 px-3 py-2.5 border border-border bg-background">
       <div className={`w-9 h-9 flex items-center justify-center text-sm font-medium shrink-0 ${scoreBg}`}>
@@ -189,11 +189,11 @@ function CandidateRefPart({ candidateId, note }: { candidateId: string; note?: s
       </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 flex-wrap">
-          <p className="text-[11px] font-pixel font-medium">{c.name}</p>
-          <span className="text-[10px] font-pixel text-muted-foreground">{roleTitle(c.roleId)}</span>
-          <span className="text-[10px] font-pixel text-muted-foreground">· {c.completedAt}</span>
+          <p className="text-[11px] font-medium">{c.name}</p>
+          <span className="text-[10px] text-muted-foreground">{roleTitle(c.roleId)}</span>
+          <span className="text-[10px] text-muted-foreground">· {c.completedAt}</span>
         </div>
-        {note && <p className="text-[10px] font-pixel text-muted-foreground mt-1">{note}</p>}
+        {note && <p className="text-[10px] text-muted-foreground mt-1">{note}</p>}
       </div>
     </div>
   )
@@ -203,9 +203,9 @@ function CandidateRefPart({ candidateId, note }: { candidateId: string; note?: s
 
 function EvidencePart({ quote, source, date }: { quote: string; source: string; date?: string }) {
   return (
-    <div className="border-l-2 border-[#4466ff] bg-[#4466ff]/[0.04] pl-3 pr-3 py-2">
+    <div className="border-l-2 border-accent-blue bg-accent-blue/[0.04] pl-3 pr-3 py-2">
       <p className="text-[11px] leading-relaxed italic text-foreground">"{quote}"</p>
-      <p className="text-[10px] font-pixel text-muted-foreground mt-1.5">
+      <p className="text-[10px] text-muted-foreground mt-1.5">
         — {source}{date && <span> · {date}</span>}
       </p>
     </div>
@@ -235,7 +235,7 @@ function ChecklistPart({
     <div className="border border-border bg-background">
       {title && (
         <div className="px-3 py-2 border-b border-border bg-muted/30">
-          <p className="text-[10px] font-pixel uppercase tracking-[0.12em] text-muted-foreground">{title}</p>
+          <p className="text-[10px] uppercase tracking-[0.12em] text-muted-foreground">{title}</p>
         </div>
       )}
       <div>
@@ -248,13 +248,13 @@ function ChecklistPart({
               disabled={applied}
               className={`w-full flex items-start gap-3 px-3 py-2 text-left transition-colors ${i > 0 ? "border-t border-border" : ""} ${applied ? "cursor-default" : "hover:bg-muted/30"}`}
             >
-              <span className={`text-[11px] font-pixel mt-0.5 shrink-0 w-4 h-4 border border-foreground flex items-center justify-center ${on ? "bg-foreground text-background" : "bg-background"}`}>
+              <span className={`text-[11px] mt-0.5 shrink-0 w-4 h-4 border border-foreground flex items-center justify-center ${on ? "bg-foreground text-background" : "bg-background"}`}>
                 {on ? "✓" : ""}
               </span>
               <span className="flex-1 min-w-0">
-                <p className={`text-[11px] font-pixel ${on ? "text-foreground" : "text-muted-foreground"}`}>{item.label}</p>
+                <p className={`text-[11px] ${on ? "text-foreground" : "text-muted-foreground"}`}>{item.label}</p>
                 {item.description && (
-                  <p className="text-[10px] font-pixel text-muted-foreground mt-0.5 leading-relaxed">{item.description}</p>
+                  <p className="text-[10px] text-muted-foreground mt-0.5 leading-relaxed">{item.description}</p>
                 )}
               </span>
             </button>
@@ -262,7 +262,7 @@ function ChecklistPart({
         })}
       </div>
       <div className="px-3 py-2 border-t border-border flex items-center justify-between gap-2 bg-muted/20">
-        <span className="text-[10px] font-pixel text-muted-foreground">
+        <span className="text-[10px] text-muted-foreground">
           {applied
             ? `Applied ${selectedCount} · undo within 5s`
             : `${selectedCount} of ${items.length} selected`}
