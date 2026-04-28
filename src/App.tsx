@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { Agentation } from "agentation"
+import { GitGraphOverlay } from "./devtools/GitGraphOverlay"
 import { RolesPage } from "./pages/RolesPage"
 import { AltsPage } from "./pages/AltsPage"
 import { HomePage } from "./pages/HomePage"
@@ -124,12 +125,15 @@ export default function App() {
       </main>
     </div>
     {import.meta.env.DEV && (
-      <Agentation
-        endpoint="http://localhost:4747"
-        onSessionCreated={(sessionId) => {
-          console.log("Session started:", sessionId);
-        }}
-      />
+      <>
+        <GitGraphOverlay />
+        <Agentation
+          endpoint="http://localhost:4747"
+          onSessionCreated={(sessionId) => {
+            console.log("Session started:", sessionId);
+          }}
+        />
+      </>
     )}
     </>
   )
