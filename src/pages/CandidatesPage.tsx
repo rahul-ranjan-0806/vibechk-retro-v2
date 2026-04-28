@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import {
   CANDIDATES as SEED_CANDIDATES,
   ROLES,
@@ -50,8 +50,17 @@ function AltRecBadge({ rec, confidence }: { rec: CandidateMini["altRec"]; confid
   return <span className={`${base} bg-status-warning text-status-warning-foreground`}>{confidence === "low" ? "Alt: Your call" : "Alt: Review"}</span>
 }
 
-export function CandidatesPage() {
+export function CandidatesPage({ onEntityChange }: { onEntityChange?: (e: { type: "role"|"candidate"|"alt"; name: string; meta?: Record<string,string> } | undefined) => void }) {
   const [openId, setOpenId] = useState<string | null>(null)
+
+  const selected = SEED_CANDIDATES.find(c => c.id === openId) ?? null
+  useEffect(() => {
+    if (selected) {
+      onEntityChange?.({ type: "candidate", name: selected.name, meta: { id: selected.id, score: String(selected.score), altRec: selected.altRec, roleId: selected.roleId } })
+    } else {
+      onEntityChange?.(undefined)
+    }
+  }, [openId])
 
   const [search, setSearch] = useState("")
   const [roleFilter, setRoleFilter] = useState<string>("all")
@@ -72,8 +81,6 @@ export function CandidatesPage() {
       return true
     })
   }, [search, roleFilter, statusFilter, recFilter, minScore, timeFilter])
-
-  const selected = SEED_CANDIDATES.find(c => c.id === openId) ?? null
 
   const resetFilters = () => {
     setSearch("")

@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Agentation } from "agentation"
 import { GitGraphOverlay } from "./devtools/GitGraphOverlay"
 import { RolesPage } from "./pages/RolesPage"
@@ -8,6 +8,9 @@ import { OrgPage } from "./pages/OrgPage"
 import { CandidatesPage } from "./pages/CandidatesPage"
 import { SettingsPage } from "./pages/SettingsPage"
 import { ChatPage } from "./pages/ChatPage"
+import { AltChatOverlay, type OverlayEntity } from "./components/AltChatOverlay"
+import { PixelSprite } from "./components/PixelSprite"
+import { PROACTIVE_NUDGES } from "./lib/mockData"
 
 type Page = "home" | "roles" | "candidates" | "alts" | "chat" | "org" | "settings"
 
@@ -25,8 +28,54 @@ function NavTooltip({ label, description, children }: { label: string; descripti
 }
 
 export default function App() {
-  const [page, setPage] = useState<Page>("chat")
+  const [page, setPage] = useState<Page>("home")
   const [navCollapsed, setNavCollapsed] = useState(false)
+
+  // Alt overlay state
+  const [overlayOpen, setOverlayOpen] = useState(false)
+  const [entityContext, setEntityContext] = useState<OverlayEntity | undefined>(undefined)
+  const [nudgeBadge, setNudgeBadge] = useState(false)
+  const [nudgeMessage, setNudgeMessage] = useState<string | null>(null)
+
+  const openOverlay = useCallback(() => {
+    setOverlayOpen(true)
+    setNudgeBadge(false)
+  }, [])
+
+  // Cmd+K — global shortcut (skip on Chat page, it has its own)
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        if (page === "chat") return
+        e.preventDefault()
+        if (overlayOpen) { setOverlayOpen(false) } else { openOverlay() }
+      }
+    }
+    window.addEventListener("keydown", handler)
+    return () => window.removeEventListener("keydown", handler)
+  }, [page, overlayOpen, openOverlay])
+
+  // Reset entity context when page changes
+  useEffect(() => { setEntityContext(undefined) }, [page])
+
+  // Proactive nudge — check for matching nudge after page/entity change
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const match = PROACTIVE_NUDGES.find(n => {
+        if (n.page !== page) return false
+        if (n.entityId && entityContext?.meta?.id !== n.entityId) return false
+        return true
+      })
+      if (match) {
+        setNudgeBadge(true)
+        setNudgeMessage(match.message)
+      } else {
+        setNudgeBadge(false)
+        setNudgeMessage(null)
+      }
+    }, 2000)
+    return () => clearTimeout(timer)
+  }, [page, entityContext])
 
   return (
     <>
@@ -115,23 +164,44 @@ export default function App() {
       </aside>
 
       <main className="flex-1 overflow-hidden">
-        {page === "home" && <HomePage onNavigate={setPage} />}
-        {page === "roles" && <RolesPage />}
-        {page === "candidates" && <CandidatesPage />}
-        {page === "alts" && <AltsPage />}
+        {page === "home" && <HomePage onNavigate={setPage} onOpenOverlay={openOverlay} />}
+        {page === "roles" && <RolesPage onEntityChange={setEntityContext} />}
+        {page === "candidates" && <CandidatesPage onEntityChange={setEntityContext} />}
+        {page === "alts" && <AltsPage onEntityChange={setEntityContext} />}
         {page === "chat" && <ChatPage />}
         {page === "org" && <OrgPage />}
         {page === "settings" && <SettingsPage />}
       </main>
     </div>
+
+    {/* Alt overlay trigger — hidden on Chat page */}
+    {page !== "chat" && !overlayOpen && (
+      <button
+        onClick={openOverlay}
+        className="fixed bottom-6 right-6 z-30 w-11 h-11 rounded-full bg-foreground text-background flex items-center justify-center shadow-lg hover:opacity-90 transition-opacity"
+        title="Ask Sabu (⌘K)"
+      >
+        <PixelSprite size={20} />
+        {nudgeBadge && (
+          <span className="absolute -top-0.5 -right-0.5 w-3 h-3 rounded-full bg-accent-blue animate-pulse" />
+        )}
+      </button>
+    )}
+
+    {/* Global Alt chat overlay */}
+    <AltChatOverlay
+      open={overlayOpen}
+      onClose={() => setOverlayOpen(false)}
+      context={{ page, entity: entityContext }}
+      nudgeMessage={nudgeBadge ? nudgeMessage : null}
+    />
+
     {import.meta.env.DEV && (
       <>
         <GitGraphOverlay />
         <Agentation
           endpoint="http://localhost:4747"
-          onSessionCreated={(sessionId) => {
-            console.log("Session started:", sessionId);
-          }}
+          onSessionCreated={() => {}}
         />
       </>
     )}

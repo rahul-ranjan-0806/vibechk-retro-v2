@@ -380,6 +380,22 @@ export const ALT_CHAT_RESPONSES: AltResponseRule[] = [
   },
 ]
 
+// ─── Proactive nudges ─────────────────────────────────────────
+
+export interface ProactiveNudge {
+  page: string
+  entityId?: string
+  message: string
+  priority: "low" | "medium" | "high"
+}
+
+export const PROACTIVE_NUDGES: ProactiveNudge[] = [
+  { page: "home", message: "Marcus has been waiting 2 days. Want to decide?", priority: "high" },
+  { page: "roles", entityId: "spd", message: "3 candidates this week scored below 5 on systems thinking. Worth reviewing the eval criteria?", priority: "medium" },
+  { page: "candidates", entityId: "c6", message: "3 similar profiles to Marcus since his interview. Worth comparing.", priority: "low" },
+  { page: "alts", entityId: "sashank", message: "Your override rate spiked this week. Want to talk about calibration?", priority: "medium" },
+]
+
 export function matchAltResponse(input: string): AltMessage {
   const trimmed = input.trim()
   for (const r of ALT_CHAT_RESPONSES) {
