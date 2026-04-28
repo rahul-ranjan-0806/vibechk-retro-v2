@@ -12,6 +12,7 @@ import {
   CATEGORY_LABELS,
   useSourceColors,
 } from "@/components/MemoryMindMap"
+import { MemoryMindMap as MemoryMindMap3D } from "@/components/MemoryMindMap3D"
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet"
@@ -387,6 +388,8 @@ function MemoryModal({ open, onClose, initialView, initialMemoryId, loadingMemor
 }) {
   const sourceColors = useSourceColors()
   const [view, setView] = useState<"map" | "list">(initialView)
+  const [mapMode, setMapMode] = useState<"2d" | "3d">("2d")
+  const [showHUD, setShowHUD] = useState(true)
   const [selectedMemory, setSelectedMemory] = useState<MemoryNode | null>(null)
   const [expandedId, setExpandedId] = useState<string | null>(initialMemoryId ?? null)
   const [addingMemory, setAddingMemory] = useState(false)
@@ -513,6 +516,18 @@ function MemoryModal({ open, onClose, initialView, initialMemoryId, loadingMemor
       }
     }
   }, [open, initialView, initialMemoryId, autoAdd])
+
+  // H key toggles HUD (2D/3D switcher + perf overlay in 3D mode)
+  useEffect(() => {
+    if (!open) return
+    const handler = (e: KeyboardEvent) => {
+      if (e.key.toLowerCase() === "h" && !e.metaKey && !e.ctrlKey && !e.altKey) {
+        setShowHUD(p => !p)
+      }
+    }
+    window.addEventListener("keydown", handler)
+    return () => window.removeEventListener("keydown", handler)
+  }, [open])
 
   const handleMapNodeClick = useCallback((memory: MemoryNode) => {
     setSelectedMemory(memory)
@@ -661,13 +676,36 @@ function MemoryModal({ open, onClose, initialView, initialMemoryId, loadingMemor
           <div className="flex-1 overflow-hidden relative">
             {/* Map view — always mounted, toggled via hidden */}
             <div className={`h-full flex ${view !== "map" ? "hidden" : ""}`}>
-              <div className={`flex-1 min-w-0 p-4 transition-all`}>
-                <MemoryMindMap
-                  memories={MOCK_MEMORIES}
-                  edges={MOCK_EDGES}
-                  onNodeClick={handleMapNodeClick}
-                  selectedId={selectedMemory?.id}
-                />
+              <div className={`flex-1 min-w-0 p-4 transition-all relative`}>
+                {/* 2D/3D toggle — bottom-right, toggled with H */}
+                {showHUD && (
+                  <div className="absolute bottom-5 right-5 z-10 flex items-center gap-1 bg-muted/80 backdrop-blur-sm rounded-md p-0.5 border border-border">
+                    <button
+                      onClick={() => setMapMode("2d")}
+                      className={`text-[10px] font-medium px-2 py-1 rounded transition-colors ${mapMode === "2d" ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground"}`}
+                    >2D</button>
+                    <button
+                      onClick={() => setMapMode("3d")}
+                      className={`text-[10px] font-medium px-2 py-1 rounded transition-colors ${mapMode === "3d" ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground"}`}
+                    >3D</button>
+                  </div>
+                )}
+                {mapMode === "2d" ? (
+                  <MemoryMindMap
+                    memories={MOCK_MEMORIES}
+                    edges={MOCK_EDGES}
+                    onNodeClick={handleMapNodeClick}
+                    selectedId={selectedMemory?.id}
+                  />
+                ) : (
+                  <MemoryMindMap3D
+                    memories={MOCK_MEMORIES}
+                    edges={MOCK_EDGES}
+                    onNodeClick={handleMapNodeClick}
+                    selectedId={selectedMemory?.id}
+                    className="h-full w-full"
+                  />
+                )}
               </div>
 
               {/* Side panel within modal */}
