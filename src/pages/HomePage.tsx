@@ -1,12 +1,9 @@
-import { useEffect, useRef, useState } from "react"
+import { useState } from "react"
 import { PixelSprite } from "@/components/PixelSprite"
-import { AltMessagePart } from "@/components/AltMessageParts"
 import {
   CANDIDATES as SEED_CANDIDATES,
   ROLES,
-  matchAltResponse,
   roleTitle,
-  type AltMsgPart,
   type CandidateMini,
 } from "@/lib/mockData"
 
@@ -56,164 +53,11 @@ function scoreColor(score: number) {
   return { bg: "bg-status-danger", fg: "text-status-danger-foreground" }
 }
 
-// ── Chat drawer (unchanged) ─────────────────────────────────
-
-type ChatMsg =
-  | { from: "user"; text: string }
-  | { from: "alt"; text: string; parts?: AltMsgPart[] }
-
-function AltChatDrawer({ open, instant, onClose }: { open: boolean; instant: boolean; onClose: () => void }) {
-  const [input, setInput] = useState("")
-  const [msgs, setMsgs] = useState<ChatMsg[]>([])
-  const bodyRef = useRef<HTMLDivElement>(null)
-  const inputRef = useRef<HTMLInputElement>(null)
-
-  useEffect(() => {
-    if (bodyRef.current) bodyRef.current.scrollTop = bodyRef.current.scrollHeight
-  }, [msgs])
-
-  useEffect(() => {
-    if (open) {
-      const t = setTimeout(() => inputRef.current?.focus(), 200)
-      return () => clearTimeout(t)
-    }
-  }, [open])
-
-  useEffect(() => {
-    if (!open) return
-    const handler = (e: KeyboardEvent) => { if (e.key === "Escape") onClose() }
-    window.addEventListener("keydown", handler)
-    return () => window.removeEventListener("keydown", handler)
-  }, [open, onClose])
-
-  const send = (override?: string) => {
-    const msg = (override ?? input).trim()
-    if (!msg) return
-    setMsgs(p => [...p, { from: "user", text: msg }])
-    setInput("")
-    setTimeout(() => {
-      const reply = matchAltResponse(msg)
-      setMsgs(p => [...p, { from: "alt", text: reply.text, parts: reply.parts }])
-    }, 600)
-  }
-
-  const prompts = [
-    "What should I prioritize today?",
-    "Why is Marcus flagged?",
-    "Should I shortlist Priya?",
-    "Am I being too strict on systems thinking?",
-    "Draft a rejection for Tom",
-    "Export this week's decisions",
-  ]
-
-  return (
-    <>
-      <div
-        className={`fixed inset-0 z-40 bg-foreground/20 ${instant ? "" : "transition-opacity duration-200"} ${open ? "opacity-100" : "opacity-0 pointer-events-none"}`}
-        onClick={onClose}
-      />
-
-      <aside
-        className={`fixed top-0 right-0 bottom-0 z-50 bg-background border-l border-border shadow-xl flex flex-col rounded-l-xl ${instant ? "" : "transition-transform duration-200 ease-out"} ${open ? "translate-x-0" : "translate-x-full"}`}
-        style={{ width: "50vw" }}
-        aria-hidden={!open}
-      >
-        <div className="flex items-center justify-between px-4 py-3 border-b border-border shrink-0">
-          <div className="flex items-center gap-2.5">
-            <PixelSprite size={22} />
-            <div>
-              <p className="text-xs font-medium">Sashank's Alt</p>
-              <p className="text-[10px] text-muted-foreground">Thinking partner · trained on your decisions</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="text-[10px] text-muted-foreground hidden sm:inline">Esc to close</span>
-            <button onClick={onClose} className="text-muted-foreground hover:text-foreground text-base leading-none px-1" aria-label="Close chat">✕</button>
-          </div>
-        </div>
-
-        <div ref={bodyRef} className="flex-1 overflow-y-auto p-5 flex flex-col gap-3 min-h-0">
-          {msgs.length === 0 ? (
-            <div className="flex flex-col gap-3">
-              <div className="text-[11px] leading-relaxed rounded-lg bg-muted/60 border border-border px-3 py-2.5">
-                Morning, Sashank. I've read the queue and can reason across your past decisions, the active candidates, and the memories you've taught me. What's on your mind?
-              </div>
-              <p className="text-[10px] uppercase tracking-wider text-muted-foreground mt-2 mb-0.5">Try asking</p>
-              {prompts.map(p => (
-                <button key={p} onClick={() => send(p)}
-                  className="text-left text-[11px] rounded-md px-3 py-2 border border-border bg-muted/30 hover:bg-muted/60 transition-colors">
-                  {p}
-                </button>
-              ))}
-            </div>
-          ) : (
-            msgs.map((m, i) => {
-              if (m.from === "user") {
-                return (
-                  <div key={i} className="text-[11px] leading-relaxed rounded-lg px-3 py-2.5 max-w-[92%] bg-foreground text-background self-end">
-                    {m.text}
-                  </div>
-                )
-              }
-              return (
-                <div key={i} className="flex flex-col gap-2 max-w-[92%] self-start w-full">
-                  <div className="text-[11px] leading-relaxed rounded-lg px-3 py-2.5 bg-muted/60 border border-border">
-                    {m.text}
-                  </div>
-                  {m.parts && m.parts.length > 0 && (
-                    <div className="flex flex-col gap-2 pl-1">
-                      {m.parts.map((part, pi) => (
-                        <AltMessagePart key={pi} part={part} />
-                      ))}
-                    </div>
-                  )}
-                </div>
-              )
-            })
-          )}
-        </div>
-
-        <div className="p-3 border-t border-border flex gap-2 shrink-0">
-          <input
-            ref={inputRef}
-            value={input}
-            onChange={e => setInput(e.target.value)}
-            onKeyDown={e => { if (e.key === "Enter") send() }}
-            placeholder="Ask your Alt anything..."
-            className="flex-1 text-[11px] rounded-md bg-muted/40 border border-border px-3 py-2 outline-none placeholder:text-muted-foreground focus:border-foreground/40"
-          />
-          <button onClick={() => send()} disabled={!input.trim()}
-            className="text-[11px] rounded-md px-3 py-2 bg-foreground text-background hover:opacity-90 disabled:opacity-40 transition-opacity">
-            Send
-          </button>
-        </div>
-      </aside>
-    </>
-  )
-}
-
 // ── Page ─────────────────────────────────────────────────────
 
-export function HomePage({ onNavigate }: { onNavigate: (p: Page) => void }) {
-  const [chatOpen, setChatOpen] = useState(false)
-  const [instantOpen, setInstantOpen] = useState(false)
+export function HomePage({ onNavigate, onOpenOverlay }: { onNavigate: (p: Page) => void; onOpenOverlay?: () => void }) {
   const [setupDismissed, setSetupDismissed] = useState(false)
   const [autoExpanded, setAutoExpanded] = useState(false)
-
-  const openChatSlide = () => { setInstantOpen(false); setChatOpen(true) }
-  const openChatInstant = () => { setInstantOpen(true); setChatOpen(o => !o) }
-  const closeChat = () => { setChatOpen(false); setInstantOpen(false) }
-
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
-        e.preventDefault()
-        openChatInstant()
-      }
-    }
-    window.addEventListener("keydown", handler)
-    return () => window.removeEventListener("keydown", handler)
-  }, [])
 
   // Derived data
   const pushed = SEED_CANDIDATES.filter(c => c.status === "shortlisted")
@@ -251,9 +95,9 @@ export function HomePage({ onNavigate }: { onNavigate: (p: Page) => void }) {
               <div className="flex items-center gap-2 mb-1">
                 <span className="text-[10px] uppercase tracking-wider text-accent-blue">Sashank's Alt</span>
                 <span className="text-[10px] text-muted-foreground">· since yesterday</span>
-                <button onClick={openChatSlide}
+                <button onClick={() => onOpenOverlay?.()}
                   className="ml-auto text-[11px] rounded-md px-3 py-1.5 bg-foreground text-background hover:opacity-90 transition-opacity flex items-center gap-1.5">
-                  <span>Chat with Alt</span>
+                  <span>Ask Sabu</span>
                   <span className="text-[9px] opacity-70">⌘K</span>
                 </button>
               </div>
@@ -292,9 +136,9 @@ export function HomePage({ onNavigate }: { onNavigate: (p: Page) => void }) {
                             <button className="text-[11px] rounded-md px-3 py-1.5 bg-status-danger text-status-danger-foreground hover:opacity-90 transition-opacity">
                               Reject
                             </button>
-                            <button onClick={openChatSlide}
+                            <button onClick={() => onOpenOverlay?.()}
                               className="text-[11px] rounded-md px-3 py-1.5 border border-border text-muted-foreground hover:text-foreground hover:border-foreground/40 transition-colors">
-                              Discuss with Alt
+                              Discuss with Sabu
                             </button>
                             <button onClick={() => onNavigate("candidates")}
                               className="text-[11px] rounded-md px-3 py-1.5 border border-border text-muted-foreground hover:text-foreground hover:border-foreground/40 transition-colors ml-auto">
@@ -432,7 +276,6 @@ export function HomePage({ onNavigate }: { onNavigate: (p: Page) => void }) {
         </div>
       </div>
 
-      <AltChatDrawer open={chatOpen} instant={instantOpen} onClose={closeChat} />
     </div>
   )
 }
