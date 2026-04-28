@@ -55,6 +55,28 @@ export const SOURCE_COLORS: Record<MemorySource, string> = {
   whatsapp: "#25D366",
 }
 
+export const SOURCE_COLORS_DARK: Record<MemorySource, string> = {
+  slack: "#BF5CC1",
+  linkedin: "#5DA3F0",
+  manual: "#6CD44A",
+  interview: "#E0A840",
+  document: "#F06060",
+  whatsapp: "#50E88C",
+}
+
+/** Returns the right color map for the current theme. */
+export function useSourceColors(): Record<MemorySource, string> {
+  const [isDark, setIsDark] = useState(() => document.documentElement.classList.contains("dark"))
+  useEffect(() => {
+    const obs = new MutationObserver(() => {
+      setIsDark(document.documentElement.classList.contains("dark"))
+    })
+    obs.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] })
+    return () => obs.disconnect()
+  }, [])
+  return isDark ? SOURCE_COLORS_DARK : SOURCE_COLORS
+}
+
 export const SOURCE_LABELS: Record<MemorySource, string> = {
   slack: "Slack",
   linkedin: "LinkedIn",
@@ -84,6 +106,7 @@ interface MemoryMindMapProps {
 }
 
 export function MemoryMindMap({ memories, edges, onNodeClick, selectedId, className }: MemoryMindMapProps) {
+  const colors = useSourceColors()
   const svgRef = useRef<SVGSVGElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const [nodes, setNodes] = useState<SimNode[]>([])
@@ -190,7 +213,7 @@ export function MemoryMindMap({ memories, edges, onNodeClick, selectedId, classN
       {/* Legend */}
       <div className="absolute top-3 left-3 z-10 flex flex-col gap-1">
         <p className="text-[8px] uppercase tracking-widest text-muted-foreground mb-0.5">Sources</p>
-        {Object.entries(SOURCE_COLORS).map(([key, color]) => (
+        {Object.entries(colors).map(([key, color]) => (
           <div key={key} className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full" style={{ background: color }} />
             <span className="text-[9px] text-muted-foreground">{SOURCE_LABELS[key as MemorySource]}</span>
@@ -260,7 +283,7 @@ export function MemoryMindMap({ memories, edges, onNodeClick, selectedId, classN
           const r = getNodeRadius(node.weight)
           const isHovered = hoveredId === node.id
           const isSelected = selectedId === node.id
-          const color = SOURCE_COLORS[node.source]
+          const color = colors[node.source]
           return (
             <g
               key={node.id}
