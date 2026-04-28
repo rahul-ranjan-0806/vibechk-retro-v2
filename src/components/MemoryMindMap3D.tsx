@@ -609,12 +609,14 @@ interface MemoryMindMapProps {
   edges: MemoryEdge[]
   onNodeClick?: (memory: MemoryNode) => void
   selectedId?: string | null
+  className?: string
+  showHUD?: boolean
 }
 
-export function MemoryMindMap({ memories, edges: _edges, onNodeClick, selectedId }: MemoryMindMapProps) {
+export function MemoryMindMap({ memories, edges: _edges, onNodeClick, selectedId, className, showHUD = true }: MemoryMindMapProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const [focusedIndex, setFocusedIndex] = useState(-1)
-  const [showPerf, setShowPerf] = useState(true)
+  const showPerf = showHUD
   const [webglSupported, setWebglSupported] = useState(true)
   const [sizeConfig, setSizeConfig] = useState<SizeConfig>({
     baseSize: DEFAULT_BASE_SIZE,
@@ -658,8 +660,6 @@ export function MemoryMindMap({ memories, edges: _edges, onNodeClick, selectedId
       })
     } else if (e.key === "Escape") {
       setFocusedIndex(-1)
-    } else if (e.key.toLowerCase() === "h" && !e.metaKey && !e.ctrlKey && !e.altKey) {
-      setShowPerf(p => !p)
     }
   }, [nodePositions, onNodeClick])
 
@@ -687,25 +687,25 @@ export function MemoryMindMap({ memories, edges: _edges, onNodeClick, selectedId
   return (
     <div
       ref={containerRef}
-      className="w-full h-full relative bg-[#f8f9fc] rounded-lg border border-border overflow-hidden"
+      className={`w-full h-full relative bg-[#0f1117] rounded-lg border border-border overflow-hidden ${className ?? ""}`}
       tabIndex={0}
       onKeyDown={handleKeyDown}
       style={{ outline: "none" }}
     >
       {/* Legend */}
       <div className="absolute top-3 left-3 z-30 flex flex-col gap-1 pointer-events-none">
-        <p className="text-[8px] font-pixel uppercase tracking-widest text-muted-foreground mb-0.5">Sources</p>
+        <p className="text-[8px] font-pixel uppercase tracking-widest text-white/40 mb-0.5">Sources</p>
         {Object.entries(SOURCE_COLORS).map(([key, color]) => (
           <div key={key} className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full" style={{ background: color }} />
-            <span className="text-[9px] font-pixel text-muted-foreground">{SOURCE_LABELS[key as MemorySource]}</span>
+            <span className="text-[9px] font-pixel text-white/50">{SOURCE_LABELS[key as MemorySource]}</span>
           </div>
         ))}
       </div>
 
       <div className="absolute bottom-3 left-3 z-30 pointer-events-none">
-        <p className="text-[8px] font-pixel text-muted-foreground/60">
-          Drag to orbit · Scroll to zoom · Tab to focus · H to toggle stats
+        <p className="text-[8px] font-pixel text-white/30">
+          Drag to orbit · Scroll to zoom · Tab to focus · H to toggle HUD
         </p>
       </div>
 
