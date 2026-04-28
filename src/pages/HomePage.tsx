@@ -3,6 +3,7 @@ import { PixelSprite } from "@/components/PixelSprite"
 import { AltMessagePart } from "@/components/AltMessageParts"
 import {
   CANDIDATES as SEED_CANDIDATES,
+  ROLES,
   matchAltResponse,
   roleTitle,
   type AltMsgPart,
@@ -11,78 +12,36 @@ import {
 
 type Page = "home" | "roles" | "candidates" | "alts" | "org" | "settings"
 
+// ── Setup banner (dismissible) ──────────────────────────────
+
 interface SetupItem {
   id: string; title: string; description: string
   status: "done" | "pending" | "warning"; cta: string; ctaTarget: Page | null
 }
 
 const SETUP_ITEMS: SetupItem[] = [
-  { id: "alt", title: "Create your Alt", description: "Your Alt interviews candidates on your behalf. Train it with your voice and values.", status: "done", cta: "View Alt →", ctaTarget: "alts" },
-  { id: "role", title: "Set up a role", description: "Create a job posting and configure eval criteria for the role.", status: "done", cta: "View roles →", ctaTarget: "roles" },
-  { id: "ats", title: "Connect your ATS", description: "Sync shortlisted candidates to Dover automatically after interviews.", status: "done", cta: "Manage →", ctaTarget: "settings" },
-  { id: "threshold", title: "Set shortlist threshold", description: "Define the score above which your Alt auto-shortlists candidates.", status: "warning", cta: "Set threshold →", ctaTarget: "roles" },
-  { id: "slack", title: "Enable Slack notifications", description: "Get notified in Slack when exceptional candidates complete interviews.", status: "pending", cta: "Set up →", ctaTarget: "settings" },
+  { id: "alt", title: "Create your Alt", description: "Train it with your voice and values.", status: "done", cta: "View Alt →", ctaTarget: "alts" },
+  { id: "role", title: "Set up a role", description: "Create a posting and eval criteria.", status: "done", cta: "View roles →", ctaTarget: "roles" },
+  { id: "ats", title: "Connect your ATS", description: "Sync shortlisted candidates to Dover.", status: "done", cta: "Manage →", ctaTarget: "settings" },
+  { id: "threshold", title: "Set shortlist threshold", description: "Define when Alt auto-shortlists.", status: "warning", cta: "Set threshold →", ctaTarget: "roles" },
+  { id: "slack", title: "Enable Slack notifications", description: "Get notified for exceptional candidates.", status: "pending", cta: "Set up →", ctaTarget: "settings" },
 ]
 
-function activityScoreColor(score: number) {
-  if (score >= 7) return { bg: "bg-status-success", fg: "text-status-success-foreground" }
-  if (score >= 5) return { bg: "bg-status-warning", fg: "text-status-warning-foreground" }
-  return { bg: "bg-status-danger", fg: "text-status-danger-foreground" }
-}
+// ── Role pipeline mock data ─────────────────────────────────
 
-const ACTIVITY = [
-  { id: 1, candidate: "Arjun Mehta", role: "Sr. Product Designer", score: 8, time: "5h ago", decision: "shortlisted" },
-  { id: 2, candidate: "Sarah Kim", role: "Sr. Product Designer", score: 8, time: "1d ago", decision: "shortlisted" },
-  { id: 3, candidate: "Ilya Rosen", role: "Founding Engineer", score: 7, time: "2d ago", decision: "shortlisted" },
-  { id: 4, candidate: "Nikhil Raj", role: "Product Marketing Lead", score: 5, time: "3d ago", decision: "rejected" },
-  { id: 5, candidate: "Hannah Luo", role: "Founding Engineer", score: 4, time: "4d ago", decision: "rejected" },
+const PIPELINE: { roleId: string; thisWeek: number; lastWeek: number }[] = [
+  { roleId: "r1", thisWeek: 6, lastWeek: 4 },
+  { roleId: "r2", thisWeek: 2, lastWeek: 5 },
+  { roleId: "r3", thisWeek: 0, lastWeek: 3 },
 ]
 
-// ── Setup card ───────────────────────────────────────────────
-
-function SetupCard({ item, onNavigate }: { item: SetupItem; onNavigate: (p: Page) => void }) {
-  const dotColor = item.status === "done" ? "bg-status-success-dot" : item.status === "warning" ? "bg-status-warning-dot" : "bg-border"
-  const statusLabel = item.status === "done" ? "Done" : item.status === "warning" ? "Needs attention" : "Not started"
-  const statusColor = item.status === "done" ? "text-status-success-foreground" : item.status === "warning" ? "text-status-warning-foreground" : "text-muted-foreground"
-  const cardBg = item.status === "warning" ? "border-status-warning-dot bg-status-warning/50" : "border-border bg-card hover:bg-muted/20"
-
-  return (
-    <div className={`group p-3.5 rounded-lg border transition-all duration-150 ${cardBg}`}>
-      <div className={`flex justify-between gap-3 ${item.status === "done" ? "items-center" : "items-start"}`}>
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-1">
-            <div className={`w-1.5 h-1.5 rounded-full shrink-0 mt-0.5 ${dotColor}`} />
-            <p className="text-sm font-medium">{item.title}</p>
-          </div>
-          {item.status !== "done" && (
-            <p className="text-[11px] text-muted-foreground leading-relaxed pl-3.5 pr-16">{item.description}</p>
-          )}
-        </div>
-        <div className="flex flex-col items-end gap-2 shrink-0">
-          <span className={`text-[10px] ${statusColor} ${item.status === "done" && item.ctaTarget ? "group-hover:hidden" : ""}`}>{statusLabel}</span>
-          {item.ctaTarget && (
-            <button onClick={() => onNavigate(item.ctaTarget!)}
-              className={`text-[10px] rounded-md px-2.5 py-1 bg-foreground text-background transition-opacity hover:opacity-90 ${
-                item.status === "done"
-                  ? "hidden group-hover:block focus:block"
-                  : "opacity-0 group-hover:opacity-100 focus:opacity-100"
-              }`}>
-              {item.cta}
-            </button>
-          )}
-        </div>
-      </div>
-    </div>
-  )
+function pipelineStatus(thisWeek: number, lastWeek: number) {
+  if (thisWeek === 0) return { label: "Stalled", dot: "bg-status-danger-dot", text: "text-status-danger-foreground" }
+  if (thisWeek < lastWeek * 0.6) return { label: "Slowing", dot: "bg-status-warning-dot", text: "text-status-warning-foreground" }
+  return { label: "Healthy", dot: "bg-status-success-dot", text: "text-status-success-foreground" }
 }
 
-function DecisionBadge({ d }: { d: string }) {
-  const s: Record<string, string> = { shortlisted: "bg-status-success text-status-success-foreground", rejected: "bg-status-danger text-status-danger-foreground", pending: "bg-status-warning text-status-warning-foreground" }
-  const l: Record<string, string> = { shortlisted: "Pushed to ATS", rejected: "Rejected", pending: "Your call" }
-  return <span className={`text-[10px] rounded-md px-1.5 py-0.5 ${s[d]||s.pending}`}>{l[d]||"Your call"}</span>
-}
-
-// ── Alt triage card ──────────────────────────────────────────
+// ── Alt triage helpers ──────────────────────────────────────
 
 function AltRecPill({ rec, confidence }: { rec: CandidateMini["altRec"]; confidence: CandidateMini["confidence"] }) {
   const base = "text-[10px] rounded-md px-1.5 py-0.5"
@@ -91,102 +50,13 @@ function AltRecPill({ rec, confidence }: { rec: CandidateMini["altRec"]; confide
   return <span className={`${base} bg-status-warning text-status-warning-foreground`}>{confidence === "low" ? "Alt: Your call" : "Alt: Review"}</span>
 }
 
-function AltTriageCard({ onNavigate, onOpenChat }: { onNavigate: (p: Page) => void; onOpenChat: () => void }) {
-  const [expanded, setExpanded] = useState(false)
-
-  const pushed = SEED_CANDIDATES.filter(c => c.status === "shortlisted").length
-  const rejected = SEED_CANDIDATES.filter(c => c.status === "rejected").length
-  const dilemmas = SEED_CANDIDATES.filter(c => c.status === "pending")
-
-  const summary = (() => {
-    const autoParts: string[] = []
-    if (pushed) autoParts.push(`pushed ${pushed} to the ATS`)
-    if (rejected) autoParts.push(`filtered ${rejected} out`)
-    const autoSentence = autoParts.length ? `I've ${autoParts.join(" and ")} since yesterday.` : ""
-    if (dilemmas.length === 0) {
-      return `${autoSentence} You're caught up — no dilemmas for you to weigh in on.`.trim()
-    }
-    const names = dilemmas.map(c => c.name).slice(0, 2).join(" and ")
-    const suffix = dilemmas.length === 1
-      ? `${names} is the one I couldn't decide on — want to take a look?`
-      : `${dilemmas.length} candidates — ${names}${dilemmas.length > 2 ? " and others" : ""} — are split calls I'd want your read on.`
-    return `${autoSentence} ${suffix}`.trim()
-  })()
-
-  return (
-    <div className="relative rounded-xl border-2 border-dashed border-accent-blue bg-accent-blue/[0.035] p-4 mb-6">
-      <div className="flex items-start gap-3">
-        <div className="pt-0.5 shrink-0"><PixelSprite size={28} /></div>
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-1.5">
-            <span className="text-[10px] uppercase tracking-wider text-accent-blue">Alt update</span>
-            <span className="text-[10px] text-muted-foreground">· Sashank's Alt · just now</span>
-          </div>
-          <p className="text-sm leading-relaxed text-foreground">{summary}</p>
-
-          <div className="flex items-center gap-2 mt-3 flex-wrap">
-            {dilemmas.length > 0 && (
-              <button onClick={() => setExpanded(!expanded)}
-                className="text-[11px] rounded-md px-3 py-1.5 bg-accent-blue text-white hover:opacity-90 transition-opacity">
-                {expanded ? "Hide dilemmas" : `Review ${dilemmas.length} dilemma${dilemmas.length !== 1 ? "s" : ""}`}
-              </button>
-            )}
-            <button onClick={() => onNavigate("candidates")}
-              className="text-[11px] rounded-md px-3 py-1.5 border border-border text-muted-foreground hover:text-foreground hover:border-foreground/40 transition-colors">
-              All candidates →
-            </button>
-            <button onClick={() => onNavigate("roles")}
-              className="text-[11px] rounded-md px-3 py-1.5 border border-border text-muted-foreground hover:text-foreground hover:border-foreground/40 transition-colors">
-              Tune thresholds
-            </button>
-            <button onClick={() => onNavigate("alts")}
-              className="text-[11px] rounded-md px-3 py-1.5 border border-border text-muted-foreground hover:text-foreground hover:border-foreground/40 transition-colors">
-              Teach Alt a memory
-            </button>
-            <button onClick={onOpenChat}
-              className="text-[11px] rounded-md px-3 py-1.5 bg-foreground text-background hover:opacity-90 transition-opacity flex items-center gap-1.5 ml-auto">
-              <span>Chat with Alt</span>
-              <span className="text-[9px] opacity-70">⌘K</span>
-            </button>
-          </div>
-
-          {expanded && dilemmas.length > 0 && (
-            <div className="mt-4 flex flex-col gap-1.5">
-              {dilemmas.map(c => (
-                <div key={c.id}
-                  className="flex items-start gap-3 px-3 py-2.5 rounded-lg border border-border bg-background">
-                  <div className="w-8 h-8 rounded-md flex items-center justify-center text-sm font-medium shrink-0 bg-status-warning text-status-warning-foreground">
-                    {c.score}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-0.5 flex-wrap">
-                      <p className="text-sm font-medium">{c.name}</p>
-                      <span className="text-[10px] text-muted-foreground">{roleTitle(c.roleId)}</span>
-                      <AltRecPill rec={c.altRec} confidence={c.confidence} />
-                    </div>
-                    <p className="text-[11px] leading-relaxed text-muted-foreground">{c.reasoning}</p>
-                  </div>
-                  <div className="flex items-center gap-1.5 shrink-0 self-center">
-                    <button onClick={onOpenChat}
-                      className="text-[10px] rounded-md px-2.5 py-1 bg-accent-blue text-white hover:opacity-90 transition-opacity">
-                      Discuss with Alt
-                    </button>
-                    <button onClick={() => onNavigate("candidates")}
-                      className="text-[10px] rounded-md px-2.5 py-1 border border-border text-muted-foreground hover:text-foreground hover:border-foreground/40 transition-colors">
-                      Open →
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  )
+function scoreColor(score: number) {
+  if (score >= 7) return { bg: "bg-status-success", fg: "text-status-success-foreground" }
+  if (score >= 5) return { bg: "bg-status-warning", fg: "text-status-warning-foreground" }
+  return { bg: "bg-status-danger", fg: "text-status-danger-foreground" }
 }
 
-// ── Chat with Alt — right-side drawer ────────────────────────
+// ── Chat drawer (unchanged) ─────────────────────────────────
 
 type ChatMsg =
   | { from: "user"; text: string }
@@ -325,12 +195,10 @@ function AltChatDrawer({ open, instant, onClose }: { open: boolean; instant: boo
 // ── Page ─────────────────────────────────────────────────────
 
 export function HomePage({ onNavigate }: { onNavigate: (p: Page) => void }) {
-  const h = new Date().getHours()
-  const greeting = h < 12 ? "Good morning" : h < 17 ? "Good afternoon" : "Good evening"
-  const doneCount = SETUP_ITEMS.filter(i => i.status === "done").length
-  const hasWarning = SETUP_ITEMS.some(i => i.status === "warning")
   const [chatOpen, setChatOpen] = useState(false)
   const [instantOpen, setInstantOpen] = useState(false)
+  const [setupDismissed, setSetupDismissed] = useState(false)
+  const [autoExpanded, setAutoExpanded] = useState(false)
 
   const openChatSlide = () => { setInstantOpen(false); setChatOpen(true) }
   const openChatInstant = () => { setInstantOpen(true); setChatOpen(o => !o) }
@@ -347,91 +215,219 @@ export function HomePage({ onNavigate }: { onNavigate: (p: Page) => void }) {
     return () => window.removeEventListener("keydown", handler)
   }, [])
 
+  // Derived data
+  const pushed = SEED_CANDIDATES.filter(c => c.status === "shortlisted")
+  const rejected = SEED_CANDIDATES.filter(c => c.status === "rejected")
+  const dilemmas = SEED_CANDIDATES.filter(c => c.status === "pending")
+  const totalHandled = pushed.length + rejected.length
+
+  // Alt summary sentence
+  const summaryParts: string[] = []
+  if (pushed.length) summaryParts.push(`pushed ${pushed.length} to the ATS`)
+  if (rejected.length) summaryParts.push(`filtered ${rejected.length} out`)
+  const autoSentence = summaryParts.length ? `I've ${summaryParts.join(" and ")} since yesterday.` : ""
+  const dilemmaClause = dilemmas.length === 0
+    ? "You're caught up — no dilemmas to weigh in on."
+    : `${dilemmas.length} candidate${dilemmas.length !== 1 ? "s" : ""} need${dilemmas.length === 1 ? "s" : ""} your call.`
+
+  // Setup
+  const doneCount = SETUP_ITEMS.filter(i => i.status === "done").length
+  const setupComplete = doneCount === SETUP_ITEMS.length
+  const incomplete = SETUP_ITEMS.filter(i => i.status !== "done")
+    .sort((a, b) => {
+      const rank = (s: SetupItem["status"]) => s === "warning" ? 0 : s === "pending" ? 1 : 2
+      return rank(a.status) - rank(b.status)
+    })
+
   return (
     <div className="h-full flex flex-col overflow-hidden">
       <div className="flex-1 overflow-y-auto">
-        <div className="p-6 max-w-5xl mx-auto">
-          {/* Header */}
-          <div className="flex items-start justify-between mb-6">
-            <div>
-              <h1 className="text-xl font-medium mb-0.5">{greeting}, Sashank</h1>
-              <p className="text-sm text-muted-foreground">
-                {hasWarning ? "A few things need your attention." : "6 new interviews since yesterday."}
+        <div className="max-w-5xl mx-auto px-8 py-6">
+
+          {/* ── Alt summary ──────────────────────────────── */}
+          <div className="flex items-start gap-3 mb-8">
+            <div className="pt-0.5 shrink-0"><PixelSprite size={28} /></div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-[10px] uppercase tracking-wider text-accent-blue">Sashank's Alt</span>
+                <span className="text-[10px] text-muted-foreground">· since yesterday</span>
+                <button onClick={openChatSlide}
+                  className="ml-auto text-[11px] rounded-md px-3 py-1.5 bg-foreground text-background hover:opacity-90 transition-opacity flex items-center gap-1.5">
+                  <span>Chat with Alt</span>
+                  <span className="text-[9px] opacity-70">⌘K</span>
+                </button>
+              </div>
+              <p className="text-sm leading-relaxed text-foreground">
+                {autoSentence} {dilemmaClause}
               </p>
             </div>
-            <div className="flex items-center gap-3">
-              <div className="text-right">
-                <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Setup complete</p>
-                <p className="text-xs text-foreground tabular-nums">{doneCount}/{SETUP_ITEMS.length}</p>
-              </div>
-              <div className="w-20 h-1.5 rounded-full bg-muted overflow-hidden">
-                <div className="h-full rounded-full bg-foreground transition-all" style={{ width: `${(doneCount/SETUP_ITEMS.length)*100}%` }} />
-              </div>
-            </div>
           </div>
 
-          <AltTriageCard onNavigate={onNavigate} onOpenChat={openChatSlide} />
-
-          {/* Stats */}
-          <div className="grid grid-cols-4 gap-3 mb-6">
-            {[
-              { label: "Active roles", value: "3", color: "text-foreground" },
-              { label: "Interviews today", value: "14", color: "text-accent-blue" },
-              { label: "Pending review", value: "6", color: "text-status-warning-foreground" },
-              { label: "Shortlisted this week", value: "11", color: "text-status-success-foreground" },
-            ].map(s => (
-              <div key={s.label} className="p-3.5 rounded-lg bg-muted/40 border border-border">
-                <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1.5">{s.label}</p>
-                <p className={`text-2xl font-medium tabular-nums ${s.color}`}>{s.value}</p>
-              </div>
-            ))}
-          </div>
-
-          {/* Two columns */}
-          <div className="grid grid-cols-[1fr_380px] gap-5">
-            <div>
-              <p className="text-[10px] uppercase tracking-wider font-medium text-muted-foreground mb-2">Candidate activity</p>
-              <div className="border border-border rounded-lg overflow-hidden">
-                {ACTIVITY.map((a, i) => {
-                  const sc = activityScoreColor(a.score)
+          {/* ── Dilemmas (action-required) ────────────────── */}
+          {dilemmas.length > 0 && (
+            <div className="mb-8">
+              <p className="text-[10px] uppercase tracking-wider font-medium text-muted-foreground mb-3">
+                Needs your call · {dilemmas.length}
+              </p>
+              <div className="flex flex-col gap-2.5">
+                {dilemmas.map(c => {
+                  const sc = scoreColor(c.score)
                   return (
-                    <div key={a.id} className={`flex items-center gap-3 px-4 py-3 hover:bg-muted/30 transition-colors cursor-pointer ${i > 0 ? "border-t border-border" : ""}`}>
-                      <div className={`w-8 h-8 rounded-md flex items-center justify-center text-sm font-medium shrink-0 ${sc.bg} ${sc.fg}`}>
-                        {a.score}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium truncate">{a.candidate}</p>
-                        <p className="text-[11px] text-muted-foreground truncate">{a.role} · completed interview</p>
-                      </div>
-                      <div className="flex items-center gap-2 shrink-0">
-                        <DecisionBadge d={a.decision} />
-                        <span className="text-[10px] text-muted-foreground">{a.time}</span>
+                    <div key={c.id} className="rounded-xl border-2 border-dashed border-accent-blue bg-accent-blue/[0.035] p-4">
+                      <div className="flex items-start gap-3">
+                        <div className={`w-10 h-10 rounded-lg flex items-center justify-center text-base font-medium shrink-0 ${sc.bg} ${sc.fg}`}>
+                          {c.score}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1 flex-wrap">
+                            <p className="text-sm font-medium">{c.name}</p>
+                            <span className="text-[10px] text-muted-foreground">{roleTitle(c.roleId)}</span>
+                            <AltRecPill rec={c.altRec} confidence={c.confidence} />
+                          </div>
+                          <p className="text-[12px] leading-relaxed text-foreground/80 mb-3">{c.reasoning}</p>
+                          <div className="flex items-center gap-2">
+                            <button className="text-[11px] rounded-md px-3 py-1.5 bg-status-success text-status-success-foreground hover:opacity-90 transition-opacity">
+                              Shortlist
+                            </button>
+                            <button className="text-[11px] rounded-md px-3 py-1.5 bg-status-danger text-status-danger-foreground hover:opacity-90 transition-opacity">
+                              Reject
+                            </button>
+                            <button onClick={openChatSlide}
+                              className="text-[11px] rounded-md px-3 py-1.5 border border-border text-muted-foreground hover:text-foreground hover:border-foreground/40 transition-colors">
+                              Discuss with Alt
+                            </button>
+                            <button onClick={() => onNavigate("candidates")}
+                              className="text-[11px] rounded-md px-3 py-1.5 border border-border text-muted-foreground hover:text-foreground hover:border-foreground/40 transition-colors ml-auto">
+                              Open transcript →
+                            </button>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   )
                 })}
-                <div className="px-4 py-2.5 border-t border-border">
-                  <button onClick={() => onNavigate("roles")} className="text-[11px] text-muted-foreground hover:text-foreground transition-colors">
-                    View all candidates →
-                  </button>
-                </div>
               </div>
             </div>
+          )}
 
-            <div>
-              <p className="text-[10px] uppercase tracking-wider font-medium text-muted-foreground mb-2">Setup & config</p>
-              <div className="flex flex-col gap-2">
-                {[...SETUP_ITEMS]
-                  .sort((a, b) => {
-                    const rank = (s: SetupItem["status"]) => s === "warning" ? 0 : s === "pending" ? 1 : 2
-                    return rank(a.status) - rank(b.status)
-                  })
-                  .map(item => (
-                    <SetupCard key={item.id} item={item} onNavigate={onNavigate} />
-                  ))}
-              </div>
+          {/* ── Role pipelines ───────────────────────────── */}
+          <div className="mb-8">
+            <p className="text-[10px] uppercase tracking-wider font-medium text-muted-foreground mb-3">Role pipelines</p>
+            <div className="border border-border rounded-lg overflow-hidden">
+              {PIPELINE.map((p, i) => {
+                const role = ROLES.find(r => r.id === p.roleId)
+                if (!role) return null
+                const status = pipelineStatus(p.thisWeek, p.lastWeek)
+                const delta = p.thisWeek - p.lastWeek
+                const deltaStr = delta > 0 ? `+${delta}` : `${delta}`
+                return (
+                  <button key={p.roleId} onClick={() => onNavigate("roles")}
+                    className={`w-full flex items-center gap-3 px-4 py-3 hover:bg-muted/30 transition-colors text-left ${i > 0 ? "border-t border-border" : ""}`}>
+                    <div className={`w-2 h-2 rounded-full shrink-0 ${status.dot}`} />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium">{role.title}</p>
+                    </div>
+                    <div className="flex items-center gap-3 shrink-0">
+                      <span className="text-[11px] text-muted-foreground tabular-nums">
+                        {p.thisWeek} this week
+                        <span className={`ml-1 ${delta >= 0 ? "text-status-success-foreground" : "text-status-danger-foreground"}`}>
+                          ({deltaStr})
+                        </span>
+                      </span>
+                      <span className={`text-[10px] rounded-md px-1.5 py-0.5 ${status.text} bg-muted/60`}>{status.label}</span>
+                    </div>
+                  </button>
+                )
+              })}
             </div>
           </div>
+
+          {/* ── Auto-decisions (collapsed) ────────────────── */}
+          {totalHandled > 0 && (
+            <div className="mb-8">
+              <button
+                onClick={() => setAutoExpanded(!autoExpanded)}
+                className="flex items-center gap-2 mb-3 group"
+              >
+                <p className="text-[10px] uppercase tracking-wider font-medium text-muted-foreground">
+                  Handled by Alt · {totalHandled}
+                </p>
+                <svg
+                  width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+                  className={`text-muted-foreground transition-transform ${autoExpanded ? "rotate-180" : ""}`}
+                >
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </button>
+
+              {!autoExpanded && (
+                <p className="text-[11px] text-muted-foreground">
+                  {pushed.length} pushed to ATS, {rejected.length} rejected. <button onClick={() => setAutoExpanded(true)} className="text-foreground hover:underline">Review →</button>
+                </p>
+              )}
+
+              {autoExpanded && (
+                <div className="border border-border rounded-lg overflow-hidden">
+                  {[...pushed, ...rejected].map((c, i) => {
+                    const sc = scoreColor(c.score)
+                    const isShortlisted = c.status === "shortlisted"
+                    return (
+                      <div key={c.id} className={`flex items-center gap-3 px-4 py-2.5 ${i > 0 ? "border-t border-border" : ""}`}>
+                        <div className={`w-7 h-7 rounded-md flex items-center justify-center text-xs font-medium shrink-0 ${sc.bg} ${sc.fg}`}>
+                          {c.score}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm truncate">{c.name}</p>
+                          <p className="text-[10px] text-muted-foreground truncate">{roleTitle(c.roleId)}</p>
+                        </div>
+                        <span className={`text-[10px] rounded-md px-1.5 py-0.5 shrink-0 ${
+                          isShortlisted ? "bg-status-success text-status-success-foreground" : "bg-status-danger text-status-danger-foreground"
+                        }`}>
+                          {isShortlisted ? "Pushed to ATS" : "Rejected"}
+                        </span>
+                        <span className="text-[10px] text-muted-foreground shrink-0">{c.completedAt}</span>
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* ── Setup banner (dismissible) ────────────────── */}
+          {!setupComplete && !setupDismissed && (
+            <div className="rounded-lg border border-border bg-muted/30 px-4 py-3">
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-3">
+                  <p className="text-[10px] uppercase tracking-wider font-medium text-muted-foreground">Finish setup</p>
+                  <div className="flex items-center gap-2">
+                    <div className="w-16 h-1 rounded-full bg-muted overflow-hidden">
+                      <div className="h-full rounded-full bg-foreground transition-all" style={{ width: `${(doneCount / SETUP_ITEMS.length) * 100}%` }} />
+                    </div>
+                    <span className="text-[10px] text-muted-foreground tabular-nums">{doneCount}/{SETUP_ITEMS.length}</span>
+                  </div>
+                </div>
+                <button onClick={() => setSetupDismissed(true)} className="text-muted-foreground hover:text-foreground text-xs leading-none">✕</button>
+              </div>
+              <div className="flex flex-col gap-1.5">
+                {incomplete.map(item => {
+                  const dotColor = item.status === "warning" ? "bg-status-warning-dot" : "bg-border"
+                  return (
+                    <div key={item.id} className="flex items-center gap-2.5">
+                      <div className={`w-1.5 h-1.5 rounded-full shrink-0 ${dotColor}`} />
+                      <p className="text-[11px] text-foreground flex-1">{item.title}</p>
+                      {item.ctaTarget && (
+                        <button onClick={() => onNavigate(item.ctaTarget!)}
+                          className="text-[10px] text-muted-foreground hover:text-foreground transition-colors">
+                          {item.cta}
+                        </button>
+                      )}
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+          )}
 
         </div>
       </div>
