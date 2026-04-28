@@ -273,12 +273,17 @@ function CollapsibleSection({ title, defaultOpen = true, children }: { title: st
 
 // ── Job Posting Tab ───────────────────────────────────────────
 
-function JobPostingTab({ status, onStatusChange }: { status: "draft"|"live"; onStatusChange: (s: "draft"|"live") => void }) {
-  const [agentOpen, setAgentOpen] = useState(false)
+function JDEditorModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   const [msgs, setMsgs] = useState<ChatMsg[]>([{ from: "agent", text: "Hey! I can help refine the JD. Cosmetic changes go through directly — anything affecting the interview flow or eval criteria needs team review first." }])
   const [input, setInput] = useState("")
   const [idx, setIdx] = useState(0)
+  const [closing, setClosing] = useState(false)
+  const [downloadOpen, setDownloadOpen] = useState(false)
   const bodyRef = useRef<HTMLDivElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => { if (bodyRef.current) bodyRef.current.scrollTop = bodyRef.current.scrollHeight }, [msgs])
+  useEffect(() => { if (open && !closing) { const t = setTimeout(() => inputRef.current?.focus(), 300); return () => clearTimeout(t) } }, [open, closing])
 
   const send = () => {
     const msg = input.trim(); if (!msg) return
@@ -286,26 +291,200 @@ function JobPostingTab({ status, onStatusChange }: { status: "draft"|"live"; onS
     setTimeout(() => { setMsgs(p => [...p, { from: "agent", text: AGENT_RESPONSES[idx % AGENT_RESPONSES.length] }]); setIdx(i => i+1) }, 800)
   }
 
-  const openAgent = () => setAgentOpen(true)
-  const closeAgent = () => setAgentOpen(false)
+  const handleClose = () => {
+    setClosing(true)
+    setTimeout(() => { setClosing(false); onClose() }, 180)
+  }
 
-  useEffect(() => { if (bodyRef.current) bodyRef.current.scrollTop = bodyRef.current.scrollHeight }, [msgs])
+  if (!open && !closing) return null
 
   return (
-    <div className="flex flex-1 min-h-0">
+    <div className={`fixed inset-0 z-50 flex items-center justify-center ${closing ? "modal-backdrop-exit" : "modal-backdrop-enter"}`}
+      style={{ background: "hsl(var(--background) / 0.6)", backdropFilter: "blur(4px)", WebkitBackdropFilter: "blur(4px)" }}
+      onClick={e => { if (e.target === e.currentTarget) handleClose() }}>
+      <div className={`bg-card border-4 border-border rounded-2xl shadow-2xl flex overflow-hidden ${closing ? "modal-pop-exit" : "modal-pop-enter"}`}
+        style={{ width: "95vw", height: "95vh" }}>
 
-      {/* Scrollable content column */}
+        {/* Left — Notion-style JD editor */}
+        <div className="flex-1 flex flex-col overflow-hidden border-r border-border">
+          <div className="shrink-0 px-6 pt-5 pb-3 border-b border-border flex items-center justify-between">
+            <div>
+              <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">Job Description</p>
+              <h2 className="text-lg font-medium">Senior Product Designer</h2>
+            </div>
+            <div className="flex items-center gap-3">
+              <span className="text-[10px] text-muted-foreground">Last edited 2h ago</span>
+              {/* Import */}
+              <button onClick={() => document.getElementById("jd-import-input")?.click()}
+                className="flex items-center gap-1.5 text-[10px] px-2.5 py-1 rounded-md border border-border text-muted-foreground hover:text-foreground hover:border-foreground/40 transition-colors">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                Import
+              </button>
+              <input id="jd-import-input" type="file" accept=".pdf,.doc,.docx,.md,.txt" className="hidden" onChange={() => {}} />
+              {/* Download dropdown */}
+              <div className="relative">
+                <button onClick={() => setDownloadOpen(d => !d)}
+                  className="flex items-center gap-1.5 text-[10px] px-2.5 py-1 rounded-md border border-border text-muted-foreground hover:text-foreground hover:border-foreground/40 transition-colors">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                  Download
+                  <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                {downloadOpen && (
+                  <>
+                    <div className="fixed inset-0 z-10" onClick={() => setDownloadOpen(false)} />
+                    <div className="absolute right-0 top-full mt-1 z-20 w-36 bg-popover border border-border rounded-lg shadow-lg overflow-hidden">
+                      {[
+                        { label: "PDF", ext: ".pdf", icon: "📄" },
+                        { label: "Word", ext: ".docx", icon: "📝" },
+                        { label: "Markdown", ext: ".md", icon: "📋" },
+                      ].map(f => (
+                        <button key={f.ext} onClick={() => setDownloadOpen(false)}
+                          className="w-full flex items-center gap-2 px-3 py-2 text-[11px] text-left hover:bg-muted/50 transition-colors">
+                          <span>{f.icon}</span>
+                          <span>Download as {f.label}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </>
+                )}
+              </div>
+              <button onClick={handleClose} className="text-muted-foreground hover:text-foreground text-sm leading-none px-1">✕</button>
+            </div>
+          </div>
+          <div className="flex-1 overflow-y-auto px-10 py-8">
+            <div className="max-w-2xl mx-auto">
+              {/* Title */}
+              <h1 className="text-2xl font-bold text-foreground mb-1 outline-none" contentEditable suppressContentEditableWarning>
+                Senior Product Designer
+              </h1>
+              <p className="text-sm text-muted-foreground mb-6" contentEditable suppressContentEditableWarning>
+                Product · San Francisco / Remote · Full-time
+              </p>
+
+              {/* Intro */}
+              <p className="text-[15px] leading-relaxed text-foreground mb-6" contentEditable suppressContentEditableWarning>
+                We're looking for a <strong>Senior Product Designer</strong> to join our growing product team. You'll own end-to-end design for our core hiring workflow — from discovery to shipped features — working directly with founders and engineers.
+              </p>
+
+              {/* H2 — What you'll do */}
+              <h2 className="text-lg font-semibold text-foreground mt-8 mb-3 outline-none" contentEditable suppressContentEditableWarning>What you'll do</h2>
+              <div className="flex flex-col gap-1.5 mb-6">
+                {[
+                  "Lead design for 2–3 product areas with full ownership of research, wireframes, and specs",
+                  "Run design crits and shape the design system alongside engineers",
+                  "Partner with PMs to drive roadmap decisions using qualitative + quantitative data",
+                ].map((item, i) => (
+                  <div key={i} className="flex items-start gap-2.5 group">
+                    <span className="text-muted-foreground/40 group-hover:text-muted-foreground text-[15px] mt-0.5 shrink-0 transition-colors cursor-grab select-none">⠿</span>
+                    <p className="text-[15px] leading-relaxed text-foreground flex-1 outline-none" contentEditable suppressContentEditableWarning>• {item}</p>
+                  </div>
+                ))}
+                <button className="text-[12px] text-muted-foreground hover:text-foreground mt-1 text-left pl-7 transition-colors">+ Add item</button>
+              </div>
+
+              {/* H2 — What we're looking for */}
+              <h2 className="text-lg font-semibold text-foreground mt-8 mb-3 outline-none" contentEditable suppressContentEditableWarning>What we're looking for</h2>
+              <div className="flex flex-col gap-1.5 mb-6">
+                {[
+                  "4+ years of product design experience, ideally in B2B SaaS",
+                  "Strong systems thinking — you design for scale, not just the happy path",
+                  "Comfortable with ambiguity and moving fast without sacrificing craft",
+                  "LinkedIn profile and a portfolio of shipped work required",
+                ].map((item, i) => (
+                  <div key={i} className="flex items-start gap-2.5 group">
+                    <span className="text-muted-foreground/40 group-hover:text-muted-foreground text-[15px] mt-0.5 shrink-0 transition-colors cursor-grab select-none">⠿</span>
+                    <p className="text-[15px] leading-relaxed text-foreground flex-1 outline-none" contentEditable suppressContentEditableWarning>• {item}</p>
+                  </div>
+                ))}
+                <button className="text-[12px] text-muted-foreground hover:text-foreground mt-1 text-left pl-7 transition-colors">+ Add item</button>
+              </div>
+
+              {/* H2 — About */}
+              <h2 className="text-lg font-semibold text-foreground mt-8 mb-3 outline-none" contentEditable suppressContentEditableWarning>About Alt Inc.</h2>
+              <p className="text-[15px] leading-relaxed text-foreground mb-4 outline-none" contentEditable suppressContentEditableWarning>
+                We're building AI avatars that scale founder taste. Our Alts conduct pre-screening conversations so small teams can hire like they have a recruiting org behind them — without losing the signal that makes their bar special.
+              </p>
+              <p className="text-[15px] leading-relaxed text-foreground mb-6 outline-none" contentEditable suppressContentEditableWarning>
+                12 people, seed stage, remote-first (PT ±4h). Learn more at <a href="#" className="text-link underline underline-offset-2 hover:opacity-80">alt.inc</a>.
+              </p>
+
+              {/* H3 — Perks */}
+              <h3 className="text-base font-medium text-foreground mt-8 mb-2 outline-none" contentEditable suppressContentEditableWarning>Perks & benefits</h3>
+              <p className="text-[15px] leading-relaxed text-foreground mb-1 outline-none" contentEditable suppressContentEditableWarning>
+                • Competitive equity package (4-year vest, 1-year cliff)
+              </p>
+              <p className="text-[15px] leading-relaxed text-foreground mb-1 outline-none" contentEditable suppressContentEditableWarning>
+                • 100% covered health, dental, vision for you + dependents
+              </p>
+              <p className="text-[15px] leading-relaxed text-foreground mb-1 outline-none" contentEditable suppressContentEditableWarning>
+                • $2,500 home office budget
+              </p>
+              <p className="text-[15px] leading-relaxed text-foreground mb-6 outline-none" contentEditable suppressContentEditableWarning>
+                • Flexible PTO — we trust you to manage your time
+              </p>
+
+              <div className="border-t border-border pt-4 mt-4">
+                <p className="text-xs text-muted-foreground">
+                  Apply at <a href="#" className="text-link underline underline-offset-2 hover:opacity-80">alt.inc/apply/senior-product-designer</a> · Questions? Reach out to <a href="#" className="text-link underline underline-offset-2 hover:opacity-80">hiring@alt.inc</a>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Right — Agent chat */}
+        <div className="w-[360px] shrink-0 flex flex-col overflow-hidden bg-background">
+          <div className="shrink-0 px-4 pt-5 pb-3 border-b border-border">
+            <div className="flex items-center gap-2 mb-1">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" className="text-accent-blue">
+                <path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z" fill="currentColor" />
+              </svg>
+              <span className="text-xs font-medium">Sabu</span>
+            </div>
+            <p className="text-[10px] text-muted-foreground">Cosmetic edits apply instantly. Changes to eval criteria or interview flow need team review.</p>
+          </div>
+          <div ref={bodyRef} className="flex-1 overflow-y-auto p-4 flex flex-col gap-2.5">
+            {msgs.map((m, i) => (
+              <div key={i} className={`text-[11px] leading-relaxed rounded-xl px-3 py-2 ${
+                m.from === "agent"
+                  ? "bg-muted/60 border border-border self-start max-w-[90%]"
+                  : "bg-foreground text-background self-end max-w-[85%]"
+              }`}>
+                {m.text}
+              </div>
+            ))}
+          </div>
+          <div className="p-3 border-t border-border flex gap-2 shrink-0">
+            <input ref={inputRef} value={input} onChange={e => setInput(e.target.value)}
+              onKeyDown={e => { if (e.key === "Enter") send(); if (e.key === "Escape") handleClose() }}
+              placeholder="Describe the change..."
+              className="flex-1 text-[11px] rounded-lg bg-muted/40 border border-border px-3 py-2 outline-none placeholder:text-muted-foreground focus:border-foreground/40" />
+            <button onClick={send} disabled={!input.trim()}
+              className="text-[11px] rounded-lg px-3 py-2 bg-foreground text-background hover:opacity-90 disabled:opacity-40 transition-opacity">Send</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function JobPostingTab({ status, onStatusChange }: { status: "draft"|"live"; onStatusChange: (s: "draft"|"live") => void }) {
+  const [editorOpen, setEditorOpen] = useState(false)
+
+  return (
+    <>
+    <div className="flex flex-1 min-h-0">
       <div className="flex-1 min-w-0 overflow-hidden">
         <div className="h-full overflow-y-auto">
-          <div className="max-w-3xl mx-auto px-8 py-6 flex flex-col gap-6">
+          <div className="max-w-5xl mx-auto px-8 py-6 flex flex-col gap-6">
 
             {/* JD */}
             <CollapsibleSection title="Job description">
-              <div className="relative bg-muted/40 border border-border p-4 text-sm leading-relaxed">
-                <button onClick={openAgent}
-                  className="absolute top-2.5 right-2.5 flex items-center gap-1.5 text-[10px] px-2 py-1 border border-border bg-background text-muted-foreground hover:text-foreground hover:border-foreground/40 transition-colors">
+              <div className="relative bg-muted/40 border border-border rounded-lg p-4 text-sm leading-relaxed">
+                <button onClick={() => setEditorOpen(true)}
+                  className="absolute top-2.5 right-2.5 flex items-center gap-1.5 text-[10px] px-2.5 py-1 rounded-md border border-border bg-background text-muted-foreground hover:text-foreground hover:border-foreground/40 transition-colors">
                   <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-                  Edit with agent
+                  Edit with Sabu
                 </button>
                 <p className="mb-2 pr-32">We're looking for a <strong>Senior Product Designer</strong> to join our growing product team. You'll own end-to-end design for our core hiring workflow — from discovery to shipped features — working directly with founders and engineers.</p>
                 <p className="mb-1 font-medium">What you'll do:</p>
@@ -322,14 +501,14 @@ function JobPostingTab({ status, onStatusChange }: { status: "draft"|"live"; onS
 
             {/* Requirements */}
             <CollapsibleSection title="Requirements">
-              <div className="border border-border overflow-hidden">
+              <div className="border border-border rounded-lg overflow-hidden">
                 {[{ short: "in", label: "LinkedIn", color: "#0A66C2" }, { short: "gh", label: "GitHub", color: "#24292e" }].map((r, i) => (
                   <div key={r.label} className={`flex items-center justify-between px-3 py-2.5 ${i > 0 ? "border-t border-border" : ""}`}>
                     <div className="flex items-center gap-2 text-sm">
-                      <span className="text-[9px] font-bold px-1 py-0.5 text-white" style={{ background: r.color }}>{r.short}</span>
+                      <span className="text-[9px] font-bold px-1 py-0.5 rounded text-white" style={{ background: r.color }}>{r.short}</span>
                       {r.label}
                     </div>
-                    <select className="text-[10px] border border-border px-2 py-1 bg-background text-foreground">
+                    <select className="text-[10px] border border-border rounded-md px-2 py-1 bg-background text-foreground">
                       <option>Required</option><option>Optional</option><option>Off</option>
                     </select>
                   </div>
@@ -339,9 +518,9 @@ function JobPostingTab({ status, onStatusChange }: { status: "draft"|"live"; onS
 
             {/* Share with candidates */}
             <CollapsibleSection title="Share with candidates">
-              <div className="flex items-center gap-2 bg-muted/40 border border-border px-3 py-2.5">
+              <div className="flex items-center gap-2 bg-muted/40 border border-border rounded-lg px-3 py-2.5">
                 <span className="text-xs text-muted-foreground flex-1 overflow-hidden text-ellipsis whitespace-nowrap">alt.inc/apply/senior-product-designer</span>
-                <button className="text-[10px] border border-border px-2 py-1 bg-background text-muted-foreground hover:text-foreground transition-colors shrink-0">Copy</button>
+                <button className="text-[10px] border border-border rounded-md px-2 py-1 bg-background text-muted-foreground hover:text-foreground transition-colors shrink-0">Copy</button>
               </div>
             </CollapsibleSection>
 
@@ -349,8 +528,8 @@ function JobPostingTab({ status, onStatusChange }: { status: "draft"|"live"; onS
             <CollapsibleSection title="Collaborators">
               <div className="flex flex-col gap-2">
                 {[{ i: "SG", n: "Sashank G." }, { i: "KG", n: "Kinnari G." }].map(c => (
-                  <div key={c.i} className="flex items-center gap-2.5 px-3 py-2 border border-border bg-muted/20">
-                    <div className="w-6 h-6 bg-accent-blue/10 text-accent-blue flex items-center justify-center text-[9px] font-medium shrink-0">{c.i}</div>
+                  <div key={c.i} className="flex items-center gap-2.5 px-3 py-2 border border-border rounded-lg bg-muted/20">
+                    <div className="w-6 h-6 rounded-md bg-accent-blue/10 text-accent-blue flex items-center justify-center text-[9px] font-medium shrink-0">{c.i}</div>
                     <span className="text-sm">{c.n}</span>
                   </div>
                 ))}
@@ -361,30 +540,10 @@ function JobPostingTab({ status, onStatusChange }: { status: "draft"|"live"; onS
           </div>
         </div>
       </div>
-
-      {/* Agent panel — fixed 30vw, closed by default */}
-      {agentOpen && (
-        <div className="w-[30vw] shrink-0 flex flex-col h-full border-l border-border overflow-hidden">
-          <div className="flex items-center justify-between px-4 py-3 border-b border-border shrink-0">
-            <span className="text-xs font-medium">Edit with agent</span>
-            <button onClick={closeAgent} className="text-muted-foreground hover:text-foreground text-sm leading-none">✕</button>
-          </div>
-          <div ref={bodyRef} className="flex-1 overflow-y-auto p-3 flex flex-col gap-2">
-            {msgs.map((m, i) => (
-              <div key={i} className={`text-[11px] leading-relaxed px-2.5 py-2 ${m.from === "agent" ? "bg-muted/60 border border-border" : "bg-foreground text-background self-end max-w-[85%]"}`}>
-                {m.text}
-              </div>
-            ))}
-          </div>
-          <div className="p-2.5 border-t border-border flex gap-2 shrink-0">
-            <input value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === "Enter" && send()} placeholder="Describe the change..."
-              className="flex-1 text-[11px] bg-muted/40 border border-border px-2.5 py-1.5 outline-none placeholder:text-muted-foreground" />
-            <button onClick={send} className="text-[11px] px-3 py-1.5 bg-foreground text-background hover:opacity-90">Send</button>
-          </div>
-        </div>
-      )}
-
     </div>
+
+    <JDEditorModal open={editorOpen} onClose={() => setEditorOpen(false)} />
+    </>
   )
 }
 
@@ -759,10 +918,14 @@ function RoleDetail({ role, activeProfile, onProfileOpen, onProfileClose }: { ro
 
 // ── Main Export ───────────────────────────────────────────────
 
-export function RolesPage() {
+export function RolesPage({ onEntityChange }: { onEntityChange?: (e: { type: "role"|"candidate"|"alt"; name: string; meta?: Record<string,string> } | undefined) => void }) {
   const [selectedId, setSelectedId] = useState(ROLES[0].id)
   const [activeProfile, setActiveProfile] = useState<string | null>(null)
   const selectedRole = ROLES.find(r => r.id === selectedId)!
+
+  useEffect(() => {
+    onEntityChange?.({ type: "role", name: selectedRole.title, meta: { id: selectedRole.id, status: selectedRole.status, candidateCount: String(selectedRole.candidateCount) } })
+  }, [selectedId])
 
   const openProfile = (key: string) => setActiveProfile(key)
   const closeProfile = () => setActiveProfile(null)
