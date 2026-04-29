@@ -139,9 +139,10 @@ interface AltChatOverlayProps {
   onClose: () => void
   context: OverlayContext
   nudgeMessage?: string | null
+  prefillInput?: string | null
 }
 
-export function AltChatOverlay({ open, onClose, context, nudgeMessage }: AltChatOverlayProps) {
+export function AltChatOverlay({ open, onClose, context, nudgeMessage, prefillInput }: AltChatOverlayProps) {
   const [input, setInput] = useState("")
   const [msgs, setMsgs] = useState<ChatMsg[]>([])
   const [closing, setClosing] = useState(false)
@@ -176,6 +177,13 @@ export function AltChatOverlay({ open, onClose, context, nudgeMessage }: AltChat
       setMsgs([{ from: "alt", text: nudgeMessage }])
     }
   }, [open, nudgeMessage])
+
+  // Seed prefill input on open
+  useEffect(() => {
+    if (open && prefillInput) {
+      setInput(prefillInput)
+    }
+  }, [open, prefillInput])
 
   // Escape to close (only when slash isn't open)
   useEffect(() => {

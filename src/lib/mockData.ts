@@ -28,6 +28,20 @@ export const ROLES: RoleMini[] = [
   { id: "r3", title: "Product Marketing Lead" },
 ]
 
+export interface AltMini {
+  id: string
+  name: string
+  owner: string
+  initials: string
+  completeness: number
+  status: "active" | "setup"
+}
+
+export const ALTS_MINI: AltMini[] = [
+  { id: "sashank", name: "Sashank's Alt", owner: "Sashank Gondala", initials: "SG", completeness: 85, status: "active" },
+  { id: "kinnari", name: "Kinnari's Alt", owner: "Kinnari Gilganchi", initials: "KG", completeness: 40, status: "setup" },
+]
+
 // Status reflects what Alt autonomously did: shortlisted = pushed to ATS,
 // rejected = filtered out, pending = dilemma / flagged for admin review.
 // Only altRec=review or low-confidence cases land as pending.

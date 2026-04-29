@@ -1155,6 +1155,10 @@ function AltDetail({ alt }: { alt: AltData }) {
 
   const openAddMemory = () => { setAutoAddMemory(true); setMemoryModalView("list"); setMemoryModalFocusId(null); setMemoryModalOpen(true) }
 
+  const openMemoryAt = (memoryId: string) => { setAutoAddMemory(false); setMemoryModalView("list"); setMemoryModalFocusId(memoryId); setMemoryModalOpen(true) }
+
+  const topMemories = [...MOCK_MEMORIES].sort((a, b) => b.weight - a.weight).slice(0, 4)
+
 
 
   const testSubtitle = alt.completeness < 50
@@ -1280,8 +1284,41 @@ function AltDetail({ alt }: { alt: AltData }) {
           </button>
         </div>
 
-        {/* Connected sources */}
+        {/* Scrollable content */}
         <div className="flex-1 overflow-y-auto px-6 pb-6">
+          {/* Top memories */}
+          {topMemories.length > 0 && (
+            <div className="mb-6">
+              <div className="flex items-center justify-between mb-3">
+                <p className="text-[10px] uppercase tracking-wider font-medium text-muted-foreground">Top memories</p>
+                <button onClick={openMapModal}
+                  className="text-[10px] text-muted-foreground hover:text-foreground transition-colors">
+                  View all →
+                </button>
+              </div>
+              <div className="flex flex-col gap-1.5">
+                {topMemories.map(m => (
+                  <button key={m.id} onClick={() => openMemoryAt(m.id)}
+                    className="text-left rounded-lg border border-border bg-card hover:bg-muted/30 transition-colors px-3 py-2.5 group">
+                    <div className="flex items-start gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full mt-1.5 shrink-0" style={{ background: sourceColors[m.source] }} />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-[12px] leading-snug text-foreground line-clamp-2">{m.label}</p>
+                        <div className="flex items-center gap-2 mt-1">
+                          <span className="text-[9px] text-muted-foreground uppercase tracking-wider">{m.source}</span>
+                          <span className="text-[9px] text-muted-foreground">·</span>
+                          <span className="text-[9px] text-muted-foreground">weight {m.weight}</span>
+                        </div>
+                      </div>
+                      <span className="text-[10px] text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity shrink-0 mt-0.5">→</span>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Connected sources */}
           <p className="text-[10px] uppercase tracking-wider font-medium text-muted-foreground mb-3">Connected sources</p>
           <div className="flex flex-col gap-1.5">
             {Object.entries(SOURCE_LABELS).map(([key, label]) => {
@@ -1408,61 +1445,19 @@ function AltDetail({ alt }: { alt: AltData }) {
 
 // ── Alts Page ────────────────────────────────────────────────
 
-export function AltsPage() {
-  const [selectedId, setSelectedId] = useState(ALTS[0].id)
-  const [sidebarExpanded, setSidebarExpanded] = useState(false)
-  const expandTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const selectedAlt = ALTS.find(a => a.id === selectedId)!
+export function AltsPage({ onEntityChange, selectedAltId }: { onEntityChange?: (e: { type: "role"|"candidate"|"alt"; name: string; meta?: Record<string,string> } | undefined) => void; selectedAltId?: string; onSelectAlt?: (id: string) => void } = {}) {
+  const selectedId = selectedAltId ?? ALTS[0].id
+  const selectedAlt = ALTS.find(a => a.id === selectedId) ?? ALTS[0]
 
-  const handleSidebarEnter = () => {
-    expandTimer.current = setTimeout(() => setSidebarExpanded(true), 100)
-  }
-  const handleSidebarLeave = () => {
-    if (expandTimer.current) { clearTimeout(expandTimer.current); expandTimer.current = null }
-    setSidebarExpanded(false)
-  }
-
-  useEffect(() => () => { if (expandTimer.current) clearTimeout(expandTimer.current) }, [])
+  useEffect(() => {
+    onEntityChange?.({ type: "alt", name: selectedAlt.name, meta: { id: selectedAlt.id, status: selectedAlt.status, completeness: String(selectedAlt.completeness) } })
+  }, [selectedId])
 
   return (
     <div className="h-full flex overflow-hidden bg-background">
-      <div
-        className="shrink-0 border-r border-border flex flex-col py-3 bg-background transition-all duration-200 overflow-hidden"
-        style={{ width: sidebarExpanded ? 188 : 60 }}
-        onMouseEnter={handleSidebarEnter}
-        onMouseLeave={handleSidebarLeave}
-      >
-        <div className="px-3 mb-3 h-5">
-          {sidebarExpanded && <span className="text-[10px] uppercase tracking-wider font-medium text-muted-foreground whitespace-nowrap">Your Alts</span>}
-        </div>
-        {ALTS.map(alt => {
-          const isSelected = selectedId === alt.id
-          const dotColor = alt.status === "active" ? "bg-status-success-dot" : "bg-muted-foreground/40"
-          return (
-            <button key={alt.id} onClick={() => setSelectedId(alt.id)}
-              className={`flex items-center gap-3 px-3 py-2.5 transition-colors w-full border-l-2 ${
-                isSelected ? "border-l-foreground bg-muted/50" : "border-l-transparent hover:bg-muted/30"
-              }`}>
-              <div className="relative shrink-0">
-                <div className={`border rounded-lg p-1 ${isSelected ? "border-foreground/30 bg-muted/50" : "border-border bg-muted/20"}`}>
-                  <PixelSprite size={28} active={alt.status === "active"} breathing={isSelected && alt.status === "active"} />
-                </div>
-                <div className={`absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full border border-background ${dotColor}`} />
-              </div>
-              {sidebarExpanded && (
-                <div className="text-left min-w-0 overflow-hidden">
-                  <p className={`text-xs font-medium truncate ${isSelected ? "text-foreground" : "text-muted-foreground"}`}>{alt.name}</p>
-                  <p className="text-[10px] text-muted-foreground">{alt.completeness}% complete</p>
-                </div>
-              )}
-            </button>
-          )
-        })}
-      </div>
       <div className="flex-1 overflow-hidden flex flex-col">
         <AltDetail key={selectedId} alt={selectedAlt} />
       </div>
-
     </div>
   )
 }

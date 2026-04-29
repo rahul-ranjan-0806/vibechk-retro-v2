@@ -55,9 +55,9 @@ function scoreColor(score: number) {
 
 // ── Page ─────────────────────────────────────────────────────
 
-export function HomePage({ onNavigate, onOpenOverlay }: { onNavigate: (p: Page) => void; onOpenOverlay?: () => void }) {
+export function HomePage({ onNavigate, onOpenOverlay }: { onNavigate: (p: Page) => void; onOpenOverlay?: (prefill?: string) => void }) {
   const [setupDismissed, setSetupDismissed] = useState(false)
-  const [autoExpanded, setAutoExpanded] = useState(false)
+  const [autoExpanded, setAutoExpanded] = useState(true)
 
   // Derived data
   const pushed = SEED_CANDIDATES.filter(c => c.status === "shortlisted")
@@ -136,7 +136,7 @@ export function HomePage({ onNavigate, onOpenOverlay }: { onNavigate: (p: Page) 
                             <button className="text-[11px] rounded-md px-3 py-1.5 bg-status-danger text-status-danger-foreground hover:opacity-90 transition-opacity">
                               Reject
                             </button>
-                            <button onClick={() => onOpenOverlay?.()}
+                            <button onClick={() => onOpenOverlay?.(`Why did you score ${c.name} ${c.score}?`)}
                               className="text-[11px] rounded-md px-3 py-1.5 border border-border text-muted-foreground hover:text-foreground hover:border-foreground/40 transition-colors">
                               Discuss with Sabu
                             </button>

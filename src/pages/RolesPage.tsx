@@ -315,11 +315,18 @@ function JDEditorModal({ open, onClose }: { open: boolean; onClose: () => void }
             <div className="flex items-center gap-3">
               <span className="text-[10px] text-muted-foreground">Last edited 2h ago</span>
               {/* Import */}
-              <button onClick={() => document.getElementById("jd-import-input")?.click()}
-                className="flex items-center gap-1.5 text-[10px] px-2.5 py-1 rounded-md border border-border text-muted-foreground hover:text-foreground hover:border-foreground/40 transition-colors">
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                Import
-              </button>
+              <div className="flex items-center gap-1.5">
+                <button onClick={() => document.getElementById("jd-import-input")?.click()}
+                  className="flex items-center gap-1.5 text-[10px] px-2.5 py-1 rounded-md border border-border text-muted-foreground hover:text-foreground hover:border-foreground/40 transition-colors">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                  Import
+                </button>
+                <div className="flex items-center gap-1">
+                  <span className="text-[8px] font-medium px-1.5 py-0.5 rounded-sm bg-status-danger/15 text-status-danger-foreground border border-status-danger/30 uppercase tracking-wider">PDF</span>
+                  <span className="text-[8px] font-medium px-1.5 py-0.5 rounded-sm bg-accent-blue/15 text-accent-blue border border-accent-blue/30 uppercase tracking-wider">MD</span>
+                  <span className="text-[8px] font-medium px-1.5 py-0.5 rounded-sm bg-muted text-muted-foreground border border-border uppercase tracking-wider">DOC</span>
+                </div>
+              </div>
               <input id="jd-import-input" type="file" accept=".pdf,.doc,.docx,.md,.txt" className="hidden" onChange={() => {}} />
               {/* Download dropdown */}
               <div className="relative">
@@ -918,21 +925,23 @@ function RoleDetail({ role, activeProfile, onProfileOpen, onProfileClose }: { ro
 
 // ── Main Export ───────────────────────────────────────────────
 
-export function RolesPage({ onEntityChange }: { onEntityChange?: (e: { type: "role"|"candidate"|"alt"; name: string; meta?: Record<string,string> } | undefined) => void }) {
-  const [selectedId, setSelectedId] = useState(ROLES[0].id)
+export function RolesPage({ onEntityChange, selectedRoleId, onSelectRole: _onSelectRole }: { onEntityChange?: (e: { type: "role"|"candidate"|"alt"; name: string; meta?: Record<string,string> } | undefined) => void; selectedRoleId?: string; onSelectRole?: (id: string) => void }) {
+  const selectedId = selectedRoleId ?? ROLES[0].id
   const [activeProfile, setActiveProfile] = useState<string | null>(null)
-  const selectedRole = ROLES.find(r => r.id === selectedId)!
+  const selectedRole = ROLES.find(r => r.id === selectedId) ?? ROLES[0]
 
   useEffect(() => {
     onEntityChange?.({ type: "role", name: selectedRole.title, meta: { id: selectedRole.id, status: selectedRole.status, candidateCount: String(selectedRole.candidateCount) } })
   }, [selectedId])
+
+  // Reset profile drilldown when role changes
+  useEffect(() => { setActiveProfile(null) }, [selectedId])
 
   const openProfile = (key: string) => setActiveProfile(key)
   const closeProfile = () => setActiveProfile(null)
 
   return (
     <div className="flex h-full overflow-hidden">
-      <RoleList selectedId={selectedId} onSelect={(id) => { setSelectedId(id); setActiveProfile(null) }} collapsed={activeProfile !== null} />
       <RoleDetail key={selectedId} role={selectedRole} activeProfile={activeProfile} onProfileOpen={openProfile} onProfileClose={closeProfile} />
     </div>
   )

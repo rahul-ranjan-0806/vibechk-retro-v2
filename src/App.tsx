@@ -10,7 +10,7 @@ import { SettingsPage } from "./pages/SettingsPage"
 import { ChatPage } from "./pages/ChatPage"
 import { AltChatOverlay, type OverlayEntity } from "./components/AltChatOverlay"
 import { PixelSprite } from "./components/PixelSprite"
-import { PROACTIVE_NUDGES } from "./lib/mockData"
+import { PROACTIVE_NUDGES, ROLES, ALTS_MINI } from "./lib/mockData"
 
 type Page = "home" | "roles" | "candidates" | "alts" | "chat" | "org" | "settings"
 
@@ -31,13 +31,19 @@ export default function App() {
   const [page, setPage] = useState<Page>("home")
   const [navCollapsed, setNavCollapsed] = useState(false)
 
+  // Selected entity IDs for sidebar drill-down
+  const [selectedRoleId, setSelectedRoleId] = useState<string>(ROLES[0].id)
+  const [selectedAltId, setSelectedAltId] = useState<string>(ALTS_MINI[0].id)
+
   // Alt overlay state
   const [overlayOpen, setOverlayOpen] = useState(false)
   const [entityContext, setEntityContext] = useState<OverlayEntity | undefined>(undefined)
   const [nudgeBadge, setNudgeBadge] = useState(false)
   const [nudgeMessage, setNudgeMessage] = useState<string | null>(null)
+  const [prefillInput, setPrefillInput] = useState<string | null>(null)
 
-  const openOverlay = useCallback(() => {
+  const openOverlay = useCallback((prefill?: string) => {
+    setPrefillInput(prefill ?? null)
     setOverlayOpen(true)
     setNudgeBadge(false)
   }, [])
@@ -84,14 +90,18 @@ export default function App() {
         <div className={`${navCollapsed ? "px-0 flex justify-center" : "px-5 flex items-center justify-between"} mb-5`}>
           {navCollapsed
             ? <button onClick={() => setNavCollapsed(false)} className="text-muted-foreground hover:text-foreground transition-colors p-0.5" title="Expand sidebar">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/><path d="M14 9l3 3-3 3"/>
-                </svg>
+                <div className="w-7 h-7 rounded-md bg-foreground text-background flex items-center justify-center font-pixel text-[10px] font-bold tracking-tight">vc</div>
               </button>
             : <>
-                <span className="font-pixel text-sm font-medium tracking-widest text-foreground">vibechk</span>
-                <button onClick={() => setNavCollapsed(true)} className="text-muted-foreground hover:text-foreground transition-colors p-0.5" title="Collapse sidebar">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <div className="flex items-center gap-2 min-w-0">
+                  <div className="w-7 h-7 rounded-md bg-foreground text-background flex items-center justify-center font-pixel text-[10px] font-bold tracking-tight shrink-0">vc</div>
+                  <div className="flex flex-col min-w-0">
+                    <span className="font-pixel text-[12px] font-medium tracking-widest text-foreground leading-tight">vibechk</span>
+                    <span className="text-[9px] text-muted-foreground tracking-wide leading-tight truncate">Alt Inc</span>
+                  </div>
+                </div>
+                <button onClick={() => setNavCollapsed(true)} className="text-muted-foreground hover:text-foreground transition-colors p-0.5 shrink-0" title="Collapse sidebar">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/><path d="M16 15l-3-3 3-3"/>
                   </svg>
                 </button>
@@ -116,7 +126,7 @@ export default function App() {
             icon: <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/><path d="M9 9h0M9 12h0M9 15h0M9 18h0"/></svg> },
         ].map(item => {
           const btn = (
-            <button key={item.id} onClick={() => setPage(item.id)}
+            <button onClick={() => setPage(item.id)}
               className={`w-full flex items-center ${navCollapsed ? "justify-center px-0" : "gap-2.5 px-5"} py-2 text-sm transition-colors text-left rounded-md ${
                 page === item.id ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground hover:bg-accent"
               }`}>
@@ -129,9 +139,65 @@ export default function App() {
               )}
             </button>
           )
-          return navCollapsed
-            ? <NavTooltip key={item.id} label={item.label} description={item.description}>{btn}</NavTooltip>
+          const wrapped = navCollapsed
+            ? <NavTooltip label={item.label} description={item.description}>{btn}</NavTooltip>
             : btn
+
+          // Sub-list for Roles when active and expanded
+          const showRoleList = item.id === "roles" && page === "roles" && !navCollapsed
+          // Sub-list for Alts when active and expanded
+          const showAltList = item.id === "alts" && page === "alts" && !navCollapsed
+
+          return (
+            <div key={item.id} className="flex flex-col">
+              {wrapped}
+              {showRoleList && (
+                <div className="flex flex-col gap-0.5 mt-1 mb-1 ml-3 pl-3 border-l border-border">
+                  {ROLES.map(r => (
+                    <button key={r.id} onClick={() => setSelectedRoleId(r.id)}
+                      className={`w-full text-left text-[11px] py-1.5 pl-3 pr-2 rounded-md transition-colors truncate ${
+                        selectedRoleId === r.id
+                          ? "bg-accent text-foreground font-medium"
+                          : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+                      }`}>
+                      {r.title}
+                    </button>
+                  ))}
+                  <button className="w-full text-left text-[11px] py-1.5 pl-3 pr-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">
+                    + New role
+                  </button>
+                </div>
+              )}
+              {showAltList && (
+                <div className="flex flex-col gap-0.5 mt-1 mb-1 ml-3 pl-3 border-l border-border">
+                  {ALTS_MINI.map(a => {
+                    const isSelected = selectedAltId === a.id
+                    return (
+                      <button key={a.id} onClick={() => setSelectedAltId(a.id)}
+                        className={`w-full text-left text-[11px] py-1.5 pl-2 pr-2 rounded-md transition-colors flex items-center gap-2 ${
+                          isSelected
+                            ? "bg-accent text-foreground font-medium"
+                            : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+                        }`}>
+                        <div className={`w-5 h-5 rounded-full flex items-center justify-center text-[8px] font-medium shrink-0 ${
+                          isSelected ? "bg-foreground text-background" : "bg-muted text-muted-foreground"
+                        }`}>{a.initials}</div>
+                        <div className="flex-1 min-w-0">
+                          <p className="truncate leading-tight">{a.name}</p>
+                          <div className="flex items-center gap-1 mt-0.5">
+                            <div className="flex-1 h-0.5 bg-muted rounded-full overflow-hidden">
+                              <div className="h-full bg-foreground/50 rounded-full" style={{ width: `${a.completeness}%` }} />
+                            </div>
+                            <span className="text-[8px] text-muted-foreground tabular-nums">{a.completeness}%</span>
+                          </div>
+                        </div>
+                      </button>
+                    )
+                  })}
+                </div>
+              )}
+            </div>
+          )
         })}
 
         {!navCollapsed && <p className="text-[10px] uppercase tracking-wider font-medium px-5 mb-1 mt-3 text-muted-foreground">Configure</p>}
@@ -165,9 +231,9 @@ export default function App() {
 
       <main className="flex-1 overflow-hidden">
         {page === "home" && <HomePage onNavigate={setPage} onOpenOverlay={openOverlay} />}
-        {page === "roles" && <RolesPage onEntityChange={setEntityContext} />}
+        {page === "roles" && <RolesPage onEntityChange={setEntityContext} selectedRoleId={selectedRoleId} onSelectRole={setSelectedRoleId} />}
         {page === "candidates" && <CandidatesPage onEntityChange={setEntityContext} />}
-        {page === "alts" && <AltsPage onEntityChange={setEntityContext} />}
+        {page === "alts" && <AltsPage onEntityChange={setEntityContext} selectedAltId={selectedAltId} onSelectAlt={setSelectedAltId} />}
         {page === "chat" && <ChatPage />}
         {page === "org" && <OrgPage />}
         {page === "settings" && <SettingsPage />}
@@ -191,9 +257,10 @@ export default function App() {
     {/* Global Alt chat overlay */}
     <AltChatOverlay
       open={overlayOpen}
-      onClose={() => setOverlayOpen(false)}
+      onClose={() => { setOverlayOpen(false); setPrefillInput(null) }}
       context={{ page, entity: entityContext }}
       nudgeMessage={nudgeBadge ? nudgeMessage : null}
+      prefillInput={prefillInput}
     />
 
     {import.meta.env.DEV && (
