@@ -248,7 +248,7 @@ export function CandidatesPage({ onEntityChange, onNavigateToCandidate }: { onEn
                                 </div>
                                 <p className="text-[11px] leading-relaxed text-foreground/90">{c.reasoning}</p>
                                 <div className="flex items-center gap-1.5 pt-1.5 border-t border-border">
-                                  <StatusBadge status={c.status} />
+                                  {!(c.score >= 9 && c.status === "shortlisted") && <StatusBadge status={c.status} />}
                                   <StellarTag score={c.score} />
                                   <span className="ml-auto text-[10px] text-muted-foreground">Click to open in role →</span>
                                 </div>
@@ -266,7 +266,7 @@ export function CandidatesPage({ onEntityChange, onNavigateToCandidate }: { onEn
                         <AltRecBadge rec={c.altRec} confidence={c.confidence} />
                       </div>
                       <div className="w-24 shrink-0">
-                        <StatusBadge status={c.status} />
+                        {!(c.score >= 9 && c.status === "shortlisted") && <StatusBadge status={c.status} />}
                       </div>
                       <div className="w-16 shrink-0 text-right">
                         <span className="text-xs text-muted-foreground">{c.completedAt}</span>
