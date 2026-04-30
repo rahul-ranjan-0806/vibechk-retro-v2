@@ -154,6 +154,7 @@ export function AltChatOverlay({ open, onClose, context, nudgeMessage, prefillIn
   const [slashFilter, setSlashFilter] = useState("")
   const [slashSource, setSlashSource] = useState<string | null>(null)
   const [slashIndex, setSlashIndex] = useState(0)
+  const [sendKey, setSendKey] = useState(0)  // increments each send → remounts shimmer
 
   const bodyRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -209,6 +210,7 @@ export function AltChatOverlay({ open, onClose, context, nudgeMessage, prefillIn
       setSlashOpen(false)
       setSlashSource(null)
       setSlashFilter("")
+      setSendKey(0)
       onClose()
     }, 150)
   }, [onClose])
@@ -299,6 +301,7 @@ export function AltChatOverlay({ open, onClose, context, nudgeMessage, prefillIn
     const fullMsg = connectorPills.length
       ? `${msg}${msg ? " " : ""}[with context from: ${connectorPills.map(p => p.sourceLabel + "/" + p.label).join(", ")}]`
       : msg
+    setSendKey(k => k + 1)  // remount shimmer for sweep animation
     setMsgs(p => [...p, { from: "user", text: msg || "Fetch context from attached sources" }])
     setInput("")
     setConnectorPills([])
@@ -380,9 +383,9 @@ export function AltChatOverlay({ open, onClose, context, nudgeMessage, prefillIn
 
   return (
     <div className="fixed inset-0 z-[60]" onClick={e => { if (e.target === e.currentTarget) handleClose() }}>
-      {/* Progressive gradient blur — animated grow from 0 to full blur */}
+      {/* Backdrop tint + mask — blur ramps to 12px the moment a chat is sent */}
       <div
-        className={`absolute inset-0 pointer-events-none ${blurClass}`}
+        className={`absolute inset-0 pointer-events-none alt-overlay-backdrop ${msgs.length > 0 ? "blurred" : ""} ${blurClass}`}
         style={{
           maskImage: "linear-gradient(to top, black 30%, transparent 80%)",
           WebkitMaskImage: "linear-gradient(to top, black 30%, transparent 80%)",
@@ -390,44 +393,46 @@ export function AltChatOverlay({ open, onClose, context, nudgeMessage, prefillIn
         }}
       />
 
-      {/* Shimmer sweep — bottom→top, fires alongside backdrop reveal */}
-      {!closing && <div className="alt-overlay-shimmer" />}
+      {/* White shimmer sweep — fires once per send (key remount restarts animation) */}
+      {sendKey > 0 && !closing && <div key={sendKey} className="alt-overlay-shimmer" />}
 
-      {/* Content anchored to bottom */}
-      <div className={`absolute bottom-0 left-0 right-0 flex flex-col items-center pb-8 px-4 ${animClass}`}>
-        <div className="w-full max-w-2xl flex flex-col gap-3">
-
-          {/* Messages — grow upward */}
-          {msgs.length > 0 && (
-            <div ref={bodyRef} className="max-h-[50vh] overflow-y-auto flex flex-col gap-2.5 px-1 scroll-smooth">
-              {msgs.map((m, i) => {
-                if (m.from === "user") {
-                  return (
-                    <div key={i} className="text-[11px] leading-relaxed rounded-lg px-3.5 py-2.5 max-w-[85%] bg-foreground text-background self-end">
-                      {m.text}
-                    </div>
-                  )
-                }
+      {/* Messages — anchored to TOP, fade in after the shimmer/blur transition */}
+      {msgs.length > 0 && (
+        <div className="absolute top-0 left-0 right-0 max-h-[60vh] overflow-y-auto pt-16 pb-6 pointer-events-none">
+          <div ref={bodyRef} className="max-w-2xl mx-auto px-4 flex flex-col gap-2.5 pointer-events-auto">
+            {msgs.map((m, i) => {
+              if (m.from === "user") {
                 return (
-                  <div key={i} className="flex flex-col gap-2 max-w-[85%] self-start w-full">
-                    <div className="flex items-start gap-2">
-                      <div className="shrink-0 mt-0.5"><PixelSprite size={18} /></div>
-                      <div className="text-[11px] leading-relaxed rounded-lg px-3.5 py-2.5 bg-card border border-border shadow-sm">
-                        {m.text}
-                      </div>
-                    </div>
-                    {m.parts && m.parts.length > 0 && (
-                      <div className="flex flex-col gap-2 ml-7">
-                        {m.parts.map((part, pi) => (
-                          <AltMessagePart key={pi} part={part} />
-                        ))}
-                      </div>
-                    )}
+                  <div key={i} className="alt-overlay-msg text-[11px] leading-relaxed rounded-lg px-3.5 py-2.5 max-w-[85%] bg-foreground text-background self-end">
+                    {m.text}
                   </div>
                 )
-              })}
-            </div>
-          )}
+              }
+              return (
+                <div key={i} className="alt-overlay-msg flex flex-col gap-2 max-w-[85%] self-start w-full">
+                  <div className="flex items-start gap-2">
+                    <div className="shrink-0 mt-0.5"><PixelSprite size={18} /></div>
+                    <div className="text-[11px] leading-relaxed rounded-lg px-3.5 py-2.5 bg-card border border-border shadow-sm">
+                      {m.text}
+                    </div>
+                  </div>
+                  {m.parts && m.parts.length > 0 && (
+                    <div className="flex flex-col gap-2 ml-7">
+                      {m.parts.map((part, pi) => (
+                        <AltMessagePart key={pi} part={part} />
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Input region — anchored to bottom (always) */}
+      <div className={`absolute bottom-0 left-0 right-0 flex flex-col items-center pb-8 px-4 ${animClass}`}>
+        <div className="w-full max-w-2xl flex flex-col gap-3">
 
           {/* Prompt suggestions — shown when empty */}
           {msgs.length === 0 && !nudgeMessage && (

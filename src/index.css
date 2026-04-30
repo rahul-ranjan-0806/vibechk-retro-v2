@@ -237,40 +237,36 @@ h1 { letter-spacing: -0.02em; }
 
 /* ── Alt chat overlay ─────────────────────────────────────── */
 
-/* Backdrop: blur grows from 0 → 12px alongside opacity, ease-in for snappy feel */
-@keyframes alt-overlay-blur-in {
-  0% {
-    opacity: 0;
-    backdrop-filter: blur(0px);
-    -webkit-backdrop-filter: blur(0px);
-  }
-  100% {
-    opacity: 1;
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-  }
+/* Backdrop tint/mask: only opacity fade on open, no blur yet */
+@keyframes alt-overlay-backdrop-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
-@keyframes alt-overlay-blur-out {
-  0% {
-    opacity: 1;
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-  }
-  100% {
-    opacity: 0;
-    backdrop-filter: blur(0px);
-    -webkit-backdrop-filter: blur(0px);
-  }
+@keyframes alt-overlay-backdrop-out {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+.alt-overlay-blur-enter { animation: alt-overlay-backdrop-in 0.2s ease-out forwards; }
+.alt-overlay-blur-exit  { animation: alt-overlay-backdrop-out 0.18s ease-in forwards; }
+
+/* Backdrop blur intensity — toggled the moment a chat is sent */
+.alt-overlay-backdrop {
+  backdrop-filter: blur(0px);
+  -webkit-backdrop-filter: blur(0px);
+  transition: backdrop-filter 0.55s ease-in, -webkit-backdrop-filter 0.55s ease-in;
+}
+.alt-overlay-backdrop.blurred {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
-/* Shimmer sweep bottom → top, fires alongside backdrop reveal */
+/* White shimmer sweep — bottom → top, fires once per send */
 @keyframes alt-overlay-shimmer-sweep {
   0%   { transform: translateY(100%); opacity: 0; }
-  15%  { opacity: 0.5; }
-  85%  { opacity: 0.5; }
+  18%  { opacity: 0.7; }
+  82%  { opacity: 0.7; }
   100% { transform: translateY(-100%); opacity: 0; }
 }
-
 .alt-overlay-shimmer {
   position: absolute;
   inset: 0;
@@ -278,31 +274,34 @@ h1 { letter-spacing: -0.02em; }
   background: linear-gradient(
     to top,
     transparent 0%,
-    hsl(var(--foreground) / 0.04) 35%,
-    hsl(var(--foreground) / 0.10) 50%,
-    hsl(var(--foreground) / 0.04) 65%,
+    rgba(255, 255, 255, 0.06) 35%,
+    rgba(255, 255, 255, 0.20) 50%,
+    rgba(255, 255, 255, 0.06) 65%,
     transparent 100%
   );
   animation: alt-overlay-shimmer-sweep 0.55s ease-in forwards;
 }
 
-/* Content reveal: opacity-only, delayed until backdrop finishes */
+/* Content reveal — input region: simple opacity in/out */
 @keyframes alt-overlay-content-in {
-  0%   { opacity: 0; }
-  100% { opacity: 1; }
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 @keyframes alt-overlay-content-out {
   0%   { opacity: 1; transform: translateY(0) scale(1); }
   100% { opacity: 0; transform: translateY(8px) scale(0.97); }
 }
+.alt-overlay-enter { animation: alt-overlay-content-in 0.2s ease-out forwards; }
+.alt-overlay-exit  { animation: alt-overlay-content-out 0.15s ease-in forwards; }
 
-.alt-overlay-blur-enter   { animation: alt-overlay-blur-in 0.25s ease-in forwards; }
-.alt-overlay-blur-exit    { animation: alt-overlay-blur-out 0.18s ease-in forwards; }
-.alt-overlay-enter        {
-  opacity: 0;
-  animation: alt-overlay-content-in 0.2s ease-out 0.22s forwards;
+/* Per-message fade-in (after the shimmer/blur transition) */
+@keyframes alt-overlay-msg-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
-.alt-overlay-exit         { animation: alt-overlay-content-out 0.15s ease-in forwards; }
+.alt-overlay-msg {
+  animation: alt-overlay-msg-in 0.3s ease-out 0.4s both;
+}
 
 /* ── Link pill shimmer ─────────────────────────────────────── */
 
