@@ -400,7 +400,7 @@ export function AltChatOverlay({ open, onClose, context, nudgeMessage, prefillIn
             {msgs.map((m, i) => {
               if (m.from === "user") {
                 return (
-                  <div key={i} className="alt-overlay-msg text-[11px] leading-relaxed rounded-lg px-3.5 py-2.5 max-w-[85%] bg-foreground text-background self-end">
+                  <div key={i} className="alt-overlay-msg text-sm leading-relaxed rounded-lg px-3.5 py-2.5 max-w-[85%] bg-foreground text-background self-end">
                     {m.text}
                   </div>
                 )
@@ -409,7 +409,7 @@ export function AltChatOverlay({ open, onClose, context, nudgeMessage, prefillIn
                 <div key={i} className="alt-overlay-msg flex flex-col gap-2 max-w-[85%] self-start w-full">
                   <div className="flex items-start gap-2">
                     <div className="shrink-0 mt-0.5"><PixelSprite size={18} /></div>
-                    <div className="text-[11px] leading-relaxed rounded-lg px-3.5 py-2.5 bg-card border border-border shadow-sm">
+                    <div className="text-sm leading-relaxed rounded-lg px-3.5 py-2.5 bg-card border border-border shadow-sm">
                       {m.text}
                     </div>
                   </div>

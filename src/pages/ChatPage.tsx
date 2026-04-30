@@ -483,7 +483,7 @@ export function ChatPage() {
                     <PixelSprite size={36} />
                   </div>
                   <div>
-                    <h1 className="text-display">What can I help with?</h1>
+                    <h1 className="text-h3">What can I help with?</h1>
                     <p className="text-sm text-muted-foreground mt-0.5">Sashank's Alt · trained on your decisions</p>
                   </div>
                 </div>
