@@ -190,38 +190,43 @@ export function HomePage({ onNavigate, onOpenOverlay }: { onNavigate: (p: Page) 
             </div>
           )}
 
-          {/* ── Role pipelines ───────────────────────────── */}
-          <div className="mb-12">
-            <p className="text-[15px] font-semibold text-foreground mb-2">Role pipelines</p>
-            <div>
-              {PIPELINE.map((p, i) => {
-                const role = ROLES.find(r => r.id === p.roleId)
-                if (!role) return null
-                const status = pipelineStatus(p.thisWeek, p.lastWeek)
-                const delta = p.thisWeek - p.lastWeek
-                const deltaStr = delta > 0 ? `+${delta}` : `${delta}`
-                return (
-                  <button key={p.roleId} onClick={() => onNavigate("roles")}
-                    className={`w-full flex items-center gap-3 px-2 py-2 hover:bg-muted/60 transition-colors text-left rounded-sm group ${i > 0 ? "border-t border-border/40" : ""}`}>
-                    <div className={`w-1.5 h-1.5 rounded-full shrink-0 ${status.dot}`} />
-                    <span className="text-muted-foreground text-sm shrink-0">📋</span>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm">{role.title}</p>
+          {/* ── Setup callout ────────────────────────────── */}
+          {!setupComplete && !setupDismissed && (
+            <div className="mb-12 rounded-md bg-muted/60 px-4 py-3 flex gap-3">
+              <div className="text-xl pt-0.5 shrink-0">💡</div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <p className="text-sm font-medium">Finish setup</p>
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-16 h-1 rounded-full bg-foreground/10 overflow-hidden">
+                        <div className="h-full rounded-full bg-foreground transition-all" style={{ width: `${(doneCount / SETUP_ITEMS.length) * 100}%` }} />
+                      </div>
+                      <span className="text-xs text-muted-foreground tabular-nums">{doneCount}/{SETUP_ITEMS.length}</span>
                     </div>
-                    <div className="flex items-center gap-2 shrink-0">
-                      <span className="text-xs text-muted-foreground tabular-nums">
-                        {p.thisWeek} this week
-                        <span className={`ml-1 ${delta >= 0 ? "text-status-success-foreground" : "text-status-danger-foreground"}`}>
-                          ({deltaStr})
-                        </span>
-                      </span>
-                      <span className={`text-xs rounded-xs px-1.5 py-0.5 ${status.text} bg-muted`}>{status.label}</span>
-                    </div>
-                  </button>
-                )
-              })}
+                  </div>
+                  <button onClick={() => setSetupDismissed(true)} className="text-muted-foreground hover:text-foreground w-6 h-6 flex items-center justify-center rounded-sm hover:bg-foreground/5">✕</button>
+                </div>
+                <div className="flex flex-col gap-1">
+                  {incomplete.map(item => {
+                    const dotColor = item.status === "warning" ? "bg-status-warning-dot" : "bg-border"
+                    return (
+                      <div key={item.id} className="flex items-center gap-2 group">
+                        <div className={`w-1.5 h-1.5 rounded-full shrink-0 ${dotColor}`} />
+                        <p className="text-sm text-foreground flex-1">{item.title}</p>
+                        {item.ctaTarget && (
+                          <button onClick={() => onNavigate(item.ctaTarget!)}
+                            className="text-xs text-muted-foreground hover:text-foreground transition-colors">
+                            {item.cta}
+                          </button>
+                        )}
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
             </div>
-          </div>
+          )}
 
           {/* ── Auto-decisions (collapsed) ────────────────── */}
           {totalHandled > 0 && (
@@ -278,43 +283,38 @@ export function HomePage({ onNavigate, onOpenOverlay }: { onNavigate: (p: Page) 
             </div>
           )}
 
-          {/* ── Setup callout ────────────────────────────── */}
-          {!setupComplete && !setupDismissed && (
-            <div className="rounded-md bg-muted/60 px-4 py-3 flex gap-3">
-              <div className="text-xl pt-0.5 shrink-0">💡</div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center gap-2">
-                    <p className="text-sm font-medium">Finish setup</p>
-                    <div className="flex items-center gap-1.5">
-                      <div className="w-16 h-1 rounded-full bg-foreground/10 overflow-hidden">
-                        <div className="h-full rounded-full bg-foreground transition-all" style={{ width: `${(doneCount / SETUP_ITEMS.length) * 100}%` }} />
-                      </div>
-                      <span className="text-xs text-muted-foreground tabular-nums">{doneCount}/{SETUP_ITEMS.length}</span>
+          {/* ── Role pipelines ───────────────────────────── */}
+          <div className="mb-12">
+            <p className="text-[15px] font-semibold text-foreground mb-2">Role pipelines</p>
+            <div>
+              {PIPELINE.map((p, i) => {
+                const role = ROLES.find(r => r.id === p.roleId)
+                if (!role) return null
+                const status = pipelineStatus(p.thisWeek, p.lastWeek)
+                const delta = p.thisWeek - p.lastWeek
+                const deltaStr = delta > 0 ? `+${delta}` : `${delta}`
+                return (
+                  <button key={p.roleId} onClick={() => onNavigate("roles")}
+                    className={`w-full flex items-center gap-3 px-2 py-2 hover:bg-muted/60 transition-colors text-left rounded-sm group ${i > 0 ? "border-t border-border/40" : ""}`}>
+                    <div className={`w-1.5 h-1.5 rounded-full shrink-0 ${status.dot}`} />
+                    <span className="text-muted-foreground text-sm shrink-0">📋</span>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm">{role.title}</p>
                     </div>
-                  </div>
-                  <button onClick={() => setSetupDismissed(true)} className="text-muted-foreground hover:text-foreground w-6 h-6 flex items-center justify-center rounded-sm hover:bg-foreground/5">✕</button>
-                </div>
-                <div className="flex flex-col gap-1">
-                  {incomplete.map(item => {
-                    const dotColor = item.status === "warning" ? "bg-status-warning-dot" : "bg-border"
-                    return (
-                      <div key={item.id} className="flex items-center gap-2 group">
-                        <div className={`w-1.5 h-1.5 rounded-full shrink-0 ${dotColor}`} />
-                        <p className="text-sm text-foreground flex-1">{item.title}</p>
-                        {item.ctaTarget && (
-                          <button onClick={() => onNavigate(item.ctaTarget!)}
-                            className="text-xs text-muted-foreground hover:text-foreground transition-colors">
-                            {item.cta}
-                          </button>
-                        )}
-                      </div>
-                    )
-                  })}
-                </div>
-              </div>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <span className="text-xs text-muted-foreground tabular-nums">
+                        {p.thisWeek} this week
+                        <span className={`ml-1 ${delta >= 0 ? "text-status-success-foreground" : "text-status-danger-foreground"}`}>
+                          ({deltaStr})
+                        </span>
+                      </span>
+                      <span className={`text-xs rounded-xs px-1.5 py-0.5 ${status.text} bg-muted`}>{status.label}</span>
+                    </div>
+                  </button>
+                )
+              })}
             </div>
-          )}
+          </div>
 
         </div>
       </div>
