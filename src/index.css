@@ -237,26 +237,71 @@ h1 { letter-spacing: -0.02em; }
 
 /* ── Alt chat overlay ─────────────────────────────────────── */
 
+/* Backdrop: blur grows from 0 → 12px alongside opacity, ease-in for snappy feel */
 @keyframes alt-overlay-blur-in {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+  0% {
+    opacity: 0;
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
+  }
+  100% {
+    opacity: 1;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
 }
 @keyframes alt-overlay-blur-out {
-  from { opacity: 1; }
-  to   { opacity: 0; }
+  0% {
+    opacity: 1;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+  100% {
+    opacity: 0;
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
+  }
 }
+
+/* Shimmer sweep bottom → top, fires alongside backdrop reveal */
+@keyframes alt-overlay-shimmer-sweep {
+  0%   { transform: translateY(100%); opacity: 0; }
+  15%  { opacity: 0.5; }
+  85%  { opacity: 0.5; }
+  100% { transform: translateY(-100%); opacity: 0; }
+}
+
+.alt-overlay-shimmer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    to top,
+    transparent 0%,
+    hsl(var(--foreground) / 0.04) 35%,
+    hsl(var(--foreground) / 0.10) 50%,
+    hsl(var(--foreground) / 0.04) 65%,
+    transparent 100%
+  );
+  animation: alt-overlay-shimmer-sweep 0.55s ease-in forwards;
+}
+
+/* Content reveal: opacity-only, delayed until backdrop finishes */
 @keyframes alt-overlay-content-in {
-  0%   { opacity: 0; transform: translateY(12px) scale(0.97); }
-  100% { opacity: 1; transform: translateY(0) scale(1); }
+  0%   { opacity: 0; }
+  100% { opacity: 1; }
 }
 @keyframes alt-overlay-content-out {
   0%   { opacity: 1; transform: translateY(0) scale(1); }
   100% { opacity: 0; transform: translateY(8px) scale(0.97); }
 }
 
-.alt-overlay-blur-enter   { animation: alt-overlay-blur-in 0.2s ease-out forwards; }
-.alt-overlay-blur-exit    { animation: alt-overlay-blur-out 0.15s ease-in forwards; }
-.alt-overlay-enter        { animation: alt-overlay-content-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.alt-overlay-blur-enter   { animation: alt-overlay-blur-in 0.25s ease-in forwards; }
+.alt-overlay-blur-exit    { animation: alt-overlay-blur-out 0.18s ease-in forwards; }
+.alt-overlay-enter        {
+  opacity: 0;
+  animation: alt-overlay-content-in 0.2s ease-out 0.22s forwards;
+}
 .alt-overlay-exit         { animation: alt-overlay-content-out 0.15s ease-in forwards; }
 
 /* ── Link pill shimmer ─────────────────────────────────────── */

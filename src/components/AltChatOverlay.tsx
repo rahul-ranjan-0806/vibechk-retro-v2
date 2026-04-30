@@ -380,17 +380,18 @@ export function AltChatOverlay({ open, onClose, context, nudgeMessage, prefillIn
 
   return (
     <div className="fixed inset-0 z-[60]" onClick={e => { if (e.target === e.currentTarget) handleClose() }}>
-      {/* Progressive gradient blur */}
+      {/* Progressive gradient blur — animated grow from 0 to full blur */}
       <div
         className={`absolute inset-0 pointer-events-none ${blurClass}`}
         style={{
-          backdropFilter: "blur(12px)",
-          WebkitBackdropFilter: "blur(12px)",
           maskImage: "linear-gradient(to top, black 30%, transparent 80%)",
           WebkitMaskImage: "linear-gradient(to top, black 30%, transparent 80%)",
           background: "linear-gradient(to top, hsl(var(--background) / 0.7) 20%, transparent 70%)",
         }}
       />
+
+      {/* Shimmer sweep — bottom→top, fires alongside backdrop reveal */}
+      {!closing && <div className="alt-overlay-shimmer" />}
 
       {/* Content anchored to bottom */}
       <div className={`absolute bottom-0 left-0 right-0 flex flex-col items-center pb-8 px-4 ${animClass}`}>
