@@ -905,23 +905,44 @@ function RoleDetail({ role, activeProfile, onProfileOpen, onProfileClose }: { ro
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
-      {/* Header */}
-      <div className="border-b border-border shrink-0">
-        <div className="max-w-5xl mx-auto px-8 pt-5 pb-0">
-          <div className="flex items-center gap-3 mb-1 mt-2">
-            <h1 className="text-base font-medium">{role.title}</h1>
-            <div className="flex border border-border overflow-hidden">
-              <button onClick={() => setStatus("draft")} className={`text-[10px] rounded-md px-2.5 py-1 transition-colors ${status === "draft" ? "bg-status-warning text-status-warning-foreground" : "text-muted-foreground hover:text-foreground"}`}>Draft</button>
-              <button onClick={() => setStatus("live")} className={`text-[10px] rounded-md px-2.5 py-1 transition-colors ${status === "live" ? "bg-status-success text-status-success-foreground" : "text-muted-foreground hover:text-foreground"}`}>Live</button>
+      {/* Notion-style breadcrumb header */}
+      <div className="shrink-0 h-11 flex items-center justify-between px-3 border-b border-border/40">
+        <div className="flex items-center gap-1.5 text-[13px] text-muted-foreground">
+          <span className="hover:bg-muted px-1.5 py-0.5 rounded-sm cursor-default">Roles</span>
+          <span className="text-muted-foreground/50">/</span>
+          <span className="hover:bg-muted px-1.5 py-0.5 rounded-sm cursor-default text-foreground">{role.title}</span>
+        </div>
+        <div className="flex items-center gap-1 text-xs text-muted-foreground">
+          <span>Edited just now</span>
+          <button className="px-2 py-1 hover:bg-muted rounded-sm">Share</button>
+          <button className="w-7 h-7 flex items-center justify-center hover:bg-muted rounded-sm" title="More">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg>
+          </button>
+        </div>
+      </div>
+
+      {/* Page title block */}
+      <div className="shrink-0">
+        <div className="max-w-[1080px] mx-auto px-12 pt-16 pb-0">
+          <div className="flex items-center gap-3 mb-2">
+            <span className="text-2xl">📋</span>
+            <h1 className="text-[40px] font-bold tracking-[-0.02em] leading-[48px]">{role.title}</h1>
+          </div>
+          <div className="flex items-center gap-3 mb-10 pl-1">
+            <span className="text-sm text-muted-foreground">{role.department}</span>
+            <span className="text-muted-foreground/50">·</span>
+            <span className="text-sm text-muted-foreground">Created {role.createdAt}</span>
+            <div className="flex items-center bg-muted rounded-sm overflow-hidden">
+              <button onClick={() => setStatus("draft")} className={`text-xs px-2.5 py-1 transition-colors ${status === "draft" ? "bg-status-warning text-status-warning-foreground" : "text-muted-foreground hover:text-foreground"}`}>Draft</button>
+              <button onClick={() => setStatus("live")} className={`text-xs px-2.5 py-1 transition-colors ${status === "live" ? "bg-status-success text-status-success-foreground" : "text-muted-foreground hover:text-foreground"}`}>Live</button>
             </div>
           </div>
-          <p className="text-[10px] text-muted-foreground mb-3">{role.department} · Created {role.createdAt}</p>
-          <div className="flex items-center">
+          <div className="flex items-center gap-1 border-b border-border/60 -mx-2 px-2">
             {tabs.map(t => (
               <button key={t.id} onClick={() => setActiveTab(t.id)}
-                className={`flex items-center gap-1.5 px-3.5 py-2 text-xs border-b-2 transition-colors -mb-px ${activeTab === t.id ? "border-foreground text-foreground font-medium" : "border-transparent text-muted-foreground hover:text-foreground"}`}>
+                className={`flex items-center gap-1.5 px-3 py-2.5 text-[13px] border-b-2 transition-colors -mb-px ${activeTab === t.id ? "border-foreground text-foreground font-medium" : "border-transparent text-muted-foreground hover:text-foreground"}`}>
                 {t.label}
-                {t.badge !== undefined && <span className="text-[9px] px-1.5 py-0.5 bg-muted text-muted-foreground">{t.badge}</span>}
+                {t.badge !== undefined && <span className="text-[11px] px-1.5 py-0.5 bg-muted text-muted-foreground rounded-xs tabular-nums">{t.badge}</span>}
               </button>
             ))}
           </div>
