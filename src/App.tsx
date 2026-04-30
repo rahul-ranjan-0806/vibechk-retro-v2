@@ -28,7 +28,7 @@ function NavTooltip({ label, description, children }: { label: string; descripti
 }
 
 export default function App() {
-  const [page, setPage] = useState<Page>("home")
+  const [page, setPage] = useState<Page>("chat")
   const [navCollapsed, setNavCollapsed] = useState(false)
 
   // Selected entity IDs for sidebar drill-down
