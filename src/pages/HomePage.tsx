@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { PixelSprite } from "@/components/PixelSprite"
+import { DecisionsLog } from "@/components/DecisionsLog"
 import {
   CANDIDATES as SEED_CANDIDATES,
   ROLES,
@@ -68,6 +69,7 @@ function scoreColor(score: number) {
 export function HomePage({ onNavigate, onOpenOverlay }: { onNavigate: (p: Page) => void; onOpenOverlay?: (prefill?: string) => void }) {
   const [setupDismissed, setSetupDismissed] = useState(false)
   const [autoExpanded, setAutoExpanded] = useState(true)
+  const [logOpen, setLogOpen] = useState(false)
 
   // Derived data
   const pushed = SEED_CANDIDATES.filter(c => c.status === "shortlisted")
@@ -134,11 +136,18 @@ export function HomePage({ onNavigate, onOpenOverlay }: { onNavigate: (p: Page) 
               <p className="text-base leading-[1.6] text-foreground">
                 {autoSentence} {dilemmaClause}
               </p>
-              <button onClick={() => onOpenOverlay?.()}
-                className="mt-3 text-sm rounded-sm px-3 py-1.5 bg-accent-blue text-white hover:opacity-90 transition-opacity inline-flex items-center gap-2">
-                <span>Ask Sabu</span>
-                <span className="text-[11px] opacity-70">⌘K</span>
-              </button>
+              <div className="mt-3 flex items-center gap-2">
+                <button onClick={() => onOpenOverlay?.()}
+                  className="text-sm rounded-sm px-3 py-1.5 bg-accent-blue text-white hover:opacity-90 transition-opacity inline-flex items-center gap-2">
+                  <span>Ask Sabu</span>
+                  <span className="text-[11px] opacity-70">⌘K</span>
+                </button>
+                <button onClick={() => setLogOpen(true)}
+                  className="text-sm rounded-sm px-3 py-1.5 border border-border text-foreground hover:bg-muted/60 transition-colors inline-flex items-center gap-2">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/></svg>
+                  <span>Activity log</span>
+                </button>
+              </div>
             </div>
           </div>
 
@@ -319,6 +328,7 @@ export function HomePage({ onNavigate, onOpenOverlay }: { onNavigate: (p: Page) 
         </div>
       </div>
 
+      <DecisionsLog open={logOpen} onClose={() => setLogOpen(false)} />
     </div>
   )
 }
