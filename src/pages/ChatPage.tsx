@@ -1024,7 +1024,7 @@ export function ChatPage() {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
               onClick={e => e.stopPropagation()}
-              className="bg-background border border-border rounded-lg shadow-xl p-6 max-w-sm w-full mx-4"
+              className="bg-background border border-border rounded-lg shadow-modal p-6 max-w-sm w-full mx-4"
             >
               <h3 className="text-base font-semibold mb-2">Confirm: {confirmAction.action.label}</h3>
               <p className="text-xs text-muted-foreground leading-relaxed mb-4">

@@ -312,7 +312,7 @@ function JDEditorModal({ open, onClose }: { open: boolean; onClose: () => void }
     <div className={`fixed inset-0 z-50 flex items-center justify-center ${closing ? "modal-backdrop-exit" : "modal-backdrop-enter"}`}
       style={{ background: "hsl(var(--background) / 0.6)", backdropFilter: "blur(4px)", WebkitBackdropFilter: "blur(4px)" }}
       onClick={e => { if (e.target === e.currentTarget) handleClose() }}>
-      <div className={`bg-card border-4 border-border rounded-lg shadow-2xl flex overflow-hidden ${closing ? "modal-pop-exit" : "modal-pop-enter"}`}
+      <div className={`bg-card border border-border rounded-lg shadow-modal flex overflow-hidden ${closing ? "modal-pop-exit" : "modal-pop-enter"}`}
         style={{ width: "95vw", height: "95vh" }}>
 
         {/* Left — Notion-style JD editor */}

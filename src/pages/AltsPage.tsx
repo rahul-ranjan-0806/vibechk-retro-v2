@@ -648,7 +648,7 @@ function MemoryModal({ open, onClose, initialView, initialMemoryId, loadingMemor
       {/* Modal */}
       <div className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none">
         <div
-          className={`pointer-events-auto bg-background border-4 border-border rounded-lg shadow-2xl flex flex-col overflow-hidden ${closing ? "modal-pop-exit" : open ? "modal-pop-enter" : ""}`}
+          className={`pointer-events-auto bg-background border border-border rounded-lg shadow-modal flex flex-col overflow-hidden ${closing ? "modal-pop-exit" : open ? "modal-pop-enter" : ""}`}
           style={{ width: "95vw", height: "95vh" }}
         >
           {/* Header */}
@@ -1403,7 +1403,7 @@ function AltDetail({ alt }: { alt: AltData }) {
           const srcCount = MOCK_MEMORIES.filter(m => m.source === disconnectSource).length
           return (
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/60 backdrop-blur-sm" onClick={() => setDisconnectSource(null)}>
-              <div className="bg-card border border-border rounded-lg shadow-xl p-5 max-w-sm w-full mx-4" onClick={e => e.stopPropagation()}>
+              <div className="bg-card border border-border rounded-lg shadow-modal p-5 max-w-sm w-full mx-4" onClick={e => e.stopPropagation()}>
                 <h3 className="text-base font-semibold mb-2">Disconnect {srcLabel}?</h3>
                 <p className="text-[11px] text-muted-foreground leading-relaxed mb-4">
                   Your Alt will stop pulling new memories from {srcLabel}. The {srcCount} existing memories from this source will be kept but won't update.
