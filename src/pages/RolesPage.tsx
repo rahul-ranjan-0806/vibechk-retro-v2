@@ -66,6 +66,16 @@ const AGENT_RESPONSES = [
 const scoreColors = { green: "text-status-success-foreground", teal: "text-status-info-foreground", amber: "text-status-warning-foreground", red: "text-status-danger-foreground" }
 const dotColors = { green: "bg-status-success-dot", teal: "bg-status-info-foreground", amber: "bg-status-warning-dot", red: "bg-status-danger-dot" }
 
+function StellarTag({ score }: { score: number }) {
+  if (score < 9) return null
+  return (
+    <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-md bg-gradient-to-r from-amber-400/20 to-yellow-300/20 text-amber-700 border border-amber-400/40 inline-flex items-center gap-1 dark:text-amber-300 dark:from-amber-400/15 dark:to-yellow-300/15">
+      <svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.4H22l-6.2 4.5L18.2 22 12 17.5 5.8 22l2.4-8.1L2 9.4h7.6z"/></svg>
+      Stellar
+    </span>
+  )
+}
+
 const scoreToColor = (s: number): keyof typeof scoreColors => s >= 8 ? "green" : s >= 7 ? "teal" : s >= 5 ? "amber" : "red"
 const scoreBucket = (s: number): "excellent"|"good"|"mixed"|"weak" => s >= 9 ? "excellent" : s >= 7 ? "good" : s >= 5 ? "mixed" : "weak"
 
@@ -718,7 +728,10 @@ function CandidatesTab({ roleTitle, activeProfile, onProfileOpen, onProfileClose
                     <span className="text-[9px] text-muted-foreground">/10</span>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium truncate">{c.name}</p>
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm font-medium truncate">{c.name}</p>
+                      <StellarTag score={c.score} />
+                    </div>
                     <p className="text-[10px] text-muted-foreground">{c.time}</p>
                   </div>
                   <div className="flex flex-col items-end gap-1 shrink-0">
@@ -758,8 +771,9 @@ function CandidatesTab({ roleTitle, activeProfile, onProfileOpen, onProfileClose
                   </div>
                   <div className="flex-1">
                     <p className="text-xs leading-relaxed mb-2">Strong systems thinker with clear communication. Showed good instinct for trade-offs. Slightly thin on B2B SaaS specifics — worth probing in final interview.</p>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 flex-wrap">
                       <CandStatusBadge status={getStatus(selected)} />
+                      <StellarTag score={selected.score} />
                       <span className="text-[10px] text-muted-foreground">Interviewed {selected.time}</span>
                     </div>
                   </div>

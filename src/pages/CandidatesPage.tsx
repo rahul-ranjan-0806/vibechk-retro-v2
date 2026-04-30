@@ -22,6 +22,16 @@ function matchesTime(completed: string, bucket: TimeFilter): boolean {
   return true
 }
 
+function StellarTag({ score }: { score: number }) {
+  if (score < 9) return null
+  return (
+    <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-md bg-gradient-to-r from-amber-400/20 to-yellow-300/20 text-amber-700 border border-amber-400/40 inline-flex items-center gap-1 dark:text-amber-300 dark:from-amber-400/15 dark:to-yellow-300/15">
+      <svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.4H22l-6.2 4.5L18.2 22 12 17.5 5.8 22l2.4-8.1L2 9.4h7.6z"/></svg>
+      Stellar
+    </span>
+  )
+}
+
 function scoreColor(s: number): string {
   if (s >= 8) return "text-status-success-foreground"
   if (s >= 7) return "text-status-info-foreground"
@@ -212,7 +222,10 @@ export function CandidatesPage({ onEntityChange }: { onEntityChange?: (e: { type
                         <span className="text-[9px] text-muted-foreground">/10</span>
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium truncate">{c.name}</p>
+                        <div className="flex items-center gap-2">
+                          <p className="text-sm font-medium truncate">{c.name}</p>
+                          <StellarTag score={c.score} />
+                        </div>
                         <p className="text-[11px] text-muted-foreground leading-snug truncate">{c.reasoning}</p>
                       </div>
                       <div className="w-44 shrink-0">
@@ -265,6 +278,7 @@ export function CandidatesPage({ onEntityChange }: { onEntityChange?: (e: { type
                     <div className="flex items-center gap-2 flex-wrap">
                       <AltRecBadge rec={selected.altRec} confidence={selected.confidence} />
                       <StatusBadge status={selected.status} />
+                      <StellarTag score={selected.score} />
                     </div>
                     <p className="text-[11px] leading-relaxed text-foreground">{selected.reasoning}</p>
                   </div>

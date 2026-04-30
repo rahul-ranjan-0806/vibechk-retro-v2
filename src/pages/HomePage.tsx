@@ -47,6 +47,16 @@ function AltRecPill({ rec, confidence }: { rec: CandidateMini["altRec"]; confide
   return <span className={`${base} bg-status-warning text-status-warning-foreground`}>{confidence === "low" ? "Alt: Your call" : "Alt: Review"}</span>
 }
 
+function StellarTag({ score }: { score: number }) {
+  if (score < 9) return null
+  return (
+    <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-md bg-gradient-to-r from-amber-400/20 to-yellow-300/20 text-amber-700 border border-amber-400/40 inline-flex items-center gap-1 dark:text-amber-300 dark:from-amber-400/15 dark:to-yellow-300/15">
+      <svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.4H22l-6.2 4.5L18.2 22 12 17.5 5.8 22l2.4-8.1L2 9.4h7.6z"/></svg>
+      Stellar
+    </span>
+  )
+}
+
 function scoreColor(score: number) {
   if (score >= 7) return { bg: "bg-status-success", fg: "text-status-success-foreground" }
   if (score >= 5) return { bg: "bg-status-warning", fg: "text-status-warning-foreground" }
@@ -125,6 +135,7 @@ export function HomePage({ onNavigate, onOpenOverlay }: { onNavigate: (p: Page) 
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 mb-1 flex-wrap">
                             <p className="text-sm font-medium">{c.name}</p>
+                            <StellarTag score={c.score} />
                             <span className="text-[10px] text-muted-foreground">{roleTitle(c.roleId)}</span>
                             <AltRecPill rec={c.altRec} confidence={c.confidence} />
                           </div>
@@ -221,7 +232,10 @@ export function HomePage({ onNavigate, onOpenOverlay }: { onNavigate: (p: Page) 
                           {c.score}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm truncate">{c.name}</p>
+                          <div className="flex items-center gap-2">
+                            <p className="text-sm truncate">{c.name}</p>
+                            <StellarTag score={c.score} />
+                          </div>
                           <p className="text-[10px] text-muted-foreground truncate">{roleTitle(c.roleId)}</p>
                         </div>
                         <span className={`text-[10px] rounded-md px-1.5 py-0.5 shrink-0 ${
