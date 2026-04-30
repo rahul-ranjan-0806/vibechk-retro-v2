@@ -14,6 +14,14 @@ import { PROACTIVE_NUDGES, ROLES, ALTS_MINI } from "./lib/mockData"
 
 type Page = "home" | "roles" | "candidates" | "alts" | "chat" | "org" | "settings"
 
+// Bridge between mockData role IDs (r1/r2/r3 — used by Home + Candidates) and
+// RolesPage's role IDs (spd/swe/pmg). Two mock datasets, same domain.
+const MOCK_ROLE_TO_ROLES_PAGE: Record<string, string> = {
+  r1: "spd",
+  r2: "swe",
+  r3: "pmg",
+}
+
 function NavTooltip({ label, description, children }: { label: string; description: string; children: React.ReactNode }) {
   return (
     <div className="relative group/nav">
@@ -34,6 +42,14 @@ export default function App() {
   // Selected entity IDs for sidebar drill-down
   const [selectedRoleId, setSelectedRoleId] = useState<string>(ROLES[0].id)
   const [selectedAltId, setSelectedAltId] = useState<string>(ALTS_MINI[0].id)
+  const [pendingCandidateName, setPendingCandidateName] = useState<string | null>(null)
+
+  const navigateToCandidate = useCallback((candidateName: string, mockRoleId: string) => {
+    const rolesPageRoleId = MOCK_ROLE_TO_ROLES_PAGE[mockRoleId] ?? "spd"
+    setSelectedRoleId(rolesPageRoleId)
+    setPendingCandidateName(candidateName)
+    setPage("roles")
+  }, [])
 
   // Alt overlay state
   const [overlayOpen, setOverlayOpen] = useState(false)
@@ -223,8 +239,8 @@ export default function App() {
 
       <main className="flex-1 overflow-hidden">
         {page === "home" && <HomePage onNavigate={setPage} onOpenOverlay={openOverlay} />}
-        {page === "roles" && <RolesPage onEntityChange={setEntityContext} selectedRoleId={selectedRoleId} onSelectRole={setSelectedRoleId} />}
-        {page === "candidates" && <CandidatesPage onEntityChange={setEntityContext} />}
+        {page === "roles" && <RolesPage onEntityChange={setEntityContext} selectedRoleId={selectedRoleId} onSelectRole={setSelectedRoleId} initialCandidateName={pendingCandidateName} onCandidateConsumed={() => setPendingCandidateName(null)} />}
+        {page === "candidates" && <CandidatesPage onEntityChange={setEntityContext} onNavigateToCandidate={navigateToCandidate} />}
         {page === "alts" && <AltsPage onEntityChange={setEntityContext} selectedAltId={selectedAltId} onSelectAlt={setSelectedAltId} />}
         {page === "chat" && <ChatPage />}
         {page === "org" && <OrgPage />}

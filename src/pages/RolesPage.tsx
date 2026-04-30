@@ -648,7 +648,7 @@ function InterviewConfigTab() {
 
 // ── Candidates Tab ────────────────────────────────────────────
 
-function CandidatesTab({ roleTitle, activeProfile, onProfileOpen, onProfileClose }: { roleTitle: string; activeProfile: string | null; onProfileOpen: (key: string) => void; onProfileClose: () => void }) {
+function CandidatesTab({ roleTitle, activeProfile, onProfileOpen, onProfileClose, initialCandidateName, onCandidateConsumed }: { roleTitle: string; activeProfile: string | null; onProfileOpen: (key: string) => void; onProfileClose: () => void; initialCandidateName?: string | null; onCandidateConsumed?: () => void }) {
   // TODO (review): threshold slider icon should move to the candidate column header alongside search/filter
   const [threshold, setThreshold] = useState(7)
   const [thresholdOpen, setThresholdOpen] = useState(false)
@@ -656,6 +656,17 @@ function CandidatesTab({ roleTitle, activeProfile, onProfileOpen, onProfileClose
   const [selectedId, setSelectedId] = useState<number|null>(null)
   const [overrides] = useState<Record<number, string>>({})
   const [detailTab, setDetailTab] = useState<"transcript"|"linkedin"|"notes">("linkedin")
+
+  // Auto-select candidate when navigated from /candidates page
+  useEffect(() => {
+    if (!initialCandidateName) return
+    const target = CANDIDATES.find(c => c.name.toLowerCase() === initialCandidateName.toLowerCase())
+    if (target) {
+      setSelectedId(target.id)
+      onProfileClose()
+    }
+    onCandidateConsumed?.()
+  }, [initialCandidateName])
 
   const getStatus = (c: Candidate) => overrides[c.id] || c.agentDecision
 
@@ -892,8 +903,8 @@ function CandidatesTab({ roleTitle, activeProfile, onProfileOpen, onProfileClose
 
 // ── Role Detail ───────────────────────────────────────────────
 
-function RoleDetail({ role, activeProfile, onProfileOpen, onProfileClose }: { role: Role; activeProfile: string | null; onProfileOpen: (key: string) => void; onProfileClose: () => void }) {
-  const defaultTab = role.status === "live" ? "candidates" : "job-posting"
+function RoleDetail({ role, activeProfile, onProfileOpen, onProfileClose, initialCandidateName, onCandidateConsumed }: { role: Role; activeProfile: string | null; onProfileOpen: (key: string) => void; onProfileClose: () => void; initialCandidateName?: string | null; onCandidateConsumed?: () => void }) {
+  const defaultTab = role.status === "live" || initialCandidateName ? "candidates" : "job-posting"
   const [activeTab, setActiveTab] = useState(defaultTab)
   const [status, setStatus] = useState<"draft"|"live">(role.status === "live" ? "live" : "draft")
 
@@ -952,7 +963,7 @@ function RoleDetail({ role, activeProfile, onProfileOpen, onProfileClose }: { ro
       <div className="flex-1 overflow-hidden flex flex-col">
         {activeTab === "job-posting" && <JobPostingTab status={status} onStatusChange={setStatus} />}
         {activeTab === "interview-config" && <InterviewConfigTab />}
-        {activeTab === "candidates" && <CandidatesTab roleTitle={role.title} activeProfile={activeProfile} onProfileOpen={onProfileOpen} onProfileClose={onProfileClose} />}
+        {activeTab === "candidates" && <CandidatesTab roleTitle={role.title} activeProfile={activeProfile} onProfileOpen={onProfileOpen} onProfileClose={onProfileClose} initialCandidateName={initialCandidateName} onCandidateConsumed={onCandidateConsumed} />}
       </div>
     </div>
   )
@@ -960,7 +971,7 @@ function RoleDetail({ role, activeProfile, onProfileOpen, onProfileClose }: { ro
 
 // ── Main Export ───────────────────────────────────────────────
 
-export function RolesPage({ onEntityChange, selectedRoleId, onSelectRole: _onSelectRole }: { onEntityChange?: (e: { type: "role"|"candidate"|"alt"; name: string; meta?: Record<string,string> } | undefined) => void; selectedRoleId?: string; onSelectRole?: (id: string) => void }) {
+export function RolesPage({ onEntityChange, selectedRoleId, onSelectRole: _onSelectRole, initialCandidateName, onCandidateConsumed }: { onEntityChange?: (e: { type: "role"|"candidate"|"alt"; name: string; meta?: Record<string,string> } | undefined) => void; selectedRoleId?: string; onSelectRole?: (id: string) => void; initialCandidateName?: string | null; onCandidateConsumed?: () => void }) {
   const selectedId = selectedRoleId ?? ROLES[0].id
   const [activeProfile, setActiveProfile] = useState<string | null>(null)
   const selectedRole = ROLES.find(r => r.id === selectedId) ?? ROLES[0]
@@ -977,7 +988,7 @@ export function RolesPage({ onEntityChange, selectedRoleId, onSelectRole: _onSel
 
   return (
     <div className="flex h-full overflow-hidden">
-      <RoleDetail key={selectedId} role={selectedRole} activeProfile={activeProfile} onProfileOpen={openProfile} onProfileClose={closeProfile} />
+      <RoleDetail key={selectedId} role={selectedRole} activeProfile={activeProfile} onProfileOpen={openProfile} onProfileClose={closeProfile} initialCandidateName={initialCandidateName} onCandidateConsumed={onCandidateConsumed} />
     </div>
   )
 }

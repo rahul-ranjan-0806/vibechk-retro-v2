@@ -6,6 +6,7 @@ import {
   type CandidateMini,
 } from "@/lib/mockData"
 import { StatusPill, type StatusVariant } from "@/components/notion"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 
 type StatusFilter = "all" | "pending" | "shortlisted" | "rejected"
 type RecFilter = "all" | "shortlist" | "reject" | "review"
@@ -60,7 +61,7 @@ function AltRecBadge({ rec, confidence }: { rec: CandidateMini["altRec"]; confid
   return <StatusPill status="warning">{confidence === "low" ? "Alt: Your call" : "Alt: Review"}</StatusPill>
 }
 
-export function CandidatesPage({ onEntityChange }: { onEntityChange?: (e: { type: "role"|"candidate"|"alt"; name: string; meta?: Record<string,string> } | undefined) => void }) {
+export function CandidatesPage({ onEntityChange, onNavigateToCandidate }: { onEntityChange?: (e: { type: "role"|"candidate"|"alt"; name: string; meta?: Record<string,string> } | undefined) => void; onNavigateToCandidate?: (candidateName: string, mockRoleId: string) => void }) {
   const [openId, setOpenId] = useState<string | null>(null)
 
   const selected = SEED_CANDIDATES.find(c => c.id === openId) ?? null
@@ -208,14 +209,19 @@ export function CandidatesPage({ onEntityChange }: { onEntityChange?: (e: { type
                   </div>
                 </div>
 
+                <TooltipProvider delayDuration={350}>
                 {filtered.map((c, i) => {
                   const isOpen = openId === c.id
+                  const handleRowClick = () => {
+                    if (onNavigateToCandidate) onNavigateToCandidate(c.name, c.roleId)
+                    else setOpenId(c.id)
+                  }
                   return (
                     <div key={c.id}
                       className={`flex items-center gap-3 px-3 py-2.5 border-b border-border last:border-b-0 cursor-pointer transition-colors ${
                         isOpen ? "bg-muted/50" : i % 2 ? "bg-muted/10" : ""
                       } hover:bg-muted/40`}
-                      onClick={() => setOpenId(c.id)}
+                      onClick={handleRowClick}
                     >
                       <div className="w-10 shrink-0">
                         <span className={`text-base font-medium tabular-nums ${scoreColor(c.score)}`}>{c.score}</span>
@@ -223,7 +229,32 @@ export function CandidatesPage({ onEntityChange }: { onEntityChange?: (e: { type
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
-                          <p className="text-sm font-medium truncate">{c.name}</p>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <p className="text-sm font-medium truncate hover:text-accent-blue transition-colors">{c.name}</p>
+                            </TooltipTrigger>
+                            <TooltipContent side="right" align="start" sideOffset={8} className="max-w-xs p-0 bg-popover text-popover-foreground border border-border shadow-md">
+                              <div className="px-3.5 py-3 flex flex-col gap-2.5">
+                                <div className="flex items-center gap-2">
+                                  <span className={`text-xl font-medium tabular-nums leading-none ${scoreColor(c.score)}`}>{c.score}</span>
+                                  <span className="text-[10px] text-muted-foreground">/10</span>
+                                  <div className="ml-auto flex items-center gap-1">
+                                    <AltRecBadge rec={c.altRec} confidence={c.confidence} />
+                                  </div>
+                                </div>
+                                <div>
+                                  <p className="text-sm font-semibold leading-tight">{c.name}</p>
+                                  <p className="text-[11px] text-muted-foreground mt-0.5">{roleTitle(c.roleId)} · {c.completedAt}</p>
+                                </div>
+                                <p className="text-[11px] leading-relaxed text-foreground/90">{c.reasoning}</p>
+                                <div className="flex items-center gap-1.5 pt-1.5 border-t border-border">
+                                  <StatusBadge status={c.status} />
+                                  <StellarTag score={c.score} />
+                                  <span className="ml-auto text-[10px] text-muted-foreground">Click to open in role →</span>
+                                </div>
+                              </div>
+                            </TooltipContent>
+                          </Tooltip>
                           <StellarTag score={c.score} />
                         </div>
                         <p className="text-[11px] text-muted-foreground leading-snug truncate">{c.reasoning}</p>
@@ -243,6 +274,7 @@ export function CandidatesPage({ onEntityChange }: { onEntityChange?: (e: { type
                     </div>
                   )
                 })}
+                </TooltipProvider>
               </div>
             )}
           </div>
