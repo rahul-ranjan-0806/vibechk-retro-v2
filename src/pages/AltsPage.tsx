@@ -16,6 +16,7 @@ import { MemoryMindMap as MemoryMindMap3D } from "@/components/MemoryMindMap3D"
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet"
+import { StatusPill } from "@/components/notion"
 
 // ── Types ────────────────────────────────────────────────────
 
@@ -1200,9 +1201,9 @@ function AltDetail({ alt }: { alt: AltData }) {
           <div>
             <div className="flex items-center gap-2.5 mb-1.5">
               <h2 className="text-display">{alt.name}</h2>
-              <span className={`text-xs rounded-md px-1.5 py-0.5 ${alt.status === "active" ? "bg-status-success text-status-success-foreground" : "bg-muted text-muted-foreground"}`}>
+              <StatusPill status={alt.status === "active" ? "success" : "neutral"}>
                 {alt.status === "active" ? "Active" : "Setup"}
-              </span>
+              </StatusPill>
             </div>
             <p className="text-xs text-muted-foreground mb-2">{alt.owner}</p>
             <div className="flex items-center gap-2">

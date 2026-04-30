@@ -5,6 +5,7 @@ import {
   roleTitle,
   type CandidateMini,
 } from "@/lib/mockData"
+import { StatusPill, type StatusVariant } from "@/components/notion"
 
 type StatusFilter = "all" | "pending" | "shortlisted" | "rejected"
 type RecFilter = "all" | "shortlist" | "reject" | "review"
@@ -40,24 +41,23 @@ function scoreColor(s: number): string {
 }
 
 function StatusBadge({ status }: { status: CandidateMini["status"] }) {
-  const s: Record<CandidateMini["status"], string> = {
-    shortlisted: "bg-status-success text-status-success-foreground",
-    rejected: "bg-status-danger text-status-danger-foreground",
-    pending: "bg-status-warning text-status-warning-foreground",
+  const v: Record<CandidateMini["status"], StatusVariant> = {
+    shortlisted: "success",
+    rejected: "danger",
+    pending: "warning",
   }
   const l: Record<CandidateMini["status"], string> = {
     shortlisted: "Pushed to ATS",
     rejected: "Rejected",
     pending: "Your call",
   }
-  return <span className={`text-xs font-medium rounded-md px-1.5 py-0.5 ${s[status]}`}>{l[status]}</span>
+  return <StatusPill status={v[status]}>{l[status]}</StatusPill>
 }
 
 function AltRecBadge({ rec, confidence }: { rec: CandidateMini["altRec"]; confidence: CandidateMini["confidence"] }) {
-  const base = "text-xs rounded-md px-1.5 py-0.5"
-  if (rec === "shortlist") return <span className={`${base} bg-status-success text-status-success-foreground`}>Alt: Shortlist ↑</span>
-  if (rec === "reject") return <span className={`${base} bg-status-danger text-status-danger-foreground`}>Alt: Pass ↓</span>
-  return <span className={`${base} bg-status-warning text-status-warning-foreground`}>{confidence === "low" ? "Alt: Your call" : "Alt: Review"}</span>
+  if (rec === "shortlist") return <StatusPill status="success">Alt: Shortlist ↑</StatusPill>
+  if (rec === "reject") return <StatusPill status="danger">Alt: Pass ↓</StatusPill>
+  return <StatusPill status="warning">{confidence === "low" ? "Alt: Your call" : "Alt: Review"}</StatusPill>
 }
 
 export function CandidatesPage({ onEntityChange }: { onEntityChange?: (e: { type: "role"|"candidate"|"alt"; name: string; meta?: Record<string,string> } | undefined) => void }) {
