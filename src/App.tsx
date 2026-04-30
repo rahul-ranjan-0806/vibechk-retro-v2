@@ -51,6 +51,12 @@ export default function App() {
     setPage("roles")
   }, [])
 
+  const navigateToRole = useCallback((mockRoleId: string) => {
+    const rolesPageRoleId = MOCK_ROLE_TO_ROLES_PAGE[mockRoleId] ?? "spd"
+    setSelectedRoleId(rolesPageRoleId)
+    setPage("roles")
+  }, [])
+
   // Alt overlay state
   const [overlayOpen, setOverlayOpen] = useState(false)
   const [entityContext, setEntityContext] = useState<OverlayEntity | undefined>(undefined)
@@ -238,7 +244,7 @@ export default function App() {
       </aside>
 
       <main className="flex-1 overflow-hidden">
-        {page === "home" && <HomePage onNavigate={setPage} onOpenOverlay={openOverlay} />}
+        {page === "home" && <HomePage onNavigate={setPage} onOpenOverlay={openOverlay} onNavigateToCandidate={navigateToCandidate} onNavigateToRole={navigateToRole} />}
         {page === "roles" && <RolesPage onEntityChange={setEntityContext} selectedRoleId={selectedRoleId} onSelectRole={setSelectedRoleId} initialCandidateName={pendingCandidateName} onCandidateConsumed={() => setPendingCandidateName(null)} />}
         {page === "candidates" && <CandidatesPage onEntityChange={setEntityContext} onNavigateToCandidate={navigateToCandidate} />}
         {page === "alts" && <AltsPage onEntityChange={setEntityContext} selectedAltId={selectedAltId} onSelectAlt={setSelectedAltId} />}

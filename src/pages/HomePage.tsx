@@ -66,7 +66,7 @@ function scoreColor(score: number) {
 
 // ── Page ─────────────────────────────────────────────────────
 
-export function HomePage({ onNavigate, onOpenOverlay }: { onNavigate: (p: Page) => void; onOpenOverlay?: (prefill?: string) => void }) {
+export function HomePage({ onNavigate, onOpenOverlay, onNavigateToCandidate, onNavigateToRole }: { onNavigate: (p: Page) => void; onOpenOverlay?: (prefill?: string) => void; onNavigateToCandidate?: (name: string, mockRoleId: string) => void; onNavigateToRole?: (mockRoleId: string) => void }) {
   const [setupDismissed, setSetupDismissed] = useState(false)
   const [autoExpanded, setAutoExpanded] = useState(true)
   const [logOpen, setLogOpen] = useState(false)
@@ -328,7 +328,13 @@ export function HomePage({ onNavigate, onOpenOverlay }: { onNavigate: (p: Page) 
         </div>
       </div>
 
-      <DecisionsLog open={logOpen} onClose={() => setLogOpen(false)} />
+      <DecisionsLog
+        open={logOpen}
+        onClose={() => setLogOpen(false)}
+        onNavigateToCandidate={onNavigateToCandidate}
+        onNavigateToRole={onNavigateToRole}
+        onOpenOverlay={onOpenOverlay}
+      />
     </div>
   )
 }
