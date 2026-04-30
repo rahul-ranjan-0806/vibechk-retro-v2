@@ -96,22 +96,22 @@ export function HomePage({ onNavigate, onOpenOverlay }: { onNavigate: (p: Page) 
   return (
     <div className="h-full flex flex-col overflow-hidden">
       <div className="flex-1 overflow-y-auto">
-        <div className="max-w-5xl mx-auto px-8 py-6">
+        <div className="max-w-5xl mx-auto px-8 py-8">
 
           {/* ── Alt summary ──────────────────────────────── */}
-          <div className="flex items-start gap-3 mb-8">
-            <div className="pt-0.5 shrink-0"><PixelSprite size={28} /></div>
+          <div className="flex items-start gap-4 mb-10">
+            <div className="pt-1 shrink-0"><PixelSprite size={32} /></div>
             <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 mb-1">
-                <span className="text-[10px] uppercase tracking-wider text-accent-blue">Sashank's Alt</span>
-                <span className="text-[10px] text-muted-foreground">· since yesterday</span>
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-[11px] uppercase tracking-[0.08em] font-semibold text-muted-foreground">Sashank's Alt</span>
+                <span className="text-[11px] text-muted-foreground">· since yesterday</span>
                 <button onClick={() => onOpenOverlay?.()}
-                  className="ml-auto text-[11px] rounded-md px-3 py-1.5 bg-foreground text-background hover:opacity-90 transition-opacity flex items-center gap-1.5">
+                  className="ml-auto text-[13px] font-medium rounded-full px-4 py-2 bg-foreground text-background hover:opacity-90 transition-opacity flex items-center gap-2">
                   <span>Ask Sabu</span>
-                  <span className="text-[9px] opacity-70">⌘K</span>
+                  <span className="text-[10px] opacity-70">⌘K</span>
                 </button>
               </div>
-              <p className="text-sm leading-relaxed text-foreground">
+              <p className="text-base leading-relaxed text-foreground">
                 {autoSentence} {dilemmaClause}
               </p>
             </div>
@@ -119,40 +119,40 @@ export function HomePage({ onNavigate, onOpenOverlay }: { onNavigate: (p: Page) 
 
           {/* ── Dilemmas (action-required) ────────────────── */}
           {dilemmas.length > 0 && (
-            <div className="mb-8">
-              <p className="text-[10px] uppercase tracking-wider font-medium text-muted-foreground mb-3">
+            <div className="mb-10">
+              <p className="text-[11px] uppercase tracking-[0.08em] font-semibold text-muted-foreground mb-3">
                 Needs your call · {dilemmas.length}
               </p>
-              <div className="flex flex-col gap-2.5">
+              <div className="flex flex-col gap-3">
                 {dilemmas.map(c => {
                   const sc = scoreColor(c.score)
                   return (
-                    <div key={c.id} className="rounded-xl border-2 border-dashed border-accent-blue bg-accent-blue/[0.035] p-4">
-                      <div className="flex items-start gap-3">
-                        <div className={`w-10 h-10 rounded-lg flex items-center justify-center text-base font-medium shrink-0 ${sc.bg} ${sc.fg}`}>
+                    <div key={c.id} className="rounded-xl border-2 border-dashed border-accent-blue bg-accent-blue/[0.035] p-6">
+                      <div className="flex items-start gap-4">
+                        <div className={`w-11 h-11 rounded-lg flex items-center justify-center font-display text-lg font-semibold tabular-nums shrink-0 ${sc.bg} ${sc.fg}`}>
                           {c.score}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 mb-1 flex-wrap">
-                            <p className="text-sm font-medium">{c.name}</p>
+                          <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+                            <p className="text-base font-semibold font-display">{c.name}</p>
                             <StellarTag score={c.score} />
-                            <span className="text-[10px] text-muted-foreground">{roleTitle(c.roleId)}</span>
+                            <span className="text-xs text-muted-foreground">{roleTitle(c.roleId)}</span>
                             <AltRecPill rec={c.altRec} confidence={c.confidence} />
                           </div>
-                          <p className="text-[12px] leading-relaxed text-foreground/80 mb-3">{c.reasoning}</p>
+                          <p className="text-sm leading-relaxed text-foreground/80 mb-4">{c.reasoning}</p>
                           <div className="flex items-center gap-2">
-                            <button className="text-[11px] rounded-md px-3 py-1.5 bg-status-success text-status-success-foreground hover:opacity-90 transition-opacity">
+                            <button className="text-[13px] font-medium rounded-full px-4 py-1.5 bg-status-success text-status-success-foreground hover:opacity-90 transition-opacity">
                               Shortlist
                             </button>
-                            <button className="text-[11px] rounded-md px-3 py-1.5 bg-status-danger text-status-danger-foreground hover:opacity-90 transition-opacity">
+                            <button className="text-[13px] font-medium rounded-full px-4 py-1.5 bg-status-danger text-status-danger-foreground hover:opacity-90 transition-opacity">
                               Reject
                             </button>
                             <button onClick={() => onOpenOverlay?.(`Why did you score ${c.name} ${c.score}?`)}
-                              className="text-[11px] rounded-md px-3 py-1.5 border border-border text-muted-foreground hover:text-foreground hover:border-foreground/40 transition-colors">
+                              className="text-[13px] font-medium rounded-full px-4 py-1.5 border border-border text-muted-foreground hover:text-foreground hover:border-foreground/40 transition-colors">
                               Discuss with Sabu
                             </button>
                             <button onClick={() => onNavigate("candidates")}
-                              className="text-[11px] rounded-md px-3 py-1.5 border border-border text-muted-foreground hover:text-foreground hover:border-foreground/40 transition-colors ml-auto">
+                              className="text-[13px] font-medium rounded-full px-4 py-1.5 border border-border text-muted-foreground hover:text-foreground hover:border-foreground/40 transition-colors ml-auto">
                               Open transcript →
                             </button>
                           </div>
@@ -166,9 +166,9 @@ export function HomePage({ onNavigate, onOpenOverlay }: { onNavigate: (p: Page) 
           )}
 
           {/* ── Role pipelines ───────────────────────────── */}
-          <div className="mb-8">
-            <p className="text-[10px] uppercase tracking-wider font-medium text-muted-foreground mb-3">Role pipelines</p>
-            <div className="border border-border rounded-lg overflow-hidden">
+          <div className="mb-10">
+            <p className="text-[11px] uppercase tracking-[0.08em] font-semibold text-muted-foreground mb-3">Role pipelines</p>
+            <div className="border border-border rounded-xl overflow-hidden">
               {PIPELINE.map((p, i) => {
                 const role = ROLES.find(r => r.id === p.roleId)
                 if (!role) return null
@@ -177,19 +177,19 @@ export function HomePage({ onNavigate, onOpenOverlay }: { onNavigate: (p: Page) 
                 const deltaStr = delta > 0 ? `+${delta}` : `${delta}`
                 return (
                   <button key={p.roleId} onClick={() => onNavigate("roles")}
-                    className={`w-full flex items-center gap-3 px-4 py-3 hover:bg-muted/30 transition-colors text-left ${i > 0 ? "border-t border-border" : ""}`}>
+                    className={`w-full flex items-center gap-3 px-5 py-4 hover:bg-muted/30 transition-colors text-left ${i > 0 ? "border-t border-border" : ""}`}>
                     <div className={`w-2 h-2 rounded-full shrink-0 ${status.dot}`} />
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium">{role.title}</p>
+                      <p className="text-[15px] font-medium">{role.title}</p>
                     </div>
                     <div className="flex items-center gap-3 shrink-0">
-                      <span className="text-[11px] text-muted-foreground tabular-nums">
+                      <span className="text-xs text-muted-foreground tabular-nums">
                         {p.thisWeek} this week
                         <span className={`ml-1 ${delta >= 0 ? "text-status-success-foreground" : "text-status-danger-foreground"}`}>
                           ({deltaStr})
                         </span>
                       </span>
-                      <span className={`text-[10px] rounded-md px-1.5 py-0.5 ${status.text} bg-muted/60`}>{status.label}</span>
+                      <span className={`text-[11px] font-medium rounded-md px-2 py-0.5 ${status.text} bg-muted/60`}>{status.label}</span>
                     </div>
                   </button>
                 )
@@ -199,12 +199,12 @@ export function HomePage({ onNavigate, onOpenOverlay }: { onNavigate: (p: Page) 
 
           {/* ── Auto-decisions (collapsed) ────────────────── */}
           {totalHandled > 0 && (
-            <div className="mb-8">
+            <div className="mb-10">
               <button
                 onClick={() => setAutoExpanded(!autoExpanded)}
                 className="flex items-center gap-2 mb-3 group"
               >
-                <p className="text-[10px] uppercase tracking-wider font-medium text-muted-foreground">
+                <p className="text-[11px] uppercase tracking-[0.08em] font-semibold text-muted-foreground">
                   Handled by Alt · {totalHandled}
                 </p>
                 <svg
@@ -216,34 +216,34 @@ export function HomePage({ onNavigate, onOpenOverlay }: { onNavigate: (p: Page) 
               </button>
 
               {!autoExpanded && (
-                <p className="text-[11px] text-muted-foreground">
+                <p className="text-xs text-muted-foreground">
                   {pushed.length} pushed to ATS, {rejected.length} rejected. <button onClick={() => setAutoExpanded(true)} className="text-foreground hover:underline">Review →</button>
                 </p>
               )}
 
               {autoExpanded && (
-                <div className="border border-border rounded-lg overflow-hidden">
+                <div className="border border-border rounded-xl overflow-hidden">
                   {[...pushed, ...rejected].map((c, i) => {
                     const sc = scoreColor(c.score)
                     const isShortlisted = c.status === "shortlisted"
                     return (
-                      <div key={c.id} className={`flex items-center gap-3 px-4 py-2.5 ${i > 0 ? "border-t border-border" : ""}`}>
-                        <div className={`w-7 h-7 rounded-md flex items-center justify-center text-xs font-medium shrink-0 ${sc.bg} ${sc.fg}`}>
+                      <div key={c.id} className={`flex items-center gap-3 px-5 py-3 ${i > 0 ? "border-t border-border" : ""}`}>
+                        <div className={`w-8 h-8 rounded-md flex items-center justify-center font-display text-sm font-semibold tabular-nums shrink-0 ${sc.bg} ${sc.fg}`}>
                           {c.score}
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2">
-                            <p className="text-sm truncate">{c.name}</p>
+                            <p className="text-[15px] font-medium truncate">{c.name}</p>
                             <StellarTag score={c.score} />
                           </div>
-                          <p className="text-[10px] text-muted-foreground truncate">{roleTitle(c.roleId)}</p>
+                          <p className="text-xs text-muted-foreground truncate">{roleTitle(c.roleId)}</p>
                         </div>
-                        <span className={`text-[10px] rounded-md px-1.5 py-0.5 shrink-0 ${
+                        <span className={`text-[11px] font-medium rounded-md px-2 py-0.5 shrink-0 ${
                           isShortlisted ? "bg-status-success text-status-success-foreground" : "bg-status-danger text-status-danger-foreground"
                         }`}>
                           {isShortlisted ? "Pushed to ATS" : "Rejected"}
                         </span>
-                        <span className="text-[10px] text-muted-foreground shrink-0">{c.completedAt}</span>
+                        <span className="text-xs text-muted-foreground shrink-0">{c.completedAt}</span>
                       </div>
                     )
                   })}
@@ -254,29 +254,29 @@ export function HomePage({ onNavigate, onOpenOverlay }: { onNavigate: (p: Page) 
 
           {/* ── Setup banner (dismissible) ────────────────── */}
           {!setupComplete && !setupDismissed && (
-            <div className="rounded-lg border border-border bg-muted/30 px-4 py-3">
-              <div className="flex items-center justify-between mb-2">
+            <div className="rounded-xl border border-border bg-muted/30 px-5 py-4">
+              <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-3">
-                  <p className="text-[10px] uppercase tracking-wider font-medium text-muted-foreground">Finish setup</p>
+                  <p className="text-[11px] uppercase tracking-[0.08em] font-semibold text-muted-foreground">Finish setup</p>
                   <div className="flex items-center gap-2">
                     <div className="w-16 h-1 rounded-full bg-muted overflow-hidden">
                       <div className="h-full rounded-full bg-foreground transition-all" style={{ width: `${(doneCount / SETUP_ITEMS.length) * 100}%` }} />
                     </div>
-                    <span className="text-[10px] text-muted-foreground tabular-nums">{doneCount}/{SETUP_ITEMS.length}</span>
+                    <span className="text-xs text-muted-foreground tabular-nums">{doneCount}/{SETUP_ITEMS.length}</span>
                   </div>
                 </div>
-                <button onClick={() => setSetupDismissed(true)} className="text-muted-foreground hover:text-foreground text-xs leading-none">✕</button>
+                <button onClick={() => setSetupDismissed(true)} className="text-muted-foreground hover:text-foreground text-sm leading-none">✕</button>
               </div>
-              <div className="flex flex-col gap-1.5">
+              <div className="flex flex-col gap-2">
                 {incomplete.map(item => {
                   const dotColor = item.status === "warning" ? "bg-status-warning-dot" : "bg-border"
                   return (
-                    <div key={item.id} className="flex items-center gap-2.5">
+                    <div key={item.id} className="flex items-center gap-3">
                       <div className={`w-1.5 h-1.5 rounded-full shrink-0 ${dotColor}`} />
-                      <p className="text-[11px] text-foreground flex-1">{item.title}</p>
+                      <p className="text-[13px] text-foreground flex-1">{item.title}</p>
                       {item.ctaTarget && (
                         <button onClick={() => onNavigate(item.ctaTarget!)}
-                          className="text-[10px] text-muted-foreground hover:text-foreground transition-colors">
+                          className="text-[11px] font-medium text-muted-foreground hover:text-foreground transition-colors">
                           {item.cta}
                         </button>
                       )}

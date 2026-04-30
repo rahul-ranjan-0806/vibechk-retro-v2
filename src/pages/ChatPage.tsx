@@ -483,8 +483,8 @@ export function ChatPage() {
                     <PixelSprite size={36} />
                   </div>
                   <div>
-                    <h1 className="text-lg font-medium">What can I help with?</h1>
-                    <p className="text-xs text-muted-foreground">Sashank's Alt · trained on your decisions</p>
+                    <h1 className="font-display text-2xl font-semibold tracking-tight">What can I help with?</h1>
+                    <p className="text-[13px] text-muted-foreground">Sashank's Alt · trained on your decisions</p>
                   </div>
                 </div>
 
@@ -1026,7 +1026,7 @@ export function ChatPage() {
               onClick={e => e.stopPropagation()}
               className="bg-background border border-border rounded-lg shadow-xl p-6 max-w-sm w-full mx-4"
             >
-              <h3 className="text-sm font-medium mb-2">Confirm: {confirmAction.action.label}</h3>
+              <h3 className="font-display text-base font-semibold mb-2">Confirm: {confirmAction.action.label}</h3>
               <p className="text-xs text-muted-foreground leading-relaxed mb-4">
                 This action will take effect immediately. Are you sure you want to proceed?
               </p>

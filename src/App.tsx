@@ -96,8 +96,8 @@ export default function App() {
                 <div className="flex items-center gap-2 min-w-0">
                   <div className="w-7 h-7 rounded-md bg-foreground text-background flex items-center justify-center font-pixel text-[10px] font-bold tracking-tight shrink-0">vc</div>
                   <div className="flex flex-col min-w-0">
-                    <span className="font-pixel text-[12px] font-medium tracking-widest text-foreground leading-tight">vibechk</span>
-                    <span className="text-[9px] text-muted-foreground tracking-wide leading-tight truncate">Alt Inc</span>
+                    <span className="font-display text-base font-semibold tracking-tight text-foreground leading-tight">vibechk</span>
+                    <span className="text-[11px] text-muted-foreground leading-tight truncate">Alt Inc</span>
                   </div>
                 </div>
                 <button onClick={() => setNavCollapsed(true)} className="text-muted-foreground hover:text-foreground transition-colors p-0.5 shrink-0" title="Collapse sidebar">
@@ -109,7 +109,7 @@ export default function App() {
           }
         </div>
 
-        {!navCollapsed && <p className="text-[10px] uppercase tracking-wider font-medium px-5 mb-1 text-muted-foreground">Manage</p>}
+        {!navCollapsed && <p className="text-[11px] uppercase tracking-[0.08em] font-semibold px-5 mb-2 text-muted-foreground">Manage</p>}
 
         {[
           { id: "chat" as Page, label: "Chat", description: "Talk to your Alt",
@@ -127,7 +127,7 @@ export default function App() {
         ].map(item => {
           const btn = (
             <button onClick={() => setPage(item.id)}
-              className={`w-full flex items-center ${navCollapsed ? "justify-center px-0" : "gap-2.5 px-5"} py-2 text-sm transition-colors text-left rounded-md ${
+              className={`w-full flex items-center ${navCollapsed ? "justify-center px-0" : "gap-3 px-5"} py-2.5 text-[13px] font-medium transition-colors text-left rounded-md ${
                 page === item.id ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground hover:bg-accent"
               }`}>
               <span className="shrink-0">{item.icon}</span>
@@ -204,7 +204,7 @@ export default function App() {
         {(() => {
           const settingsBtn = (
             <button onClick={() => setPage("settings")}
-              className={`w-full flex items-center ${navCollapsed ? "justify-center px-0 mt-2" : "gap-2.5 px-5"} py-2 text-sm transition-colors text-left rounded-md ${
+              className={`w-full flex items-center ${navCollapsed ? "justify-center px-0 mt-2" : "gap-3 px-5"} py-2.5 text-[13px] font-medium transition-colors text-left rounded-md ${
                 page === "settings" ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground hover:bg-accent"
               }`}>
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
@@ -220,8 +220,8 @@ export default function App() {
               <div className="w-6 h-6 rounded-full bg-foreground flex items-center justify-center text-[10px] font-medium text-background shrink-0">SG</div>
               {!navCollapsed && (
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs font-medium truncate">Sashank G.</p>
-                  <p className="text-[10px] text-muted-foreground truncate">Alt Inc</p>
+                  <p className="text-[13px] font-medium truncate">Sashank G.</p>
+                  <p className="text-[11px] text-muted-foreground truncate">Alt Inc</p>
                 </div>
               )}
             </div>

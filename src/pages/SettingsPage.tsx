@@ -25,8 +25,8 @@ function SettingRow({ label, description, children }: { label: string; descripti
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className="mb-6">
-      <p className="text-[10px] uppercase tracking-wider font-medium text-muted-foreground mb-2">{title}</p>
-      <div className="border border-border rounded-lg px-4">{children}</div>
+      <p className="text-[11px] uppercase tracking-[0.08em] font-semibold text-muted-foreground mb-3">{title}</p>
+      <div className="border border-border rounded-xl px-5">{children}</div>
     </div>
   )
 }
@@ -79,7 +79,7 @@ export function SettingsPage() {
   return (
     <div className="p-8 overflow-y-auto h-full">
       <div className="max-w-5xl mx-auto">
-      <h1 className="text-xl font-medium mb-6">Settings</h1>
+      <h1 className="font-display text-3xl font-semibold tracking-tight mb-8">Settings</h1>
 
       <div className="max-w-xl">
         <Section title="Appearance">

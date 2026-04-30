@@ -319,7 +319,7 @@ function JDEditorModal({ open, onClose }: { open: boolean; onClose: () => void }
         <div className="flex-1 flex flex-col overflow-hidden border-r border-border">
           <div className="shrink-0 px-6 pt-5 pb-3 border-b border-border flex items-center justify-between">
             <div>
-              <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">Job Description</p>
+              <p className="text-[11px] uppercase tracking-[0.08em] font-semibold text-muted-foreground mb-1">Job Description</p>
               <h2 className="text-lg font-medium">Senior Product Designer</h2>
             </div>
             <div className="flex items-center gap-3">
