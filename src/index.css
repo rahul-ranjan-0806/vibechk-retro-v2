@@ -255,19 +255,9 @@ h1 { letter-spacing: -0.02em; }
 .alt-overlay-backdrop {
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  background:
-    linear-gradient(
-      to top,
-      rgba(0, 0, 0, 0.62) 0%,
-      rgba(0, 0, 0, 0.58) 12%,
-      rgba(0, 0, 0, 0.48) 22%,
-      rgba(0, 0, 0, 0.36) 33%,
-      rgba(0, 0, 0, 0.24) 45%,
-      rgba(0, 0, 0, 0.12) 56%,
-      rgba(0, 0, 0, 0.06) 65%,
-      rgba(0, 0, 0, 0.02) 73%,
-      transparent 82%
-    );
+  /* Same flat dark tint as the post-send state — the upward fade comes purely
+     from the mask below, so the bottom darkens to exactly the .blurred level. */
+  background: rgba(0, 0, 0, 0.55);
   -webkit-mask-image:
     linear-gradient(
       to top,
