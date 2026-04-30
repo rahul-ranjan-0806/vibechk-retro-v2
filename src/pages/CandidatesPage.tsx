@@ -114,9 +114,9 @@ export function CandidatesPage({ onEntityChange }: { onEntityChange?: (e: { type
     <div className="h-full flex flex-col overflow-hidden">
       {/* Header */}
       <div className="border-b border-border shrink-0 bg-background">
-        <div className="max-w-6xl mx-auto px-8 pt-5 pb-3">
+        <div className="max-w-[1080px] mx-auto px-12 pt-12 pb-4">
           <div className="flex items-baseline gap-3 mb-1">
-            <h1 className="font-display text-2xl font-semibold tracking-tight">Candidates</h1>
+            <h1 className="text-2xl font-semibold tracking-tight">Candidates</h1>
             <span className="text-[10px] text-muted-foreground">
               {filtered.length} of {SEED_CANDIDATES.length} · across {ROLES.length} roles
             </span>
@@ -177,7 +177,7 @@ export function CandidatesPage({ onEntityChange }: { onEntityChange?: (e: { type
       {/* Body */}
       <div className="flex-1 overflow-hidden flex">
         <div className="flex-1 min-w-0 overflow-y-auto">
-          <div className="max-w-6xl mx-auto px-8 py-4">
+          <div className="max-w-[1080px] mx-auto px-12 py-6">
             {filtered.length === 0 ? (
               <div className="border border-border rounded-lg p-8 text-center">
                 <p className="text-xs text-muted-foreground">
@@ -189,22 +189,22 @@ export function CandidatesPage({ onEntityChange }: { onEntityChange?: (e: { type
                 {/* Header row */}
                 <div className="flex items-center gap-3 px-3 py-2 bg-muted/40 border-b border-border">
                   <div className="w-10 shrink-0">
-                    <span className="text-[11px] uppercase tracking-[0.08em] font-semibold text-muted-foreground">Score</span>
+                    <span className="text-[12px] text-muted-foreground">Score</span>
                   </div>
                   <div className="flex-1">
-                    <span className="text-[11px] uppercase tracking-[0.08em] font-semibold text-muted-foreground">Candidate</span>
+                    <span className="text-[12px] text-muted-foreground">Candidate</span>
                   </div>
                   <div className="w-44 shrink-0">
-                    <span className="text-[11px] uppercase tracking-[0.08em] font-semibold text-muted-foreground">Role</span>
+                    <span className="text-[12px] text-muted-foreground">Role</span>
                   </div>
                   <div className="w-28 shrink-0">
-                    <span className="text-[11px] uppercase tracking-[0.08em] font-semibold text-muted-foreground">Alt</span>
+                    <span className="text-[12px] text-muted-foreground">Alt</span>
                   </div>
                   <div className="w-24 shrink-0">
-                    <span className="text-[11px] uppercase tracking-[0.08em] font-semibold text-muted-foreground">Status</span>
+                    <span className="text-[12px] text-muted-foreground">Status</span>
                   </div>
                   <div className="w-16 shrink-0 text-right">
-                    <span className="text-[11px] uppercase tracking-[0.08em] font-semibold text-muted-foreground">Time</span>
+                    <span className="text-[12px] text-muted-foreground">Time</span>
                   </div>
                 </div>
 
@@ -264,7 +264,7 @@ export function CandidatesPage({ onEntityChange }: { onEntityChange?: (e: { type
                     {selected.name.split(" ").map(p => p[0]).slice(0, 2).join("")}
                   </div>
                   <div className="min-w-0">
-                    <h2 className="font-display text-lg font-semibold leading-tight truncate">{selected.name}</h2>
+                    <h2 className="text-lg font-semibold leading-tight truncate">{selected.name}</h2>
                     <p className="text-[11px] text-muted-foreground truncate">{roleTitle(selected.roleId)} · {selected.completedAt}</p>
                   </div>
                 </div>
@@ -294,7 +294,7 @@ export function CandidatesPage({ onEntityChange }: { onEntityChange?: (e: { type
                     { label: "Current status", value: selected.status === "shortlisted" ? "Pushed to ATS" : selected.status === "rejected" ? "Rejected" : "Your call" },
                   ].map((row, i) => (
                     <div key={row.label} className={`flex items-center justify-between px-3 py-2 ${i > 0 ? "border-t border-border" : ""}`}>
-                      <span className="text-[11px] uppercase tracking-[0.08em] font-semibold text-muted-foreground">{row.label}</span>
+                      <span className="text-[12px] text-muted-foreground">{row.label}</span>
                       <span className="text-xs font-medium">{row.value}</span>
                     </div>
                   ))}

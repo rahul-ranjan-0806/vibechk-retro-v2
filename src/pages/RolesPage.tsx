@@ -319,7 +319,7 @@ function JDEditorModal({ open, onClose }: { open: boolean; onClose: () => void }
         <div className="flex-1 flex flex-col overflow-hidden border-r border-border">
           <div className="shrink-0 px-6 pt-5 pb-3 border-b border-border flex items-center justify-between">
             <div>
-              <p className="text-[11px] uppercase tracking-[0.08em] font-semibold text-muted-foreground mb-1">Job Description</p>
+              <p className="text-[13px] font-semibold text-foreground mb-1">Job Description</p>
               <h2 className="text-lg font-medium">Senior Product Designer</h2>
             </div>
             <div className="flex items-center gap-3">
@@ -493,7 +493,7 @@ function JobPostingTab({ status, onStatusChange }: { status: "draft"|"live"; onS
     <div className="flex flex-1 min-h-0">
       <div className="flex-1 min-w-0 overflow-hidden">
         <div className="h-full overflow-y-auto">
-          <div className="max-w-5xl mx-auto px-8 py-6 flex flex-col gap-6">
+          <div className="max-w-[840px] mx-auto px-12 pt-16 pb-24 flex flex-col gap-10">
 
             {/* JD */}
             <CollapsibleSection title="Job description">
@@ -572,7 +572,7 @@ function InterviewConfigTab() {
   const toggleExpand = (id: string) => setExpanded(p => ({ ...p, [id]: !p[id] }))
 
   return (
-    <div className="overflow-y-auto flex-1"><div className="max-w-5xl mx-auto px-8 py-6 flex flex-col gap-6">
+    <div className="overflow-y-auto flex-1"><div className="max-w-[840px] mx-auto px-12 pt-16 pb-24 flex flex-col gap-10">
       <div>
         <h3 className="text-xs font-medium uppercase tracking-wider mb-2.5">Interviewing Alt</h3>
         <div className="flex items-center gap-3 p-2.5 bg-muted/40 border border-border w-fit">

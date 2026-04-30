@@ -477,14 +477,14 @@ export function ChatPage() {
               exit={{ opacity: 0, y: -20, transition: { duration: 0.2 } }}
               className="flex-1 flex flex-col items-center justify-center px-8"
             >
-              <div className="w-full max-w-2xl flex flex-col items-center gap-6">
+              <div className="w-full max-w-2xl flex flex-col items-center gap-10">
                 <div className="flex items-center gap-3">
                   <div className="border border-border p-2 bg-muted/30 rounded-lg">
                     <PixelSprite size={36} />
                   </div>
                   <div>
-                    <h1 className="font-display text-2xl font-semibold tracking-tight">What can I help with?</h1>
-                    <p className="text-[13px] text-muted-foreground">Sashank's Alt · trained on your decisions</p>
+                    <h1 className="text-[28px] font-bold tracking-tight leading-tight">What can I help with?</h1>
+                    <p className="text-sm text-muted-foreground mt-0.5">Sashank's Alt · trained on your decisions</p>
                   </div>
                 </div>
 
@@ -576,7 +576,7 @@ export function ChatPage() {
               className="flex-1 flex flex-col min-h-0"
             >
               <Conversation className="flex-1 overflow-hidden">
-                <ConversationContent className="max-w-3xl mx-auto px-8 py-6 gap-5">
+                <ConversationContent className="max-w-3xl mx-auto px-12 py-10 gap-7">
                   {msgs.map((m, i) => (
                     <motion.div key={m.id}
                       initial={{ opacity: 0, y: 8 }}
@@ -688,7 +688,7 @@ export function ChatPage() {
 
               {/* Bottom input */}
               <div className="shrink-0 border-t border-border bg-card">
-                <div className="max-w-3xl mx-auto px-8 py-3 relative">
+                <div className="max-w-3xl mx-auto px-12 py-5 relative">
                   <SlashCommandPalette
                     query={slashQuery}
                     onSelect={handleSlashSelect}
@@ -1026,7 +1026,7 @@ export function ChatPage() {
               onClick={e => e.stopPropagation()}
               className="bg-background border border-border rounded-lg shadow-xl p-6 max-w-sm w-full mx-4"
             >
-              <h3 className="font-display text-base font-semibold mb-2">Confirm: {confirmAction.action.label}</h3>
+              <h3 className="text-base font-semibold mb-2">Confirm: {confirmAction.action.label}</h3>
               <p className="text-xs text-muted-foreground leading-relaxed mb-4">
                 This action will take effect immediately. Are you sure you want to proceed?
               </p>

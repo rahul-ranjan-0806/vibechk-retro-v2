@@ -210,7 +210,7 @@ function TestAltModal({ alt, open, onOpenChange }: {
         <div className="flex-1 flex overflow-hidden">
           {/* Left: Interview flow steps */}
           <div className="w-56 shrink-0 border-r border-border overflow-y-auto py-4 px-4">
-            <p className="text-[11px] uppercase tracking-[0.08em] font-semibold text-muted-foreground mb-3">Interview flow</p>
+            <p className="text-[13px] font-semibold text-foreground mb-3">Interview flow</p>
             <div className="flex flex-col gap-1">
               {INTERVIEW_STEPS.map((s, i) => (
                 <div key={s.id} className={`flex items-start gap-2.5 px-2.5 py-2 rounded-lg transition-colors ${i < step ? "bg-status-success/30" : i === step ? "bg-accent" : ""}`}>
@@ -300,7 +300,7 @@ function ConfigureSheet({ alt, open, onOpenChange }: {
           {/* Tonality */}
           <div>
             <div className="flex items-center justify-between mb-2">
-              <p className="text-[11px] uppercase tracking-[0.08em] font-semibold text-muted-foreground">Tonality</p>
+              <p className="text-[13px] font-semibold text-foreground">Tonality</p>
               <button onClick={() => setEditing(e => !e)}
                 className="text-[10px] px-2 py-0.5 rounded-md border border-border text-muted-foreground hover:text-foreground hover:border-foreground/40 transition-colors">
                 {editing ? "Done" : "Edit"}
@@ -317,7 +317,7 @@ function ConfigureSheet({ alt, open, onOpenChange }: {
           {/* Sources */}
           <div>
             <div className="flex items-center justify-between mb-2">
-              <p className="text-[11px] uppercase tracking-[0.08em] font-semibold text-muted-foreground">Sources</p>
+              <p className="text-[13px] font-semibold text-foreground">Sources</p>
               <button className="flex items-center gap-1.5 text-[10px] px-2.5 py-1 border border-border rounded-lg hover:bg-muted transition-colors">
                 + Connect source
               </button>
@@ -351,7 +351,7 @@ function ConfigureSheet({ alt, open, onOpenChange }: {
 
           {/* Assigned Roles */}
           <div>
-            <p className="text-[11px] uppercase tracking-[0.08em] font-semibold text-muted-foreground mb-2">Assigned roles</p>
+            <p className="text-[13px] font-semibold text-foreground mb-2">Assigned roles</p>
             {alt.roles.length === 0 ? (
               <div className="p-3 bg-muted/30 border border-border rounded-lg text-xs text-muted-foreground">Not assigned to any roles yet.</div>
             ) : (
@@ -653,7 +653,7 @@ function MemoryModal({ open, onClose, initialView, initialMemoryId, loadingMemor
           {/* Header */}
           <div className="shrink-0 flex items-center justify-between px-6 py-3 border-b border-border">
             <div className="flex items-center gap-3">
-              <h2 className="font-display text-base font-semibold">Memories</h2>
+              <h2 className="text-base font-semibold">Memories</h2>
               <span className="text-[10px] text-muted-foreground">{MOCK_MEMORIES.length} memories · {MOCK_EDGES.length} connections</span>
             </div>
             <div className="flex items-center gap-2">
@@ -1170,8 +1170,8 @@ function AltDetail({ alt }: { alt: AltData }) {
   return (
     <div className="flex-1 flex overflow-hidden">
       {/* LEFT COLUMN: Sprite card */}
-      <div className="shrink-0 overflow-y-auto border-r border-border" style={{ width: 400 }}>
-        <div className="p-6 flex flex-col gap-5">
+      <div className="shrink-0 overflow-y-auto border-r border-border/40" style={{ width: 420 }}>
+        <div className="px-10 pt-12 pb-16 flex flex-col gap-7">
           {/* Big sprite */}
           <div className="relative border border-border rounded-xl overflow-hidden bg-[#e8eaef]" style={{ height: 500 }}>
             <div className="absolute top-3 left-3 z-10">
@@ -1199,7 +1199,7 @@ function AltDetail({ alt }: { alt: AltData }) {
           {/* Alt identity */}
           <div>
             <div className="flex items-center gap-2.5 mb-1.5">
-              <h2 className="font-display text-2xl font-semibold tracking-tight">{alt.name}</h2>
+              <h2 className="text-2xl font-semibold tracking-tight">{alt.name}</h2>
               <span className={`text-[10px] rounded-md px-1.5 py-0.5 ${alt.status === "active" ? "bg-status-success text-status-success-foreground" : "bg-muted text-muted-foreground"}`}>
                 {alt.status === "active" ? "Active" : "Setup"}
               </span>
@@ -1216,7 +1216,7 @@ function AltDetail({ alt }: { alt: AltData }) {
 
           {/* Background presets */}
           <div>
-            <p className="text-[11px] uppercase tracking-[0.08em] font-semibold text-muted-foreground mb-2">Interview backdrop</p>
+            <p className="text-[13px] font-semibold text-foreground mb-2">Interview backdrop</p>
             <div className="flex gap-2">
               {BACKGROUND_PRESETS.map(bg => (
                 <button key={bg.id} onClick={() => setSelectedBg(bg.id)}
@@ -1267,7 +1267,7 @@ function AltDetail({ alt }: { alt: AltData }) {
       {/* RIGHT COLUMN: Memories & Sources */}
       <div className="flex-1 flex flex-col overflow-hidden min-w-0">
         {/* Explore memories button */}
-        <div className="shrink-0 px-6 pt-6 pb-4">
+        <div className="shrink-0 px-10 pt-12 pb-6">
           <button
             onClick={openMapModal}
             className="w-full group relative overflow-hidden rounded-xl border border-border bg-card hover:bg-muted/30 transition-colors"
@@ -1285,12 +1285,12 @@ function AltDetail({ alt }: { alt: AltData }) {
         </div>
 
         {/* Scrollable content */}
-        <div className="flex-1 overflow-y-auto px-6 pb-6">
+        <div className="flex-1 overflow-y-auto px-10 pb-16">
           {/* Top memories */}
           {topMemories.length > 0 && (
-            <div className="mb-6">
+            <div className="mb-10">
               <div className="flex items-center justify-between mb-3">
-                <p className="text-[11px] uppercase tracking-[0.08em] font-semibold text-muted-foreground">Top memories</p>
+                <p className="text-[13px] font-semibold text-foreground">Top memories</p>
                 <button onClick={openMapModal}
                   className="text-[10px] text-muted-foreground hover:text-foreground transition-colors">
                   View all →
@@ -1319,7 +1319,7 @@ function AltDetail({ alt }: { alt: AltData }) {
           )}
 
           {/* Connected sources */}
-          <p className="text-[11px] uppercase tracking-[0.08em] font-semibold text-muted-foreground mb-3">Connected sources</p>
+          <p className="text-[13px] font-semibold text-foreground mb-3">Connected sources</p>
           <div className="flex flex-col gap-1.5">
             {Object.entries(SOURCE_LABELS).map(([key, label]) => {
               const count = MOCK_MEMORIES.filter(m => m.source === key).length
@@ -1403,7 +1403,7 @@ function AltDetail({ alt }: { alt: AltData }) {
           return (
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/60 backdrop-blur-sm" onClick={() => setDisconnectSource(null)}>
               <div className="bg-card border border-border rounded-xl shadow-xl p-5 max-w-sm w-full mx-4" onClick={e => e.stopPropagation()}>
-                <h3 className="font-display text-base font-semibold mb-2">Disconnect {srcLabel}?</h3>
+                <h3 className="text-base font-semibold mb-2">Disconnect {srcLabel}?</h3>
                 <p className="text-[11px] text-muted-foreground leading-relaxed mb-4">
                   Your Alt will stop pulling new memories from {srcLabel}. The {srcCount} existing memories from this source will be kept but won't update.
                 </p>

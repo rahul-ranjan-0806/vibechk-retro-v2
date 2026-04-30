@@ -9,7 +9,7 @@ module.exports = {
     extend: {
       fontFamily: {
         sans: ["var(--font-body)", "system-ui", "sans-serif"],
-        display: ["var(--font-display)", "system-ui", "sans-serif"],
+        display: ["var(--font-body)", "system-ui", "sans-serif"],
         pixel: ["DM Mono", "monospace"],
       },
       colors: {
@@ -70,9 +70,15 @@ module.exports = {
         link: "hsl(var(--link))",
       },
       borderRadius: {
-        lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
+        lg: "10px",
+        md: "6px",
+        sm: "4px",
+        xs: "3px",
+      },
+      boxShadow: {
+        popover: "0 1px 4px rgba(15,15,15,0.05), 0 4px 12px rgba(15,15,15,0.10)",
+        modal: "0 8px 32px rgba(15,15,15,0.14)",
+        tooltip: "0 1px 2px rgba(15,15,15,0.16)",
       },
       keyframes: {
         "accordion-down": {

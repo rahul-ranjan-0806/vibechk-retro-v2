@@ -95,64 +95,89 @@ export function HomePage({ onNavigate, onOpenOverlay }: { onNavigate: (p: Page) 
 
   return (
     <div className="h-full flex flex-col overflow-hidden">
+      {/* Notion-style breadcrumb header */}
+      <div className="shrink-0 h-11 flex items-center justify-between px-3 border-b border-border/40">
+        <div className="flex items-center gap-1.5 text-[13px] text-muted-foreground">
+          <span className="hover:bg-muted px-1.5 py-0.5 rounded-sm cursor-default">Home</span>
+        </div>
+        <div className="flex items-center gap-1 text-xs text-muted-foreground">
+          <span>Edited just now</span>
+          <button className="px-2 py-1 hover:bg-muted rounded-sm">Share</button>
+          <button className="w-7 h-7 flex items-center justify-center hover:bg-muted rounded-sm" title="Comments">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          </button>
+          <button className="w-7 h-7 flex items-center justify-center hover:bg-muted rounded-sm" title="Favorite">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          </button>
+          <button className="w-7 h-7 flex items-center justify-center hover:bg-muted rounded-sm" title="More">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg>
+          </button>
+        </div>
+      </div>
+
       <div className="flex-1 overflow-y-auto">
-        <div className="max-w-5xl mx-auto px-8 py-8">
+        <div className="max-w-[840px] mx-auto px-12 pt-20 pb-32">
+
+          {/* ── Page title ──────────────────────────────── */}
+          <div className="flex items-center gap-3 mb-1">
+            <PixelSprite size={28} />
+          </div>
+          <h1 className="text-[40px] font-bold tracking-[-0.02em] leading-[48px] mb-2">Hiring Triage</h1>
+          <p className="text-sm text-muted-foreground mb-12">Sashank's Alt · since yesterday</p>
 
           {/* ── Alt summary ──────────────────────────────── */}
-          <div className="flex items-start gap-4 mb-10">
-            <div className="pt-1 shrink-0"><PixelSprite size={32} /></div>
+          <div className="mb-14 group flex items-start gap-2 -ml-7">
+            <div className="opacity-0 group-hover:opacity-100 transition-opacity flex flex-col gap-0 pt-0.5">
+              <button className="w-5 h-5 flex items-center justify-center text-muted-foreground hover:bg-muted rounded-sm" title="Add block"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M12 5v14M5 12h14"/></svg></button>
+            </div>
             <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 mb-2">
-                <span className="text-[11px] uppercase tracking-[0.08em] font-semibold text-muted-foreground">Sashank's Alt</span>
-                <span className="text-[11px] text-muted-foreground">· since yesterday</span>
-                <button onClick={() => onOpenOverlay?.()}
-                  className="ml-auto text-[13px] font-medium rounded-full px-4 py-2 bg-foreground text-background hover:opacity-90 transition-opacity flex items-center gap-2">
-                  <span>Ask Sabu</span>
-                  <span className="text-[10px] opacity-70">⌘K</span>
-                </button>
-              </div>
-              <p className="text-base leading-relaxed text-foreground">
+              <p className="text-base leading-[1.6] text-foreground">
                 {autoSentence} {dilemmaClause}
               </p>
+              <button onClick={() => onOpenOverlay?.()}
+                className="mt-3 text-sm rounded-sm px-3 py-1.5 bg-accent-blue text-white hover:opacity-90 transition-opacity inline-flex items-center gap-2">
+                <span>Ask Sabu</span>
+                <span className="text-[11px] opacity-70">⌘K</span>
+              </button>
             </div>
           </div>
 
           {/* ── Dilemmas (action-required) ────────────────── */}
           {dilemmas.length > 0 && (
-            <div className="mb-10">
-              <p className="text-[11px] uppercase tracking-[0.08em] font-semibold text-muted-foreground mb-3">
+            <div className="mb-12">
+              <p className="text-[15px] font-semibold text-foreground mb-3">
                 Needs your call · {dilemmas.length}
               </p>
               <div className="flex flex-col gap-3">
                 {dilemmas.map(c => {
                   const sc = scoreColor(c.score)
                   return (
-                    <div key={c.id} className="rounded-xl border-2 border-dashed border-accent-blue bg-accent-blue/[0.035] p-6">
-                      <div className="flex items-start gap-4">
-                        <div className={`w-11 h-11 rounded-lg flex items-center justify-center font-display text-lg font-semibold tabular-nums shrink-0 ${sc.bg} ${sc.fg}`}>
+                    <div key={c.id} className="rounded-md bg-status-warning/30 px-4 py-3 group">
+                      <div className="flex items-start gap-3">
+                        <div className={`w-9 h-9 rounded-sm flex items-center justify-center text-base font-semibold tabular-nums shrink-0 ${sc.bg} ${sc.fg}`}>
                           {c.score}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-                            <p className="text-base font-semibold font-display">{c.name}</p>
+                          <div className="flex items-center gap-2 mb-1 flex-wrap">
+                            <p className="text-[15px] font-semibold">{c.name}</p>
                             <StellarTag score={c.score} />
                             <span className="text-xs text-muted-foreground">{roleTitle(c.roleId)}</span>
                             <AltRecPill rec={c.altRec} confidence={c.confidence} />
                           </div>
-                          <p className="text-sm leading-relaxed text-foreground/80 mb-4">{c.reasoning}</p>
-                          <div className="flex items-center gap-2">
-                            <button className="text-[13px] font-medium rounded-full px-4 py-1.5 bg-status-success text-status-success-foreground hover:opacity-90 transition-opacity">
+                          <p className="text-sm leading-relaxed text-foreground/80 mb-3">{c.reasoning}</p>
+                          <div className="flex items-center gap-1.5">
+                            <button className="text-[13px] rounded-sm px-2.5 py-1 bg-status-success text-status-success-foreground hover:opacity-90 transition-opacity">
                               Shortlist
                             </button>
-                            <button className="text-[13px] font-medium rounded-full px-4 py-1.5 bg-status-danger text-status-danger-foreground hover:opacity-90 transition-opacity">
+                            <button className="text-[13px] rounded-sm px-2.5 py-1 bg-status-danger text-status-danger-foreground hover:opacity-90 transition-opacity">
                               Reject
                             </button>
                             <button onClick={() => onOpenOverlay?.(`Why did you score ${c.name} ${c.score}?`)}
-                              className="text-[13px] font-medium rounded-full px-4 py-1.5 border border-border text-muted-foreground hover:text-foreground hover:border-foreground/40 transition-colors">
+                              className="text-[13px] rounded-sm px-2.5 py-1 text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
                               Discuss with Sabu
                             </button>
                             <button onClick={() => onNavigate("candidates")}
-                              className="text-[13px] font-medium rounded-full px-4 py-1.5 border border-border text-muted-foreground hover:text-foreground hover:border-foreground/40 transition-colors ml-auto">
+                              className="text-[13px] rounded-sm px-2.5 py-1 text-muted-foreground hover:text-foreground hover:bg-muted transition-colors ml-auto">
                               Open transcript →
                             </button>
                           </div>
@@ -166,9 +191,9 @@ export function HomePage({ onNavigate, onOpenOverlay }: { onNavigate: (p: Page) 
           )}
 
           {/* ── Role pipelines ───────────────────────────── */}
-          <div className="mb-10">
-            <p className="text-[11px] uppercase tracking-[0.08em] font-semibold text-muted-foreground mb-3">Role pipelines</p>
-            <div className="border border-border rounded-xl overflow-hidden">
+          <div className="mb-12">
+            <p className="text-[15px] font-semibold text-foreground mb-2">Role pipelines</p>
+            <div>
               {PIPELINE.map((p, i) => {
                 const role = ROLES.find(r => r.id === p.roleId)
                 if (!role) return null
@@ -177,19 +202,20 @@ export function HomePage({ onNavigate, onOpenOverlay }: { onNavigate: (p: Page) 
                 const deltaStr = delta > 0 ? `+${delta}` : `${delta}`
                 return (
                   <button key={p.roleId} onClick={() => onNavigate("roles")}
-                    className={`w-full flex items-center gap-3 px-5 py-4 hover:bg-muted/30 transition-colors text-left ${i > 0 ? "border-t border-border" : ""}`}>
-                    <div className={`w-2 h-2 rounded-full shrink-0 ${status.dot}`} />
+                    className={`w-full flex items-center gap-3 px-2 py-2 hover:bg-muted/60 transition-colors text-left rounded-sm group ${i > 0 ? "border-t border-border/40" : ""}`}>
+                    <div className={`w-1.5 h-1.5 rounded-full shrink-0 ${status.dot}`} />
+                    <span className="text-muted-foreground text-sm shrink-0">📋</span>
                     <div className="flex-1 min-w-0">
-                      <p className="text-[15px] font-medium">{role.title}</p>
+                      <p className="text-sm">{role.title}</p>
                     </div>
-                    <div className="flex items-center gap-3 shrink-0">
+                    <div className="flex items-center gap-2 shrink-0">
                       <span className="text-xs text-muted-foreground tabular-nums">
                         {p.thisWeek} this week
                         <span className={`ml-1 ${delta >= 0 ? "text-status-success-foreground" : "text-status-danger-foreground"}`}>
                           ({deltaStr})
                         </span>
                       </span>
-                      <span className={`text-[11px] font-medium rounded-md px-2 py-0.5 ${status.text} bg-muted/60`}>{status.label}</span>
+                      <span className={`text-xs rounded-xs px-1.5 py-0.5 ${status.text} bg-muted`}>{status.label}</span>
                     </div>
                   </button>
                 )
@@ -199,12 +225,12 @@ export function HomePage({ onNavigate, onOpenOverlay }: { onNavigate: (p: Page) 
 
           {/* ── Auto-decisions (collapsed) ────────────────── */}
           {totalHandled > 0 && (
-            <div className="mb-10">
+            <div className="mb-12">
               <button
                 onClick={() => setAutoExpanded(!autoExpanded)}
                 className="flex items-center gap-2 mb-3 group"
               >
-                <p className="text-[11px] uppercase tracking-[0.08em] font-semibold text-muted-foreground">
+                <p className="text-[15px] font-semibold text-foreground">
                   Handled by Alt · {totalHandled}
                 </p>
                 <svg
@@ -222,28 +248,28 @@ export function HomePage({ onNavigate, onOpenOverlay }: { onNavigate: (p: Page) 
               )}
 
               {autoExpanded && (
-                <div className="border border-border rounded-xl overflow-hidden">
+                <div>
                   {[...pushed, ...rejected].map((c, i) => {
                     const sc = scoreColor(c.score)
                     const isShortlisted = c.status === "shortlisted"
                     return (
-                      <div key={c.id} className={`flex items-center gap-3 px-5 py-3 ${i > 0 ? "border-t border-border" : ""}`}>
-                        <div className={`w-8 h-8 rounded-md flex items-center justify-center font-display text-sm font-semibold tabular-nums shrink-0 ${sc.bg} ${sc.fg}`}>
+                      <div key={c.id} className={`flex items-center gap-3 px-2 py-2 hover:bg-muted/60 rounded-sm transition-colors ${i > 0 ? "border-t border-border/40" : ""}`}>
+                        <div className={`w-7 h-7 rounded-sm flex items-center justify-center text-sm font-semibold tabular-nums shrink-0 ${sc.bg} ${sc.fg}`}>
                           {c.score}
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2">
-                            <p className="text-[15px] font-medium truncate">{c.name}</p>
+                            <p className="text-sm truncate">{c.name}</p>
                             <StellarTag score={c.score} />
                           </div>
                           <p className="text-xs text-muted-foreground truncate">{roleTitle(c.roleId)}</p>
                         </div>
-                        <span className={`text-[11px] font-medium rounded-md px-2 py-0.5 shrink-0 ${
+                        <span className={`text-xs rounded-xs px-1.5 py-0.5 shrink-0 ${
                           isShortlisted ? "bg-status-success text-status-success-foreground" : "bg-status-danger text-status-danger-foreground"
                         }`}>
                           {isShortlisted ? "Pushed to ATS" : "Rejected"}
                         </span>
-                        <span className="text-xs text-muted-foreground shrink-0">{c.completedAt}</span>
+                        <span className="text-xs text-muted-foreground shrink-0 tabular-nums">{c.completedAt}</span>
                       </div>
                     )
                   })}
@@ -252,37 +278,40 @@ export function HomePage({ onNavigate, onOpenOverlay }: { onNavigate: (p: Page) 
             </div>
           )}
 
-          {/* ── Setup banner (dismissible) ────────────────── */}
+          {/* ── Setup callout ────────────────────────────── */}
           {!setupComplete && !setupDismissed && (
-            <div className="rounded-xl border border-border bg-muted/30 px-5 py-4">
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-3">
-                  <p className="text-[11px] uppercase tracking-[0.08em] font-semibold text-muted-foreground">Finish setup</p>
+            <div className="rounded-md bg-muted/60 px-4 py-3 flex gap-3">
+              <div className="text-xl pt-0.5 shrink-0">💡</div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
-                    <div className="w-16 h-1 rounded-full bg-muted overflow-hidden">
-                      <div className="h-full rounded-full bg-foreground transition-all" style={{ width: `${(doneCount / SETUP_ITEMS.length) * 100}%` }} />
+                    <p className="text-sm font-medium">Finish setup</p>
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-16 h-1 rounded-full bg-foreground/10 overflow-hidden">
+                        <div className="h-full rounded-full bg-foreground transition-all" style={{ width: `${(doneCount / SETUP_ITEMS.length) * 100}%` }} />
+                      </div>
+                      <span className="text-xs text-muted-foreground tabular-nums">{doneCount}/{SETUP_ITEMS.length}</span>
                     </div>
-                    <span className="text-xs text-muted-foreground tabular-nums">{doneCount}/{SETUP_ITEMS.length}</span>
                   </div>
+                  <button onClick={() => setSetupDismissed(true)} className="text-muted-foreground hover:text-foreground w-6 h-6 flex items-center justify-center rounded-sm hover:bg-foreground/5">✕</button>
                 </div>
-                <button onClick={() => setSetupDismissed(true)} className="text-muted-foreground hover:text-foreground text-sm leading-none">✕</button>
-              </div>
-              <div className="flex flex-col gap-2">
-                {incomplete.map(item => {
-                  const dotColor = item.status === "warning" ? "bg-status-warning-dot" : "bg-border"
-                  return (
-                    <div key={item.id} className="flex items-center gap-3">
-                      <div className={`w-1.5 h-1.5 rounded-full shrink-0 ${dotColor}`} />
-                      <p className="text-[13px] text-foreground flex-1">{item.title}</p>
-                      {item.ctaTarget && (
-                        <button onClick={() => onNavigate(item.ctaTarget!)}
-                          className="text-[11px] font-medium text-muted-foreground hover:text-foreground transition-colors">
-                          {item.cta}
-                        </button>
-                      )}
-                    </div>
-                  )
-                })}
+                <div className="flex flex-col gap-1">
+                  {incomplete.map(item => {
+                    const dotColor = item.status === "warning" ? "bg-status-warning-dot" : "bg-border"
+                    return (
+                      <div key={item.id} className="flex items-center gap-2 group">
+                        <div className={`w-1.5 h-1.5 rounded-full shrink-0 ${dotColor}`} />
+                        <p className="text-sm text-foreground flex-1">{item.title}</p>
+                        {item.ctaTarget && (
+                          <button onClick={() => onNavigate(item.ctaTarget!)}
+                            className="text-xs text-muted-foreground hover:text-foreground transition-colors">
+                            {item.cta}
+                          </button>
+                        )}
+                      </div>
+                    )
+                  })}
+                </div>
               </div>
             </div>
           )}

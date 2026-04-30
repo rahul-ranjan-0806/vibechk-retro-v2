@@ -86,7 +86,7 @@ export default function App() {
   return (
     <>
     <div className="flex h-screen bg-background text-foreground overflow-hidden">
-      <aside className={`${navCollapsed ? "w-14" : "w-48"} shrink-0 border-r border-border flex flex-col py-4 gap-0.5 bg-background transition-all duration-200 ${navCollapsed ? "overflow-visible" : "overflow-hidden"}`}>
+      <aside className={`${navCollapsed ? "w-14" : "w-60"} shrink-0 flex flex-col py-3 gap-0.5 bg-muted/60 transition-all duration-200 ${navCollapsed ? "overflow-visible" : "overflow-hidden"}`}>
         <div className={`${navCollapsed ? "px-0 flex justify-center" : "px-5 flex items-center justify-between"} mb-5`}>
           {navCollapsed
             ? <button onClick={() => setNavCollapsed(false)} className="text-muted-foreground hover:text-foreground transition-colors p-0.5" title="Expand sidebar">
@@ -96,8 +96,8 @@ export default function App() {
                 <div className="flex items-center gap-2 min-w-0">
                   <div className="w-7 h-7 rounded-md bg-foreground text-background flex items-center justify-center font-pixel text-[10px] font-bold tracking-tight shrink-0">vc</div>
                   <div className="flex flex-col min-w-0">
-                    <span className="font-display text-base font-semibold tracking-tight text-foreground leading-tight">vibechk</span>
-                    <span className="text-[11px] text-muted-foreground leading-tight truncate">Alt Inc</span>
+                    <span className="text-[14px] font-semibold tracking-tight text-foreground leading-tight">Sashank's vibechk</span>
+                    <span className="text-[11px] text-muted-foreground leading-tight truncate">Alt Inc · Free</span>
                   </div>
                 </div>
                 <button onClick={() => setNavCollapsed(true)} className="text-muted-foreground hover:text-foreground transition-colors p-0.5 shrink-0" title="Collapse sidebar">
@@ -109,7 +109,7 @@ export default function App() {
           }
         </div>
 
-        {!navCollapsed && <p className="text-[11px] uppercase tracking-[0.08em] font-semibold px-5 mb-2 text-muted-foreground">Manage</p>}
+        {!navCollapsed && <p className="text-xs px-3 mb-1 mt-2 text-muted-foreground/80">Manage</p>}
 
         {[
           { id: "chat" as Page, label: "Chat", description: "Talk to your Alt",
@@ -127,13 +127,13 @@ export default function App() {
         ].map(item => {
           const btn = (
             <button onClick={() => setPage(item.id)}
-              className={`w-full flex items-center ${navCollapsed ? "justify-center px-0" : "gap-3 px-5"} py-2.5 text-[13px] font-medium transition-colors text-left rounded-md ${
-                page === item.id ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground hover:bg-accent"
+              className={`w-full flex items-center ${navCollapsed ? "justify-center px-0" : "gap-2 px-3"} h-7 text-[14px] transition-colors text-left rounded-sm ${
+                page === item.id ? "bg-foreground/10 text-foreground font-medium" : "text-foreground/75 hover:bg-foreground/5"
               }`}>
-              <span className="shrink-0">{item.icon}</span>
+              <span className="shrink-0 opacity-70">{item.icon}</span>
               {!navCollapsed && <span className="flex-1 whitespace-nowrap">{item.label}</span>}
               {!navCollapsed && (item as any).badge && (
-                <span className={`text-[10px] px-1.5 py-0.5 font-medium rounded-sm ${page === item.id ? "bg-background/20 text-background" : "bg-muted text-muted-foreground"}`}>
+                <span className="text-[11px] px-1.5 py-0.5 rounded-xs bg-muted text-muted-foreground tabular-nums">
                   {(item as any).badge}
                 </span>
               )}
@@ -152,44 +152,41 @@ export default function App() {
             <div key={item.id} className="flex flex-col">
               {wrapped}
               {showRoleList && (
-                <div className="flex flex-col gap-0.5 mt-1 mb-1 ml-3 pl-3 border-l border-border">
+                <div className="flex flex-col gap-0 mt-0.5 mb-1 ml-6">
                   {ROLES.map(r => (
                     <button key={r.id} onClick={() => setSelectedRoleId(r.id)}
-                      className={`w-full text-left text-[11px] py-1.5 pl-3 pr-2 rounded-md transition-colors truncate ${
+                      className={`w-full text-left text-[13px] py-1 px-2 rounded-sm transition-colors truncate flex items-center gap-1.5 ${
                         selectedRoleId === r.id
-                          ? "bg-accent text-foreground font-medium"
-                          : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+                          ? "bg-foreground/10 text-foreground font-medium"
+                          : "text-foreground/65 hover:bg-foreground/5"
                       }`}>
-                      {r.title}
+                      <span className="text-foreground/40">📋</span>
+                      <span className="truncate">{r.title}</span>
                     </button>
                   ))}
-                  <button className="w-full text-left text-[11px] py-1.5 pl-3 pr-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors">
-                    + New role
+                  <button className="w-full text-left text-[13px] py-1 px-2 rounded-sm text-foreground/45 hover:text-foreground hover:bg-foreground/5 transition-colors flex items-center gap-1.5">
+                    <span>+</span>
+                    <span>Add a role</span>
                   </button>
                 </div>
               )}
               {showAltList && (
-                <div className="flex flex-col gap-0.5 mt-1 mb-1 ml-3 pl-3 border-l border-border">
+                <div className="flex flex-col gap-0 mt-0.5 mb-1 ml-6">
                   {ALTS_MINI.map(a => {
                     const isSelected = selectedAltId === a.id
                     return (
                       <button key={a.id} onClick={() => setSelectedAltId(a.id)}
-                        className={`w-full text-left text-[11px] py-1.5 pl-2 pr-2 rounded-md transition-colors flex items-center gap-2 ${
+                        className={`w-full text-left text-[13px] py-1 px-2 rounded-sm transition-colors flex items-center gap-1.5 ${
                           isSelected
-                            ? "bg-accent text-foreground font-medium"
-                            : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+                            ? "bg-foreground/10 text-foreground font-medium"
+                            : "text-foreground/65 hover:bg-foreground/5"
                         }`}>
-                        <div className={`w-5 h-5 rounded-full flex items-center justify-center text-[8px] font-medium shrink-0 ${
-                          isSelected ? "bg-foreground text-background" : "bg-muted text-muted-foreground"
+                        <div className={`w-4 h-4 rounded-sm flex items-center justify-center text-[8px] font-medium shrink-0 ${
+                          isSelected ? "bg-foreground text-background" : "bg-foreground/10 text-foreground/60"
                         }`}>{a.initials}</div>
-                        <div className="flex-1 min-w-0">
-                          <p className="truncate leading-tight">{a.name}</p>
-                          <div className="flex items-center gap-1 mt-0.5">
-                            <div className="flex-1 h-0.5 bg-muted rounded-full overflow-hidden">
-                              <div className="h-full bg-foreground/50 rounded-full" style={{ width: `${a.completeness}%` }} />
-                            </div>
-                            <span className="text-[8px] text-muted-foreground tabular-nums">{a.completeness}%</span>
-                          </div>
+                        <div className="flex-1 min-w-0 flex items-center gap-1.5">
+                          <span className="truncate">{a.name}</span>
+                          <span className="text-[11px] text-muted-foreground tabular-nums shrink-0">{a.completeness}%</span>
                         </div>
                       </button>
                     )
@@ -204,8 +201,8 @@ export default function App() {
         {(() => {
           const settingsBtn = (
             <button onClick={() => setPage("settings")}
-              className={`w-full flex items-center ${navCollapsed ? "justify-center px-0 mt-2" : "gap-3 px-5"} py-2.5 text-[13px] font-medium transition-colors text-left rounded-md ${
-                page === "settings" ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground hover:bg-accent"
+              className={`w-full flex items-center ${navCollapsed ? "justify-center px-0 mt-2" : "gap-2 px-3"} h-7 text-[14px] transition-colors text-left rounded-sm ${
+                page === "settings" ? "bg-foreground/10 text-foreground font-medium" : "text-foreground/75 hover:bg-foreground/5"
               }`}>
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
               {!navCollapsed && <span className="flex-1 whitespace-nowrap">Settings</span>}
@@ -214,18 +211,13 @@ export default function App() {
           return navCollapsed ? <NavTooltip label="Settings" description="Preferences and integrations">{settingsBtn}</NavTooltip> : settingsBtn
         })()}
 
-        <div className="mt-auto flex flex-col gap-1">
-          <div className="pt-2 border-t border-border">
-            <div className={`flex items-center ${navCollapsed ? "justify-center px-0" : "gap-2 px-5"} py-1.5`}>
-              <div className="w-6 h-6 rounded-full bg-foreground flex items-center justify-center text-[10px] font-medium text-background shrink-0">SG</div>
-              {!navCollapsed && (
-                <div className="flex-1 min-w-0">
-                  <p className="text-[13px] font-medium truncate">Sashank G.</p>
-                  <p className="text-[11px] text-muted-foreground truncate">Alt Inc</p>
-                </div>
-              )}
-            </div>
-          </div>
+        <div className="mt-auto flex flex-col gap-0.5">
+          <button className={`w-full flex items-center ${navCollapsed ? "justify-center px-0" : "gap-2 px-3"} h-8 rounded-sm text-[13px] text-foreground/65 hover:bg-foreground/5 transition-colors`}>
+            <span className="opacity-70">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 11h-6M19 8v6"/></svg>
+            </span>
+            {!navCollapsed && <span>Invite members</span>}
+          </button>
         </div>
       </aside>
 

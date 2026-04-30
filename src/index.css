@@ -3,86 +3,90 @@
 @tailwind utilities;
 
 :root {
-  --font-display: "Space Grotesk", system-ui, -apple-system, sans-serif;
+  /* Single typeface — Inter handles everything */
+  --font-display: "Inter", system-ui, -apple-system, sans-serif;
   --font-body: "Inter", system-ui, -apple-system, sans-serif;
-  --background: 40 20% 98%;
-  --foreground: 30 12% 10%;
+
+  /* Notion warm palette (light) — see docs/notion-style-guide.md */
+  --background: 0 0% 100%;            /* #FFFFFF main canvas */
+  --foreground: 36 9% 19%;            /* #37352F warm near-black */
   --card: 0 0% 100%;
-  --card-foreground: 30 12% 10%;
+  --card-foreground: 36 9% 19%;
   --popover: 0 0% 100%;
-  --popover-foreground: 30 12% 10%;
-  --primary: 30 12% 10%;
-  --primary-foreground: 40 20% 98%;
-  --secondary: 40 10% 94%;
-  --secondary-foreground: 30 12% 10%;
-  --muted: 40 10% 94%;
-  --muted-foreground: 30 6% 44%;
-  --accent: 40 10% 94%;
-  --accent-foreground: 30 12% 10%;
-  --destructive: 0 72% 51%;
+  --popover-foreground: 36 9% 19%;
+  --primary: 36 9% 19%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 40 14% 96%;            /* #F7F6F3 warm hover */
+  --secondary-foreground: 36 9% 19%;
+  --muted: 40 14% 96%;
+  --muted-foreground: 36 4% 45%;      /* warm secondary text */
+  --accent: 40 14% 96%;
+  --accent-foreground: 36 9% 19%;
+  --destructive: 4 65% 43%;
   --destructive-foreground: 0 0% 100%;
-  --border: 30 8% 86%;
-  --input: 30 8% 86%;
-  --ring: 30 12% 10%;
-  --radius: 0.625rem;
+  --border: 36 8% 91%;                /* nearly invisible warm border */
+  --input: 36 8% 88%;
+  --ring: 210 76% 51%;
+  --radius: 0.375rem;                 /* 6px — Notion's max card radius */
 
   --retro-green: #00cc55;
   --retro-yellow: #f5c518;
   --retro-red: #ff4444;
   --retro-blue: #4466ff;
 
-  --status-success: 90 40% 90%;
-  --status-success-fg: 100 60% 25%;
-  --status-success-dot: 90 55% 37%;
-  --status-warning: 40 80% 92%;
-  --status-warning-fg: 35 80% 30%;
-  --status-warning-dot: 35 70% 40%;
-  --status-danger: 0 70% 95%;
-  --status-danger-fg: 0 55% 40%;
-  --status-danger-dot: 0 70% 55%;
-  --status-info-fg: 165 65% 25%;
-  --accent-blue: 230 100% 64%;
-  --link: 220 80% 50%;
+  /* Notion status pills — soft pastel bg, saturated dark fg */
+  --status-success: 168 24% 90%;       /* #DDEDEA */
+  --status-success-fg: 165 58% 26%;    /* #1B6855 */
+  --status-success-dot: 165 50% 40%;
+  --status-warning: 47 80% 92%;        /* #FBF3DB */
+  --status-warning-fg: 41 70% 30%;     /* #886A19 */
+  --status-warning-dot: 41 65% 45%;
+  --status-danger: 0 80% 94%;          /* #FBE4E4 */
+  --status-danger-fg: 4 65% 43%;       /* #B12C24 */
+  --status-danger-dot: 4 65% 55%;
+  --status-info-fg: 205 78% 35%;       /* #1366A0 */
+  --accent-blue: 210 76% 51%;          /* #2383E2 Notion royal blue */
+  --link: 210 76% 51%;
 }
 
 .dark {
-  --background: 224 20% 6%;
-  --foreground: 210 20% 96%;
-  --card: 224 18% 8%;
-  --card-foreground: 210 20% 96%;
-  --popover: 224 18% 8%;
-  --popover-foreground: 210 20% 96%;
-  --primary: 210 20% 96%;
-  --primary-foreground: 224 20% 6%;
-  --secondary: 220 14% 14%;
-  --secondary-foreground: 210 20% 96%;
-  --muted: 220 14% 14%;
-  --muted-foreground: 220 10% 56%;
-  --accent: 220 14% 14%;
-  --accent-foreground: 210 20% 96%;
-  --destructive: 0 72% 51%;
+  --background: 0 0% 10%;              /* #191919 */
+  --foreground: 0 0% 90%;
+  --card: 0 0% 10%;
+  --card-foreground: 0 0% 90%;
+  --popover: 0 0% 13%;                 /* slightly lighter for surfaces */
+  --popover-foreground: 0 0% 90%;
+  --primary: 0 0% 90%;
+  --primary-foreground: 0 0% 10%;
+  --secondary: 0 0% 16%;
+  --secondary-foreground: 0 0% 90%;
+  --muted: 0 0% 16%;
+  --muted-foreground: 0 0% 55%;
+  --accent: 0 0% 16%;
+  --accent-foreground: 0 0% 90%;
+  --destructive: 0 65% 50%;
   --destructive-foreground: 0 0% 100%;
-  --border: 220 12% 18%;
-  --input: 220 12% 18%;
-  --ring: 210 20% 96%;
+  --border: 0 0% 20%;
+  --input: 0 0% 22%;
+  --ring: 210 76% 60%;
 
   --retro-green: #33ff77;
   --retro-yellow: #ffd84d;
   --retro-red: #ff6b6b;
   --retro-blue: #6688ff;
 
-  --status-success: 120 30% 12%;
-  --status-success-fg: 120 50% 65%;
-  --status-success-dot: 120 50% 50%;
-  --status-warning: 35 40% 12%;
-  --status-warning-fg: 40 70% 65%;
-  --status-warning-dot: 35 60% 50%;
-  --status-danger: 0 40% 12%;
-  --status-danger-fg: 0 60% 65%;
-  --status-danger-dot: 0 60% 55%;
-  --status-info-fg: 165 50% 60%;
-  --accent-blue: 230 100% 72%;
-  --link: 220 80% 70%;
+  --status-success: 165 30% 14%;
+  --status-success-fg: 165 45% 60%;
+  --status-success-dot: 165 50% 50%;
+  --status-warning: 41 35% 14%;
+  --status-warning-fg: 41 60% 65%;
+  --status-warning-dot: 41 60% 50%;
+  --status-danger: 4 35% 16%;
+  --status-danger-fg: 4 60% 65%;
+  --status-danger-dot: 4 60% 55%;
+  --status-info-fg: 205 60% 65%;
+  --accent-blue: 210 76% 60%;
+  --link: 210 76% 60%;
 }
 
 * { border-color: hsl(var(--border)); }
@@ -95,11 +99,10 @@ body {
   font-feature-settings: "cv02", "cv03", "cv04", "cv11";
 }
 
-/* Display face for headings, brand, prominent numbers */
-.font-display { font-family: var(--font-display); letter-spacing: -0.01em; }
-
-/* Headings default to display face */
-h1, h2, h3, h4 { font-family: var(--font-display); letter-spacing: -0.01em; }
+/* Notion uses one family — hierarchy via size + weight only */
+.font-display { letter-spacing: -0.01em; }
+h1, h2, h3, h4 { letter-spacing: -0.01em; color: hsl(var(--foreground)); }
+h1 { letter-spacing: -0.02em; }
 
 /* Retro pixel font for game elements */
 .font-pixel { font-family: 'DM Mono', monospace; letter-spacing: 0.04em; }

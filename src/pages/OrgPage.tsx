@@ -32,7 +32,7 @@ const HIRING_LOCATIONS = [
 export function OrgPage() {
   return (
     <div className="h-full overflow-y-auto">
-      <div className="max-w-4xl mx-auto px-8 py-8 flex flex-col gap-8">
+      <div className="max-w-[840px] mx-auto px-12 pt-16 pb-24 flex flex-col gap-12">
 
         {/* Hero */}
         <section className="flex items-start gap-5">
@@ -41,13 +41,13 @@ export function OrgPage() {
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1.5">
-              <span className="text-[11px] uppercase tracking-[0.08em] font-semibold text-muted-foreground">Careers</span>
+              <span className="text-[13px] font-semibold text-foreground">Careers</span>
               <span className="text-[10px] text-muted-foreground">· alt.inc/careers</span>
               <button className="ml-auto text-[10px] px-2.5 py-1 rounded-md border border-border text-muted-foreground hover:text-foreground hover:border-foreground/40 transition-colors">
                 Preview page ↗
               </button>
             </div>
-            <h1 className="font-display text-3xl font-semibold tracking-tight mb-2">Alt Inc.</h1>
+            <h1 className="text-3xl font-semibold tracking-tight mb-2">Alt Inc.</h1>
             <p className="text-sm leading-relaxed text-foreground max-w-2xl">
               We're building AI avatars that scale founder taste. Our Alts conduct pre-screening conversations
               so small teams can hire like they have a recruiting org behind them — without losing the signal
@@ -58,7 +58,7 @@ export function OrgPage() {
 
         {/* Quick facts */}
         <section>
-          <p className="text-[11px] uppercase tracking-[0.08em] font-semibold text-muted-foreground mb-2">About</p>
+          <p className="text-[13px] font-semibold text-foreground mb-2">About</p>
           <div className="grid grid-cols-4 gap-3">
             {[
               { label: "Team size", value: "12" },
@@ -67,7 +67,7 @@ export function OrgPage() {
               { label: "Stage", value: "Seed" },
             ].map(s => (
               <div key={s.label} className="p-3.5 rounded-lg bg-muted/40 border border-border">
-                <p className="text-[11px] uppercase tracking-[0.08em] font-semibold text-muted-foreground mb-1.5">{s.label}</p>
+                <p className="text-[13px] font-semibold text-foreground mb-1.5">{s.label}</p>
                 <p className="text-base font-medium">{s.value}</p>
               </div>
             ))}
@@ -76,7 +76,7 @@ export function OrgPage() {
 
         {/* Mission */}
         <section>
-          <p className="text-[11px] uppercase tracking-[0.08em] font-semibold text-muted-foreground mb-2">Mission</p>
+          <p className="text-[13px] font-semibold text-foreground mb-2">Mission</p>
           <div className="p-4 rounded-lg bg-muted/30 border border-border">
             <p className="text-sm leading-relaxed">
               Hiring today scales linearly with founder time, and founders don't scale. Alt Inc. gives every
@@ -88,7 +88,7 @@ export function OrgPage() {
 
         {/* Perks */}
         <section>
-          <p className="text-[11px] uppercase tracking-[0.08em] font-semibold text-muted-foreground mb-2">Perks & benefits</p>
+          <p className="text-[13px] font-semibold text-foreground mb-2">Perks & benefits</p>
           <div className="grid grid-cols-2 gap-2">
             {PERKS.map(p => (
               <div key={p.label} className="flex items-start gap-2.5 p-3 rounded-lg border border-border bg-card">
@@ -105,7 +105,7 @@ export function OrgPage() {
         {/* Organisation Alts */}
         <section>
           <div className="flex items-center justify-between mb-2">
-            <p className="text-[11px] uppercase tracking-[0.08em] font-semibold text-muted-foreground">Alts</p>
+            <p className="text-[13px] font-semibold text-foreground">Alts</p>
             <span className="text-[10px] text-muted-foreground">{ORG_ALTS.filter(a => a.status === "active").length} active · {ORG_ALTS.length} total</span>
           </div>
           <div className="border border-border rounded-lg overflow-hidden">
@@ -151,7 +151,7 @@ export function OrgPage() {
 
         {/* Offices & locations */}
         <section>
-          <p className="text-[11px] uppercase tracking-[0.08em] font-semibold text-muted-foreground mb-2">Offices</p>
+          <p className="text-[13px] font-semibold text-foreground mb-2">Offices</p>
           <div className="grid grid-cols-3 gap-3">
             {OFFICES.map(o => (
               <div key={o.city} className="p-3.5 rounded-lg border border-border bg-card">
@@ -171,7 +171,7 @@ export function OrgPage() {
 
         {/* Hiring locations */}
         <section>
-          <p className="text-[11px] uppercase tracking-[0.08em] font-semibold text-muted-foreground mb-2">Hiring locations</p>
+          <p className="text-[13px] font-semibold text-foreground mb-2">Hiring locations</p>
           <div className="border border-border rounded-lg overflow-hidden">
             {HIRING_LOCATIONS.map((h, i) => (
               <div key={h.region} className={`flex items-start gap-4 px-4 py-3 ${i > 0 ? "border-t border-border" : ""}`}>
@@ -194,7 +194,7 @@ export function OrgPage() {
         {/* Open roles */}
         <section>
           <div className="flex items-center justify-between mb-2">
-            <p className="text-[11px] uppercase tracking-[0.08em] font-semibold text-muted-foreground">Open roles</p>
+            <p className="text-[13px] font-semibold text-foreground">Open roles</p>
             <span className="text-[10px] text-muted-foreground">{OPEN_ROLES.length} open</span>
           </div>
           <div className="border border-border rounded-lg overflow-hidden">
