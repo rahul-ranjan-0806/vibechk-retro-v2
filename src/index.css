@@ -249,22 +249,23 @@ h1 { letter-spacing: -0.02em; }
 .alt-overlay-blur-enter { animation: alt-overlay-backdrop-in 0.2s ease-out forwards; }
 .alt-overlay-blur-exit  { animation: alt-overlay-backdrop-out 0.32s ease-in forwards; }
 
-/* Backdrop — gradient mask + soft tint by default; full-screen blur once chat starts */
-/* Many stops + cubic easing in the mask reduce 8-bit alpha banding visibly */
+/* Backdrop — progressive blur + dark tint by default (both fade upward via mask);
+   full uniform blur + flat dark tint once chat starts. Many gradient stops with a
+   cubic-curve falloff are used to keep 8-bit alpha banding below the noise floor. */
 .alt-overlay-backdrop {
-  backdrop-filter: blur(0px);
-  -webkit-backdrop-filter: blur(0px);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   background:
     linear-gradient(
       to top,
-      hsl(var(--background) / 0.72) 0%,
-      hsl(var(--background) / 0.66) 12%,
-      hsl(var(--background) / 0.55) 22%,
-      hsl(var(--background) / 0.40) 33%,
-      hsl(var(--background) / 0.26) 45%,
-      hsl(var(--background) / 0.14) 56%,
-      hsl(var(--background) / 0.06) 65%,
-      hsl(var(--background) / 0.02) 73%,
+      rgba(0, 0, 0, 0.62) 0%,
+      rgba(0, 0, 0, 0.58) 12%,
+      rgba(0, 0, 0, 0.48) 22%,
+      rgba(0, 0, 0, 0.36) 33%,
+      rgba(0, 0, 0, 0.24) 45%,
+      rgba(0, 0, 0, 0.12) 56%,
+      rgba(0, 0, 0, 0.06) 65%,
+      rgba(0, 0, 0, 0.02) 73%,
       transparent 82%
     );
   -webkit-mask-image:
@@ -301,22 +302,22 @@ h1 { letter-spacing: -0.02em; }
     background 0.45s ease-in;
 }
 
-/* Noise overlay — dithers the mask transition to kill residual banding */
+/* Noise overlay — dithers the mask transition; soft-light keeps it from lightening */
 .alt-overlay-backdrop::after {
   content: "";
   position: absolute;
   inset: 0;
   pointer-events: none;
-  opacity: 0.5;
-  mix-blend-mode: overlay;
+  opacity: 0.25;
+  mix-blend-mode: soft-light;
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.6 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
   background-size: 160px 160px;
 }
 
 .alt-overlay-backdrop.blurred {
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  background: hsl(var(--background) / 0.45);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  background: rgba(0, 0, 0, 0.55);
   -webkit-mask-image: none;
   mask-image: none;
 }
