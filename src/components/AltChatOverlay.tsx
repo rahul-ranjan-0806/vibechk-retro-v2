@@ -383,14 +383,9 @@ export function AltChatOverlay({ open, onClose, context, nudgeMessage, prefillIn
 
   return (
     <div className="fixed inset-0 z-[60]" onClick={e => { if (e.target === e.currentTarget) handleClose() }}>
-      {/* Backdrop tint + mask — blur ramps to 12px the moment a chat is sent */}
+      {/* Backdrop — gradient mask on open; switches to full-viewport blur on send */}
       <div
         className={`absolute inset-0 pointer-events-none alt-overlay-backdrop ${msgs.length > 0 ? "blurred" : ""} ${blurClass}`}
-        style={{
-          maskImage: "linear-gradient(to top, black 30%, transparent 80%)",
-          WebkitMaskImage: "linear-gradient(to top, black 30%, transparent 80%)",
-          background: "linear-gradient(to top, hsl(var(--background) / 0.7) 20%, transparent 70%)",
-        }}
       />
 
       {/* White shimmer sweep — fires once per send (key remount restarts animation) */}
@@ -573,8 +568,10 @@ export function AltChatOverlay({ open, onClose, context, nudgeMessage, prefillIn
           </div>
 
           {/* Helper text */}
-          <p className="text-center text-xs text-muted-foreground/50">
-            Esc to close · Enter to send · / for commands & sources
+          <p className="text-center text-xs text-muted-foreground/60 flex items-center justify-center gap-1.5">
+            Press
+            <kbd className="font-sans text-[11px] px-1.5 py-0.5 rounded-sm border border-border bg-muted/60 text-foreground/80 leading-none">Esc</kbd>
+            to escape chat
           </p>
         </div>
       </div>

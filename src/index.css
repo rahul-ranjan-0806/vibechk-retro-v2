@@ -249,15 +249,24 @@ h1 { letter-spacing: -0.02em; }
 .alt-overlay-blur-enter { animation: alt-overlay-backdrop-in 0.2s ease-out forwards; }
 .alt-overlay-blur-exit  { animation: alt-overlay-backdrop-out 0.18s ease-in forwards; }
 
-/* Backdrop blur intensity — toggled the moment a chat is sent */
+/* Backdrop — gradient mask + soft tint by default; full-screen blur once chat starts */
 .alt-overlay-backdrop {
   backdrop-filter: blur(0px);
   -webkit-backdrop-filter: blur(0px);
-  transition: backdrop-filter 0.55s ease-in, -webkit-backdrop-filter 0.55s ease-in;
+  background: linear-gradient(to top, hsl(var(--background) / 0.7) 20%, transparent 70%);
+  -webkit-mask-image: linear-gradient(to top, black 30%, transparent 80%);
+  mask-image: linear-gradient(to top, black 30%, transparent 80%);
+  transition:
+    backdrop-filter 0.55s ease-in,
+    -webkit-backdrop-filter 0.55s ease-in,
+    background 0.45s ease-in;
 }
 .alt-overlay-backdrop.blurred {
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  background: hsl(var(--background) / 0.45);
+  -webkit-mask-image: none;
+  mask-image: none;
 }
 
 /* White shimmer sweep — bottom → top, fires once per send */
