@@ -159,22 +159,22 @@ export function ActionDropdown({ items, onSelect, onClose, visible, filter }: Ac
               i === activeIndex ? "bg-muted/60" : "hover:bg-muted/30"
             } ${i > 0 ? "border-t border-border/50" : ""}`}
           >
-            <span className="w-5 h-5 flex items-center justify-center text-[10px] text-muted-foreground shrink-0">
+            <span className="w-5 h-5 flex items-center justify-center text-xs text-muted-foreground shrink-0">
               {item.icon}
             </span>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium truncate">{item.label}</p>
               {item.detail && (
-                <p className="text-[10px] text-muted-foreground truncate">{item.detail}</p>
+                <p className="text-xs text-muted-foreground truncate">{item.detail}</p>
               )}
             </div>
             {i === activeIndex && (
-              <span className="text-[9px] text-muted-foreground shrink-0">↵</span>
+              <span className="text-[11px] text-muted-foreground shrink-0">↵</span>
             )}
           </button>
         ))}
       </div>
-      <div className="px-3 py-1.5 border-t border-border bg-muted/20 flex items-center gap-3 text-[9px] text-muted-foreground">
+      <div className="px-3 py-1.5 border-t border-border bg-muted/20 flex items-center gap-3 text-[11px] text-muted-foreground">
         <span>↑↓ navigate</span>
         <span>↵ select</span>
         <span>esc dismiss</span>

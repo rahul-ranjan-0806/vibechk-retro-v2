@@ -49,7 +49,7 @@ export function ServersPanel() {
         <div className="flex items-center gap-2">
           <Server className="w-3.5 h-3.5 text-muted-foreground" />
           <span className="text-[11px] font-mono font-medium text-foreground">SERVERS</span>
-          <span className="text-[10px] font-mono text-muted-foreground tabular-nums">
+          <span className="text-xs font-mono text-muted-foreground tabular-nums">
             {servers.length}
           </span>
         </div>
@@ -61,10 +61,10 @@ export function ServersPanel() {
       {!collapsed && (
         <div className={cn("max-h-72 overflow-y-auto")}>
           {error && (
-            <div className="px-3 py-2 text-[10px] font-mono text-destructive">{error}</div>
+            <div className="px-3 py-2 text-xs font-mono text-destructive">{error}</div>
           )}
           {!error && servers.length === 0 && (
-            <div className="px-3 py-3 text-[10px] font-mono text-muted-foreground">
+            <div className="px-3 py-3 text-xs font-mono text-muted-foreground">
               no project servers running
             </div>
           )}
@@ -83,18 +83,18 @@ export function ServersPanel() {
                 <div className="flex items-center gap-1.5">
                   {s.branch && (
                     <span
-                      className="inline-flex items-center text-[9px] font-mono px-1 py-px rounded-sm text-white truncate max-w-[140px]"
+                      className="inline-flex items-center text-[11px] font-mono px-1 py-px rounded-sm text-white truncate max-w-[140px]"
                       style={{ backgroundColor: branchColor(s.branch) }}
                       title={s.branch}
                     >
                       {s.branch}
                     </span>
                   )}
-                  <span className="text-[10px] font-mono text-muted-foreground truncate">
+                  <span className="text-xs font-mono text-muted-foreground truncate">
                     {s.command}
                   </span>
                 </div>
-                <div className="text-[9px] font-mono text-muted-foreground/70 tabular-nums truncate">
+                <div className="text-[11px] font-mono text-muted-foreground/70 tabular-nums truncate">
                   pid {s.pid}
                 </div>
               </div>

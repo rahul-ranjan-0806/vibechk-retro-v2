@@ -264,11 +264,11 @@ export function GitGraph({ data, expanded, onToggleExpand }: Props) {
                   </span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <span className="text-[10px] font-mono text-muted-foreground tabular-nums">
+                  <span className="text-xs font-mono text-muted-foreground tabular-nums">
                     {b.commits.length} commit{b.commits.length === 1 ? "" : "s"}
                   </span>
                   {isCurrent && (
-                    <span className="text-[9px] font-mono uppercase tracking-wider px-1 py-px rounded-sm bg-foreground text-background">
+                    <span className="text-[11px] font-mono uppercase tracking-wider px-1 py-px rounded-sm bg-foreground text-background">
                       HEAD
                     </span>
                   )}
@@ -296,7 +296,7 @@ export function GitGraph({ data, expanded, onToggleExpand }: Props) {
             >
               <div className="px-3 py-2 border-b border-border bg-muted/50 flex items-center justify-between">
                 <span className="text-[11px] font-mono font-medium text-foreground truncate">{b.name}</span>
-                <span className="text-[10px] font-mono text-muted-foreground tabular-nums">
+                <span className="text-xs font-mono text-muted-foreground tabular-nums">
                   {b.commits.length}
                 </span>
               </div>
@@ -309,24 +309,24 @@ export function GitGraph({ data, expanded, onToggleExpand }: Props) {
                     className="group px-3 py-1.5 border-b border-border/60 last:border-b-0 hover:bg-accent transition-colors"
                   >
                     <div className="flex items-baseline gap-2">
-                      <span className="text-[10px] font-mono text-muted-foreground tabular-nums shrink-0">
+                      <span className="text-xs font-mono text-muted-foreground tabular-nums shrink-0">
                         {c.shortSha}
                       </span>
                       <span className="text-[11px] text-foreground truncate flex-1" title={c.subject}>
                         {c.subject}
                       </span>
                       {isNew && (
-                        <span className="text-[8px] font-mono uppercase tracking-wider px-1.5 py-px rounded-sm bg-emerald-500/15 text-emerald-600 border border-emerald-500/25 shrink-0">
+                        <span className="text-[11px] font-mono uppercase tracking-wider px-1.5 py-px rounded-sm bg-emerald-500/15 text-emerald-600 border border-emerald-500/25 shrink-0">
                           New
                         </span>
                       )}
                     </div>
                     <div className="flex items-center gap-2 mt-0.5">
-                      <span className="text-[9px] font-mono text-muted-foreground truncate">
+                      <span className="text-[11px] font-mono text-muted-foreground truncate">
                         {c.author}
                       </span>
-                      <span className="text-[9px] font-mono text-muted-foreground/70">·</span>
-                      <span className="text-[9px] font-mono text-muted-foreground/70">
+                      <span className="text-[11px] font-mono text-muted-foreground/70">·</span>
+                      <span className="text-[11px] font-mono text-muted-foreground/70">
                         {c.date}
                       </span>
                     </div>

@@ -678,7 +678,7 @@ export function MemoryMindMap({ memories, edges: _edges, onNodeClick, selectedId
       <div className="w-full h-full flex items-center justify-center bg-[#f8f9fc] rounded-lg border border-border">
         <div className="text-center px-6">
           <p className="text-sm font-medium mb-1">3D view unavailable</p>
-          <p className="text-[10px] font-pixel text-muted-foreground">Your browser doesn't support WebGL. Try Chrome, Firefox, Safari, or Edge.</p>
+          <p className="text-xs font-pixel text-muted-foreground">Your browser doesn't support WebGL. Try Chrome, Firefox, Safari, or Edge.</p>
         </div>
       </div>
     )
@@ -694,17 +694,17 @@ export function MemoryMindMap({ memories, edges: _edges, onNodeClick, selectedId
     >
       {/* Legend */}
       <div className="absolute top-3 left-3 z-30 flex flex-col gap-1 pointer-events-none">
-        <p className="text-[8px] font-pixel uppercase tracking-widest text-white/40 mb-0.5">Sources</p>
+        <p className="text-[11px] font-pixel uppercase tracking-widest text-white/40 mb-0.5">Sources</p>
         {Object.entries(SOURCE_COLORS).map(([key, color]) => (
           <div key={key} className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full" style={{ background: color }} />
-            <span className="text-[9px] font-pixel text-white/50">{SOURCE_LABELS[key as MemorySource]}</span>
+            <span className="text-[11px] font-pixel text-white/50">{SOURCE_LABELS[key as MemorySource]}</span>
           </div>
         ))}
       </div>
 
       <div className="absolute bottom-3 left-3 z-30 pointer-events-none">
-        <p className="text-[8px] font-pixel text-white/30">
+        <p className="text-[11px] font-pixel text-white/30">
           Drag to orbit · Scroll to zoom · Tab to focus · H to toggle HUD
         </p>
       </div>
@@ -713,10 +713,10 @@ export function MemoryMindMap({ memories, edges: _edges, onNodeClick, selectedId
         <div className="absolute top-3 right-3 z-30 pointer-events-none">
           <div style={{ background: "rgba(255,255,255,0.9)", WebkitBackdropFilter: "blur(6px)", backdropFilter: "blur(6px)" }}
             className="border border-border rounded-md px-2.5 py-1.5 shadow-sm">
-            <p className="text-[9px] font-pixel text-muted-foreground">
+            <p className="text-[11px] font-pixel text-muted-foreground">
               {focusedIndex + 1} / {nodePositions.length}
             </p>
-            <p className="text-[10px] font-pixel font-medium text-foreground truncate max-w-[140px]">
+            <p className="text-xs font-pixel font-medium text-foreground truncate max-w-[140px]">
               {nodePositions[focusedIndex].node.label}
             </p>
           </div>
@@ -733,7 +733,7 @@ export function MemoryMindMap({ memories, edges: _edges, onNodeClick, selectedId
         style={{ background: "transparent", position: "relative", zIndex: 0 }}
         fallback={
           <div className="w-full h-full flex items-center justify-center">
-            <p className="text-[10px] font-pixel text-muted-foreground">Loading 3D view...</p>
+            <p className="text-xs font-pixel text-muted-foreground">Loading 3D view...</p>
           </div>
         }
       >

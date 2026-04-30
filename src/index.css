@@ -47,6 +47,13 @@
   --status-info-fg: 205 78% 35%;       /* #1366A0 */
   --accent-blue: 210 76% 51%;          /* #2383E2 Notion royal blue */
   --link: 210 76% 51%;
+
+  /* Spacing rhythm — see docs/consistency-audit.md §5 */
+  --space-page-top: 64px;     /* pt-16 */
+  --space-page-bottom: 96px;  /* pb-24 */
+  --space-page-side: 48px;    /* px-12 */
+  --space-section-gap: 48px;  /* gap-12 / mb-12 */
+  --space-row-gap: 12px;      /* gap-3 */
 }
 
 .dark {

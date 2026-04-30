@@ -214,21 +214,21 @@ function TestAltModal({ alt, open, onOpenChange }: {
             <div className="flex flex-col gap-1">
               {INTERVIEW_STEPS.map((s, i) => (
                 <div key={s.id} className={`flex items-start gap-2.5 px-2.5 py-2 rounded-lg transition-colors ${i < step ? "bg-status-success/30" : i === step ? "bg-accent" : ""}`}>
-                  <div className={`w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-medium shrink-0 mt-0.5 ${
+                  <div className={`w-5 h-5 rounded-full flex items-center justify-center text-[11px] font-medium shrink-0 mt-0.5 ${
                     i < step ? "bg-status-success-dot text-white" : i === step ? "bg-foreground text-background" : "bg-muted text-muted-foreground"
                   }`}>
                     {i < step ? "✓" : s.id}
                   </div>
                   <div className="min-w-0">
                     <p className={`text-xs font-medium ${i <= step ? "text-foreground" : "text-muted-foreground"}`}>{s.label}</p>
-                    <p className="text-[9px] text-muted-foreground">{s.duration}</p>
+                    <p className="text-[11px] text-muted-foreground">{s.duration}</p>
                   </div>
                 </div>
               ))}
             </div>
             <div className="mt-4 pt-3 border-t border-border">
-              <p className="text-[10px] text-muted-foreground">~22 min total</p>
-              <p className="text-[10px] text-muted-foreground mt-1">Step {Math.min(step, INTERVIEW_STEPS.length)} of {INTERVIEW_STEPS.length}</p>
+              <p className="text-xs text-muted-foreground">~22 min total</p>
+              <p className="text-xs text-muted-foreground mt-1">Step {Math.min(step, INTERVIEW_STEPS.length)} of {INTERVIEW_STEPS.length}</p>
             </div>
           </div>
 
@@ -302,7 +302,7 @@ function ConfigureSheet({ alt, open, onOpenChange }: {
             <div className="flex items-center justify-between mb-2">
               <p className="text-[13px] font-semibold text-foreground">Tonality</p>
               <button onClick={() => setEditing(e => !e)}
-                className="text-[10px] px-2 py-0.5 rounded-md border border-border text-muted-foreground hover:text-foreground hover:border-foreground/40 transition-colors">
+                className="text-xs px-2 py-0.5 rounded-md border border-border text-muted-foreground hover:text-foreground hover:border-foreground/40 transition-colors">
                 {editing ? "Done" : "Edit"}
               </button>
             </div>
@@ -318,7 +318,7 @@ function ConfigureSheet({ alt, open, onOpenChange }: {
           <div>
             <div className="flex items-center justify-between mb-2">
               <p className="text-[13px] font-semibold text-foreground">Sources</p>
-              <button className="flex items-center gap-1.5 text-[10px] px-2.5 py-1 border border-border rounded-lg hover:bg-muted transition-colors">
+              <button className="flex items-center gap-1.5 text-xs px-2.5 py-1 border border-border rounded-lg hover:bg-muted transition-colors">
                 + Connect source
               </button>
             </div>
@@ -327,20 +327,20 @@ function ConfigureSheet({ alt, open, onOpenChange }: {
                 <div key={s.key} className={`flex items-center gap-3 px-3 py-2.5 border rounded-lg transition-colors ${
                   s.status === "connected" ? "border-border bg-card" : "border-dashed border-border bg-muted/10"
                 }`}>
-                  <div className="w-7 h-7 flex items-center justify-center text-[9px] font-bold text-white rounded-md shrink-0"
+                  <div className="w-7 h-7 flex items-center justify-center text-[11px] font-bold text-white rounded-md shrink-0"
                     style={{ background: s.status === "connected" ? s.color : "#aaa" }}>
                     {s.icon}
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium">{s.label}</p>
-                    <p className="text-[10px] text-muted-foreground">
+                    <p className="text-xs text-muted-foreground">
                       {s.status === "connected" ? `${s.memories} memories · synced ${s.lastSync}` : "Not connected"}
                     </p>
                   </div>
                   {s.status === "connected" ? (
-                    <span className="text-[9px] rounded-md px-1.5 py-0.5 bg-status-success text-status-success-foreground">Connected</span>
+                    <span className="text-[11px] rounded-md px-1.5 py-0.5 bg-status-success text-status-success-foreground">Connected</span>
                   ) : (
-                    <button className="text-[10px] px-2.5 py-1 border border-border rounded-md text-muted-foreground hover:text-foreground hover:border-foreground/40 transition-colors">
+                    <button className="text-xs px-2.5 py-1 border border-border rounded-md text-muted-foreground hover:text-foreground hover:border-foreground/40 transition-colors">
                       Connect
                     </button>
                   )}
@@ -360,9 +360,9 @@ function ConfigureSheet({ alt, open, onOpenChange }: {
                   <div key={r.id} className={`flex items-center gap-3 px-3 py-2.5 ${i > 0 ? "border-t border-border" : ""}`}>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium">{r.title}</p>
-                      <p className="text-[10px] text-muted-foreground">{r.department} · {r.candidates} candidates</p>
+                      <p className="text-xs text-muted-foreground">{r.department} · {r.candidates} candidates</p>
                     </div>
-                    <span className={`text-[10px] rounded-md px-1.5 py-0.5 ${r.status === "live" ? "bg-status-success text-status-success-foreground" : "bg-muted text-muted-foreground"}`}>
+                    <span className={`text-xs rounded-md px-1.5 py-0.5 ${r.status === "live" ? "bg-status-success text-status-success-foreground" : "bg-muted text-muted-foreground"}`}>
                       {r.status.charAt(0).toUpperCase() + r.status.slice(1)}
                     </span>
                   </div>
@@ -647,19 +647,19 @@ function MemoryModal({ open, onClose, initialView, initialMemoryId, loadingMemor
       {/* Modal */}
       <div className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none">
         <div
-          className={`pointer-events-auto bg-background border-4 border-border rounded-2xl shadow-2xl flex flex-col overflow-hidden ${closing ? "modal-pop-exit" : open ? "modal-pop-enter" : ""}`}
+          className={`pointer-events-auto bg-background border-4 border-border rounded-lg shadow-2xl flex flex-col overflow-hidden ${closing ? "modal-pop-exit" : open ? "modal-pop-enter" : ""}`}
           style={{ width: "95vw", height: "95vh" }}
         >
           {/* Header */}
           <div className="shrink-0 flex items-center justify-between px-6 py-3 border-b border-border">
             <div className="flex items-center gap-3">
               <h2 className="text-base font-semibold">Memories</h2>
-              <span className="text-[10px] text-muted-foreground">{MOCK_MEMORIES.length} memories · {MOCK_EDGES.length} connections</span>
+              <span className="text-xs text-muted-foreground">{MOCK_MEMORIES.length} memories · {MOCK_EDGES.length} connections</span>
             </div>
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setAddingMemory(true)}
-                className="text-[10px] px-3 py-1.5 rounded-md bg-foreground text-background hover:opacity-90 transition-opacity"
+                className="text-xs px-3 py-1.5 rounded-md bg-foreground text-background hover:opacity-90 transition-opacity"
               >
                 + Add memory
               </button>
@@ -682,11 +682,11 @@ function MemoryModal({ open, onClose, initialView, initialMemoryId, loadingMemor
                   <div className="absolute bottom-5 right-5 z-10 flex items-center gap-1 bg-muted/80 backdrop-blur-sm rounded-md p-0.5 border border-border">
                     <button
                       onClick={() => setMapMode("2d")}
-                      className={`text-[10px] font-medium px-2 py-1 rounded transition-colors ${mapMode === "2d" ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground"}`}
+                      className={`text-xs font-medium px-2 py-1 rounded transition-colors ${mapMode === "2d" ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground"}`}
                     >2D</button>
                     <button
                       onClick={() => setMapMode("3d")}
-                      className={`text-[10px] font-medium px-2 py-1 rounded transition-colors ${mapMode === "3d" ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground"}`}
+                      className={`text-xs font-medium px-2 py-1 rounded transition-colors ${mapMode === "3d" ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground"}`}
                     >3D</button>
                   </div>
                 )}
@@ -726,25 +726,25 @@ function MemoryModal({ open, onClose, initialView, initialMemoryId, loadingMemor
                           { label: "Added", value: selectedMemory.createdAt },
                         ].map((row, i) => (
                           <div key={row.label} className={`flex items-center justify-between px-3 py-2 ${i > 0 ? "border-t border-border" : ""}`}>
-                            <span className="text-[10px] uppercase tracking-wider text-muted-foreground">{row.label}</span>
+                            <span className="text-xs text-muted-foreground">{row.label}</span>
                             <span className="text-xs font-medium">{row.value}</span>
                           </div>
                         ))}
                       </div>
                       <div className="flex items-center gap-1.5">
                         <div className="w-3 h-3 rounded-full" style={{ background: sourceColors[selectedMemory.source] }} />
-                        <span className="text-[10px] text-muted-foreground">{SOURCE_LABELS[selectedMemory.source]}</span>
+                        <span className="text-xs text-muted-foreground">{SOURCE_LABELS[selectedMemory.source]}</span>
                       </div>
                       {selectedMemory.sourceUrl && (
                         <a href={selectedMemory.sourceUrl} target="_blank" rel="noopener noreferrer"
-                          className="flex items-center gap-1.5 text-[10px] text-link hover:underline">
+                          className="flex items-center gap-1.5 text-xs text-link hover:underline">
                           <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /><polyline points="15 3 21 3 21 9" /><line x1="10" y1="14" x2="21" y2="3" /></svg>
                           View original source
                         </a>
                       )}
                       <div className="flex gap-2 mt-1">
-                        <button className="flex-1 text-[10px] px-3 py-1.5 border border-border rounded-lg text-muted-foreground hover:text-foreground hover:border-foreground/40 transition-colors">Edit</button>
-                        <button className="flex-1 text-[10px] px-3 py-1.5 border border-destructive/30 rounded-lg text-status-danger-foreground hover:bg-status-danger transition-colors">Remove</button>
+                        <button className="flex-1 text-xs px-3 py-1.5 border border-border rounded-lg text-muted-foreground hover:text-foreground hover:border-foreground/40 transition-colors">Edit</button>
+                        <button className="flex-1 text-xs px-3 py-1.5 border border-destructive/30 rounded-lg text-status-danger-foreground hover:bg-status-danger transition-colors">Remove</button>
                       </div>
                     </div>
                   </div>
@@ -761,7 +761,7 @@ function MemoryModal({ open, onClose, initialView, initialMemoryId, loadingMemor
                   <div className="shrink-0 px-6 pt-4 pb-3 flex flex-col gap-2">
                     {/* Source chips */}
                     <div className="flex items-center gap-1.5 flex-wrap">
-                      <span className="text-[10px] text-muted-foreground mr-1">Source</span>
+                      <span className="text-xs text-muted-foreground mr-1">Source</span>
                       {Object.entries(SOURCE_LABELS).map(([key, label]) => (
                         <button
                           key={key}
@@ -779,7 +779,7 @@ function MemoryModal({ open, onClose, initialView, initialMemoryId, loadingMemor
                     </div>
                     {/* Category chips */}
                     <div className="flex items-center gap-1.5 flex-wrap">
-                      <span className="text-[10px] text-muted-foreground mr-1">Topic</span>
+                      <span className="text-xs text-muted-foreground mr-1">Topic</span>
                       {Object.entries(CATEGORY_LABELS).map(([key, label]) => (
                         <button
                           key={key}
@@ -796,14 +796,14 @@ function MemoryModal({ open, onClose, initialView, initialMemoryId, loadingMemor
                     </div>
                     {/* Sort + count */}
                     <div className="flex items-center justify-between pt-1">
-                      <span className="text-[10px] text-muted-foreground">{filteredMemories.length} memories</span>
+                      <span className="text-xs text-muted-foreground">{filteredMemories.length} memories</span>
                       <div className="flex items-center border border-border rounded-full overflow-hidden">
                         <button onClick={() => setSortBy("recent")}
-                          className={`text-[10px] px-3 py-1 transition-colors ${sortBy === "recent" ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground"}`}>
+                          className={`text-xs px-3 py-1 transition-colors ${sortBy === "recent" ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground"}`}>
                           Recent
                         </button>
                         <button onClick={() => setSortBy("weight")}
-                          className={`text-[10px] px-3 py-1 transition-colors ${sortBy === "weight" ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground"}`}>
+                          className={`text-xs px-3 py-1 transition-colors ${sortBy === "weight" ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground"}`}>
                           Weight
                         </button>
                       </div>
@@ -836,9 +836,9 @@ function MemoryModal({ open, onClose, initialView, initialMemoryId, loadingMemor
                               <div className="w-2 h-2 rounded-full shrink-0" style={{ background: sourceColors[m.source] }} />
                               <span className="text-sm font-medium flex-1 min-w-0 truncate">{m.label}</span>
                               {sortBy === "weight" && (
-                                <span className="text-[10px] text-muted-foreground tabular-nums shrink-0">{m.weight}/5</span>
+                                <span className="text-xs text-muted-foreground tabular-nums shrink-0">{m.weight}/5</span>
                               )}
-                              <span className="text-[9px] text-muted-foreground shrink-0">{m.createdAt}</span>
+                              <span className="text-[11px] text-muted-foreground shrink-0">{m.createdAt}</span>
                             </button>
                           </div>
                         )
@@ -870,25 +870,25 @@ function MemoryModal({ open, onClose, initialView, initialMemoryId, loadingMemor
                             { label: "Added", value: selectedMemory.createdAt },
                           ].map((row, i) => (
                             <div key={row.label} className={`flex items-center justify-between px-3 py-2 ${i > 0 ? "border-t border-border" : ""}`}>
-                              <span className="text-[10px] uppercase tracking-wider text-muted-foreground">{row.label}</span>
+                              <span className="text-xs text-muted-foreground">{row.label}</span>
                               <span className="text-xs font-medium">{row.value}</span>
                             </div>
                           ))}
                         </div>
                         <div className="flex items-center gap-1.5">
                           <div className="w-3 h-3 rounded-full" style={{ background: sourceColors[selectedMemory.source] }} />
-                          <span className="text-[10px] text-muted-foreground">{SOURCE_LABELS[selectedMemory.source]}</span>
+                          <span className="text-xs text-muted-foreground">{SOURCE_LABELS[selectedMemory.source]}</span>
                         </div>
                         {selectedMemory.sourceUrl && (
                           <a href={selectedMemory.sourceUrl} target="_blank" rel="noopener noreferrer"
-                            className="flex items-center gap-1.5 text-[10px] text-link hover:underline">
+                            className="flex items-center gap-1.5 text-xs text-link hover:underline">
                             <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /><polyline points="15 3 21 3 21 9" /><line x1="10" y1="14" x2="21" y2="3" /></svg>
                             View original source
                           </a>
                         )}
                         <div className="flex gap-2 mt-1">
-                          <button className="flex-1 text-[10px] px-3 py-1.5 border border-border rounded-lg text-muted-foreground hover:text-foreground hover:border-foreground/40 transition-colors">Edit</button>
-                          <button className="flex-1 text-[10px] px-3 py-1.5 border border-destructive/30 rounded-lg text-status-danger-foreground hover:bg-status-danger transition-colors">Remove</button>
+                          <button className="flex-1 text-xs px-3 py-1.5 border border-border rounded-lg text-muted-foreground hover:text-foreground hover:border-foreground/40 transition-colors">Edit</button>
+                          <button className="flex-1 text-xs px-3 py-1.5 border border-destructive/30 rounded-lg text-status-danger-foreground hover:bg-status-danger transition-colors">Remove</button>
                         </div>
                       </div>
                     </div>
@@ -909,16 +909,16 @@ function MemoryModal({ open, onClose, initialView, initialMemoryId, loadingMemor
                     {!activeSource ? (
                       <>
                         <div className="px-3 py-2 border-b border-border">
-                          <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Fetch from source</p>
+                          <p className="text-xs text-muted-foreground">Fetch from source</p>
                         </div>
                         {filteredSources.map((s, idx) => (
                           <button key={s.key} onClick={() => handleSlashSelectSource(s)}
                             onMouseEnter={() => setSlashIndex(idx)}
                             className={`w-full flex items-center gap-3 px-3 py-2.5 text-left transition-colors ${idx === slashIndex ? "bg-accent" : "hover:bg-muted/50"}`}>
-                            <div className="w-6 h-6 flex items-center justify-center text-[9px] font-bold text-white rounded-md shrink-0" style={{ background: s.color }}>{s.icon}</div>
+                            <div className="w-6 h-6 flex items-center justify-center text-[11px] font-bold text-white rounded-md shrink-0" style={{ background: s.color }}>{s.icon}</div>
                             <div className="flex-1 min-w-0">
                               <p className="text-sm font-medium">{s.label}</p>
-                              <p className="text-[10px] text-muted-foreground">{s.desc}</p>
+                              <p className="text-xs text-muted-foreground">{s.desc}</p>
                             </div>
                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-muted-foreground shrink-0"><polyline points="9 18 15 12 9 6" /></svg>
                           </button>
@@ -930,8 +930,8 @@ function MemoryModal({ open, onClose, initialView, initialMemoryId, loadingMemor
                           <button onClick={() => setSlashSource(null)} className="text-muted-foreground hover:text-foreground transition-colors">
                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="15 18 9 12 15 6" /></svg>
                           </button>
-                          <div className="w-5 h-5 flex items-center justify-center text-[8px] font-bold text-white rounded-md" style={{ background: activeSource.color }}>{activeSource.icon}</div>
-                          <p className="text-[10px] font-medium">{activeSource.label}</p>
+                          <div className="w-5 h-5 flex items-center justify-center text-[11px] font-bold text-white rounded-md" style={{ background: activeSource.color }}>{activeSource.icon}</div>
+                          <p className="text-xs font-medium">{activeSource.label}</p>
                         </div>
                         {activeSource.items.map((item, idx) => (
                           <button key={item.id} onClick={() => handleSlashSelectItem(activeSource, item)}
@@ -939,7 +939,7 @@ function MemoryModal({ open, onClose, initialView, initialMemoryId, loadingMemor
                             className={`w-full flex items-center gap-3 px-3 py-2.5 text-left transition-colors ${idx === slashIndex ? "bg-accent" : "hover:bg-muted/50"}`}>
                             <div className="flex-1 min-w-0">
                               <p className="text-sm font-medium">{item.label}</p>
-                              <p className="text-[10px] text-muted-foreground">{item.detail}</p>
+                              <p className="text-xs text-muted-foreground">{item.detail}</p>
                             </div>
                           </button>
                         ))}
@@ -951,7 +951,7 @@ function MemoryModal({ open, onClose, initialView, initialMemoryId, loadingMemor
                 {/* Attached sources — above the input */}
                 {attachedFiles.length > 0 && (
                   <div className="flex flex-wrap items-center gap-2 mb-2">
-                    <span className="text-[9px] uppercase tracking-wider text-muted-foreground">Sources</span>
+                    <span className="text-xs text-muted-foreground">Sources</span>
                     {attachedFiles.map((file, i) => {
                       const ext = file.name.split(".").pop()?.toUpperCase() || "FILE"
                       const typeLabel = file.type.startsWith("image/") ? "IMG" : ext
@@ -961,7 +961,7 @@ function MemoryModal({ open, onClose, initialView, initialMemoryId, loadingMemor
                         : file.type.includes("csv") ? "#2E7D32"
                         : "hsl(var(--foreground))"
                       return (
-                        <span key={`file-${i}`} className="inline-flex items-center rounded-md overflow-hidden text-[10px] shrink-0 border border-border">
+                        <span key={`file-${i}`} className="inline-flex items-center rounded-md overflow-hidden text-xs shrink-0 border border-border">
                           <span className="px-1.5 py-0.5 text-white font-medium" style={{ background: typeColor }}>{typeLabel}</span>
                           <span className="px-2 py-0.5 text-foreground bg-card">
                             {file.name.length > 24 ? file.name.slice(0, 22) + "…" : file.name}
@@ -972,18 +972,18 @@ function MemoryModal({ open, onClose, initialView, initialMemoryId, loadingMemor
                               setNewMemoryText("")
                             }
                           }}
-                            className="px-1.5 py-0.5 text-muted-foreground hover:text-foreground bg-card text-[8px] leading-none border-l border-border">✕</button>
+                            className="px-1.5 py-0.5 text-muted-foreground hover:text-foreground bg-card text-[11px] leading-none border-l border-border">✕</button>
                         </span>
                       )
                     })}
                     <button onClick={() => fileInputRef.current?.click()}
-                      className="text-[10px] text-muted-foreground hover:text-foreground transition-colors">+ add</button>
+                      className="text-xs text-muted-foreground hover:text-foreground transition-colors">+ add</button>
                   </div>
                 )}
 
                 {/* Input with inline pills + send button */}
                 <div
-                  className="flex flex-wrap items-center gap-1.5 border border-border rounded-xl bg-card shadow-lg px-4 py-3 min-h-[52px] cursor-text focus-within:border-foreground/40 transition-colors"
+                  className="flex flex-wrap items-center gap-1.5 border border-border rounded-lg bg-card shadow-lg px-4 py-3 min-h-[52px] cursor-text focus-within:border-foreground/40 transition-colors"
                   onClick={() => textareaRef.current?.focus()}
                 >
                   {/* Link pills */}
@@ -992,11 +992,11 @@ function MemoryModal({ open, onClose, initialView, initialMemoryId, loadingMemor
                     const isHl = highlightedPill === pillIdx
                     const truncatedUrl = link.url.replace(/^https?:\/\//, "").slice(0, 28) + (link.url.length > 35 ? "…" : "")
                     return (
-                      <span key={`link-${i}`} className={`inline-flex items-center rounded-md overflow-hidden text-[10px] shrink-0 transition-all ${isHl ? "ring-2 ring-destructive ring-offset-1 ring-offset-background" : ""}`}>
+                      <span key={`link-${i}`} className={`inline-flex items-center rounded-md overflow-hidden text-xs shrink-0 transition-all ${isHl ? "ring-2 ring-destructive ring-offset-1 ring-offset-background" : ""}`}>
                         <span className="px-1.5 py-0.5 text-white font-medium" style={{ background: link.color }}>{link.label}</span>
                         <span className={`px-1.5 py-0.5 text-muted-foreground bg-muted/40 ${link.parsing ? "link-shimmer" : ""}`}>{truncatedUrl}</span>
                         <button onClick={e => { e.stopPropagation(); setAttachedLinks(prev => prev.filter((_, j) => j !== i)); setHighlightedPill(null) }}
-                          className="px-1 py-0.5 text-muted-foreground hover:text-foreground bg-muted/40 text-[8px] leading-none">✕</button>
+                          className="px-1 py-0.5 text-muted-foreground hover:text-foreground bg-muted/40 text-[11px] leading-none">✕</button>
                       </span>
                     )
                   })}
@@ -1007,11 +1007,11 @@ function MemoryModal({ open, onClose, initialView, initialMemoryId, loadingMemor
                     const isHl = highlightedPill === pillIdx
                     return (
                       <span key={pill.id}
-                        className={`inline-flex items-center gap-1 text-[10px] font-medium px-2 py-0.5 rounded-md text-white shrink-0 transition-all ${pill.parsing ? "link-shimmer" : ""} ${isHl ? "ring-2 ring-destructive ring-offset-1 ring-offset-background" : ""}`}
+                        className={`inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-md text-white shrink-0 transition-all ${pill.parsing ? "link-shimmer" : ""} ${isHl ? "ring-2 ring-destructive ring-offset-1 ring-offset-background" : ""}`}
                         style={{ background: pill.color }}>
                         {pill.label}
                         <button onClick={e => { e.stopPropagation(); setFetchPills(prev => prev.filter((_, j) => j !== i)); setHighlightedPill(null) }}
-                          className="opacity-70 hover:opacity-100 text-[8px] leading-none">✕</button>
+                          className="opacity-70 hover:opacity-100 text-[11px] leading-none">✕</button>
                       </span>
                     )
                   })}
@@ -1090,7 +1090,7 @@ function MemoryModal({ open, onClose, initialView, initialMemoryId, loadingMemor
                   </button>
                 </div>
 
-                <p className="text-center text-[10px] text-muted-foreground/50 mt-2">Enter to save · Esc to cancel · / to fetch · 📎 to attach</p>
+                <p className="text-center text-xs text-muted-foreground/50 mt-2">Enter to save · Esc to cancel · / to fetch · 📎 to attach</p>
               </div>
             </div>
           )}
@@ -1173,9 +1173,9 @@ function AltDetail({ alt }: { alt: AltData }) {
       <div className="shrink-0 overflow-y-auto border-r border-border/40" style={{ width: 420 }}>
         <div className="px-10 pt-12 pb-16 flex flex-col gap-7">
           {/* Big sprite */}
-          <div className="relative border border-border rounded-xl overflow-hidden bg-[#e8eaef]" style={{ height: 500 }}>
+          <div className="relative border border-border rounded-lg overflow-hidden bg-[#e8eaef]" style={{ height: 500 }}>
             <div className="absolute top-3 left-3 z-10">
-              <span className="text-[9px] uppercase tracking-widest px-2 py-1 bg-black/40 text-white rounded-md">
+              <span className="text-xs px-2 py-1 bg-black/40 text-white rounded-md">
                 {BACKGROUND_PRESETS.find(b => b.id === selectedBg)?.label || "Office"} backdrop
               </span>
             </div>
@@ -1190,7 +1190,7 @@ function AltDetail({ alt }: { alt: AltData }) {
               {!spriteLoaded && (
                 <div className="flex flex-col items-center gap-3">
                   <PixelSprite size={160} active={alt.status === "active"} breathing={alt.status === "active"} />
-                  <span className="text-[10px] text-muted-foreground/60">Upload a photo to generate sprite</span>
+                  <span className="text-xs text-muted-foreground/60">Upload a photo to generate sprite</span>
                 </div>
               )}
             </div>
@@ -1200,17 +1200,17 @@ function AltDetail({ alt }: { alt: AltData }) {
           <div>
             <div className="flex items-center gap-2.5 mb-1.5">
               <h2 className="text-2xl font-semibold tracking-tight">{alt.name}</h2>
-              <span className={`text-[10px] rounded-md px-1.5 py-0.5 ${alt.status === "active" ? "bg-status-success text-status-success-foreground" : "bg-muted text-muted-foreground"}`}>
+              <span className={`text-xs rounded-md px-1.5 py-0.5 ${alt.status === "active" ? "bg-status-success text-status-success-foreground" : "bg-muted text-muted-foreground"}`}>
                 {alt.status === "active" ? "Active" : "Setup"}
               </span>
             </div>
             <p className="text-xs text-muted-foreground mb-2">{alt.owner}</p>
             <div className="flex items-center gap-2">
-              <span className="text-[10px] text-muted-foreground">Trained</span>
+              <span className="text-xs text-muted-foreground">Trained</span>
               <div className="w-32 h-1.5 rounded-full bg-muted overflow-hidden">
                 <div className="h-full rounded-full bg-foreground transition-all" style={{ width: `${alt.completeness}%` }} />
               </div>
-              <span className="text-[10px] text-muted-foreground tabular-nums">{alt.completeness}%</span>
+              <span className="text-xs text-muted-foreground tabular-nums">{alt.completeness}%</span>
             </div>
           </div>
 
@@ -1224,7 +1224,7 @@ function AltDetail({ alt }: { alt: AltData }) {
                     selectedBg === bg.id ? "border-foreground bg-muted/40" : "border-border hover:border-foreground/30 hover:bg-muted/20"
                   }`}>
                   <div className={`w-full h-8 rounded-md ${selectedBg === bg.id ? "bg-foreground/20" : "bg-muted"}`} />
-                  <span className={`text-[9px] ${selectedBg === bg.id ? "text-foreground" : "text-muted-foreground"}`}>{bg.label}</span>
+                  <span className={`text-[11px] ${selectedBg === bg.id ? "text-foreground" : "text-muted-foreground"}`}>{bg.label}</span>
                 </button>
               ))}
             </div>
@@ -1240,7 +1240,7 @@ function AltDetail({ alt }: { alt: AltData }) {
           {alt.pendingActions.length > 0 && (
             <div className="flex flex-wrap gap-1.5">
               {alt.pendingActions.map(a => (
-                <span key={a} className="text-[10px] rounded-md px-2 py-0.5 bg-status-warning text-status-warning-foreground border border-status-warning-dot">⚠ {a}</span>
+                <span key={a} className="text-xs rounded-md px-2 py-0.5 bg-status-warning text-status-warning-foreground border border-status-warning-dot">⚠ {a}</span>
               ))}
             </div>
           )}
@@ -1252,7 +1252,7 @@ function AltDetail({ alt }: { alt: AltData }) {
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="5 3 19 12 5 21 5 3" /></svg>
               <div className="flex flex-col items-center">
                 <span className="text-sm">Test my Alt</span>
-                <span className="text-[9px] text-background/60">{testSubtitle}</span>
+                <span className="text-[11px] text-background/60">{testSubtitle}</span>
               </div>
             </button>
             <button onClick={() => setConfigureOpen(true)}
@@ -1270,7 +1270,7 @@ function AltDetail({ alt }: { alt: AltData }) {
         <div className="shrink-0 px-10 pt-12 pb-6">
           <button
             onClick={openMapModal}
-            className="w-full group relative overflow-hidden rounded-xl border border-border bg-card hover:bg-muted/30 transition-colors"
+            className="w-full group relative overflow-hidden rounded-lg border border-border bg-card hover:bg-muted/30 transition-colors"
             style={{ height: 160 }}
           >
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-2">
@@ -1279,7 +1279,7 @@ function AltDetail({ alt }: { alt: AltData }) {
                 <path d="M7 9.5l3.5 1.5M14.5 11l3-2M8 16.5l2.5-3.5M15 13.5l1 3" strokeOpacity="0.4" />
               </svg>
               <span className="text-sm font-medium text-muted-foreground group-hover:text-foreground transition-colors">Explore memories</span>
-              <span className="text-[10px] text-muted-foreground">{MOCK_MEMORIES.length} memories mapped</span>
+              <span className="text-xs text-muted-foreground">{MOCK_MEMORIES.length} memories mapped</span>
             </div>
           </button>
         </div>
@@ -1292,7 +1292,7 @@ function AltDetail({ alt }: { alt: AltData }) {
               <div className="flex items-center justify-between mb-3">
                 <p className="text-[13px] font-semibold text-foreground">Top memories</p>
                 <button onClick={openMapModal}
-                  className="text-[10px] text-muted-foreground hover:text-foreground transition-colors">
+                  className="text-xs text-muted-foreground hover:text-foreground transition-colors">
                   View all →
                 </button>
               </div>
@@ -1303,14 +1303,14 @@ function AltDetail({ alt }: { alt: AltData }) {
                     <div className="flex items-start gap-2">
                       <div className="w-1.5 h-1.5 rounded-full mt-1.5 shrink-0" style={{ background: sourceColors[m.source] }} />
                       <div className="flex-1 min-w-0">
-                        <p className="text-[12px] leading-snug text-foreground line-clamp-2">{m.label}</p>
+                        <p className="text-xs leading-snug text-foreground line-clamp-2">{m.label}</p>
                         <div className="flex items-center gap-2 mt-1">
-                          <span className="text-[9px] text-muted-foreground uppercase tracking-wider">{m.source}</span>
-                          <span className="text-[9px] text-muted-foreground">·</span>
-                          <span className="text-[9px] text-muted-foreground">weight {m.weight}</span>
+                          <span className="text-xs text-muted-foreground">{m.source}</span>
+                          <span className="text-[11px] text-muted-foreground">·</span>
+                          <span className="text-[11px] text-muted-foreground">weight {m.weight}</span>
                         </div>
                       </div>
-                      <span className="text-[10px] text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity shrink-0 mt-0.5">→</span>
+                      <span className="text-xs text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity shrink-0 mt-0.5">→</span>
                     </div>
                   </button>
                 ))}
@@ -1364,11 +1364,11 @@ function AltDetail({ alt }: { alt: AltData }) {
                       <p className="text-[11px] text-muted-foreground leading-relaxed mt-2.5 mb-2">{meta.description}</p>
                       <div className="flex flex-wrap gap-1 mb-2.5">
                         {meta.keywords.map(kw => (
-                          <span key={kw} className="text-[9px] px-1.5 py-0.5 rounded-md bg-muted text-muted-foreground">{kw}</span>
+                          <span key={kw} className="text-[11px] px-1.5 py-0.5 rounded-md bg-muted text-muted-foreground">{kw}</span>
                         ))}
                       </div>
                       {meta.connectable && (
-                        <button className="text-[10px] text-accent-blue hover:underline transition-colors">
+                        <button className="text-xs text-accent-blue hover:underline transition-colors">
                           Learn about {label} access →
                         </button>
                       )}
@@ -1392,7 +1392,7 @@ function AltDetail({ alt }: { alt: AltData }) {
             className="mt-4 w-full flex items-center justify-center gap-2 px-4 py-2.5 border border-dashed border-border rounded-lg text-muted-foreground hover:text-foreground hover:border-foreground/40 transition-colors"
           >
             <span className="text-[11px]">+ Add memory</span>
-            <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-muted text-muted-foreground">{MOCK_MEMORIES.length}</span>
+            <span className="text-xs px-1.5 py-0.5 rounded-md bg-muted text-muted-foreground">{MOCK_MEMORIES.length}</span>
           </button>
         </div>
 
@@ -1402,7 +1402,7 @@ function AltDetail({ alt }: { alt: AltData }) {
           const srcCount = MOCK_MEMORIES.filter(m => m.source === disconnectSource).length
           return (
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/60 backdrop-blur-sm" onClick={() => setDisconnectSource(null)}>
-              <div className="bg-card border border-border rounded-xl shadow-xl p-5 max-w-sm w-full mx-4" onClick={e => e.stopPropagation()}>
+              <div className="bg-card border border-border rounded-lg shadow-xl p-5 max-w-sm w-full mx-4" onClick={e => e.stopPropagation()}>
                 <h3 className="text-base font-semibold mb-2">Disconnect {srcLabel}?</h3>
                 <p className="text-[11px] text-muted-foreground leading-relaxed mb-4">
                   Your Alt will stop pulling new memories from {srcLabel}. The {srcCount} existing memories from this source will be kept but won't update.

@@ -25,8 +25,8 @@ function SettingRow({ label, description, children }: { label: string; descripti
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className="mb-6">
-      <p className="text-[11px] uppercase tracking-[0.08em] font-semibold text-muted-foreground mb-3">{title}</p>
-      <div className="border border-border rounded-xl px-5">{children}</div>
+      <p className="text-xs font-semibold text-muted-foreground mb-3">{title}</p>
+      <div className="border border-border rounded-lg px-5">{children}</div>
     </div>
   )
 }
@@ -124,7 +124,7 @@ export function SettingsPage() {
 
         <Section title="ATS">
           <SettingRow label="Connected ATS" description="Dover — connected 2 weeks ago">
-            <button className="text-[10px] border border-border rounded-md px-2.5 py-1 text-muted-foreground hover:text-foreground transition-colors">Manage</button>
+            <button className="text-xs border border-border rounded-md px-2.5 py-1 text-muted-foreground hover:text-foreground transition-colors">Manage</button>
           </SettingRow>
         </Section>
       </div>

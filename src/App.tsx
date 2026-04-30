@@ -18,9 +18,9 @@ function NavTooltip({ label, description, children }: { label: string; descripti
   return (
     <div className="relative group/nav">
       {children}
-      <div className="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2.5 py-1.5 bg-foreground text-background text-[10px] rounded-md whitespace-nowrap opacity-0 group-hover/nav:opacity-100 pointer-events-none z-50 transition-opacity delay-100">
+      <div className="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2.5 py-1.5 bg-foreground text-background text-xs rounded-md whitespace-nowrap opacity-0 group-hover/nav:opacity-100 pointer-events-none z-50 transition-opacity delay-100">
         <p className="font-medium text-[11px]">{label}</p>
-        <p className="text-background/60 text-[9px]">{description}</p>
+        <p className="text-background/60 text-[11px]">{description}</p>
         <span className="absolute right-full top-1/2 -translate-y-1/2 border-4 border-transparent border-r-foreground" />
       </div>
     </div>
@@ -90,11 +90,11 @@ export default function App() {
         <div className={`${navCollapsed ? "px-0 flex justify-center" : "px-5 flex items-center justify-between"} mb-5`}>
           {navCollapsed
             ? <button onClick={() => setNavCollapsed(false)} className="text-muted-foreground hover:text-foreground transition-colors p-0.5" title="Expand sidebar">
-                <div className="w-7 h-7 rounded-md bg-foreground text-background flex items-center justify-center font-pixel text-[10px] font-bold tracking-tight">vc</div>
+                <div className="w-7 h-7 rounded-md bg-foreground text-background flex items-center justify-center font-pixel text-xs font-bold tracking-tight">vc</div>
               </button>
             : <>
                 <div className="flex items-center gap-2 min-w-0">
-                  <div className="w-7 h-7 rounded-md bg-foreground text-background flex items-center justify-center font-pixel text-[10px] font-bold tracking-tight shrink-0">vc</div>
+                  <div className="w-7 h-7 rounded-md bg-foreground text-background flex items-center justify-center font-pixel text-xs font-bold tracking-tight shrink-0">vc</div>
                   <div className="flex flex-col min-w-0">
                     <span className="text-[14px] font-semibold tracking-tight text-foreground leading-tight">Sashank's vibechk</span>
                     <span className="text-[11px] text-muted-foreground leading-tight truncate">Alt Inc · Free</span>
@@ -181,7 +181,7 @@ export default function App() {
                             ? "bg-foreground/10 text-foreground font-medium"
                             : "text-foreground/65 hover:bg-foreground/5"
                         }`}>
-                        <div className={`w-4 h-4 rounded-sm flex items-center justify-center text-[8px] font-medium shrink-0 ${
+                        <div className={`w-4 h-4 rounded-sm flex items-center justify-center text-[11px] font-medium shrink-0 ${
                           isSelected ? "bg-foreground text-background" : "bg-foreground/10 text-foreground/60"
                         }`}>{a.initials}</div>
                         <div className="flex-1 min-w-0 flex items-center gap-1.5">
@@ -197,7 +197,7 @@ export default function App() {
           )
         })}
 
-        {!navCollapsed && <p className="text-[10px] uppercase tracking-wider font-medium px-5 mb-1 mt-3 text-muted-foreground">Configure</p>}
+        {!navCollapsed && <p className="text-xs uppercase tracking-wider font-medium px-5 mb-1 mt-3 text-muted-foreground">Configure</p>}
         {(() => {
           const settingsBtn = (
             <button onClick={() => setPage("settings")}

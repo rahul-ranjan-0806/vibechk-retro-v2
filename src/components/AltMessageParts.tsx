@@ -38,7 +38,7 @@ function CtaPart({ label, semantic = "primary", hint }: { label: string; semanti
       {done ? <>✓ Done</> : (
         <>
           <span>{label}</span>
-          {hint && <span className="text-[9px] opacity-70">· {hint}</span>}
+          {hint && <span className="text-[11px] opacity-70">· {hint}</span>}
         </>
       )}
     </button>
@@ -70,7 +70,7 @@ function CtaGroupPart({ options }: { options: CtaOption[] }) {
             {isChosen ? <>✓ {o.label}</> : (
               <>
                 <span>{o.label}</span>
-                {o.hint && <span className="text-[9px] opacity-70">· {o.hint}</span>}
+                {o.hint && <span className="text-[11px] opacity-70">· {o.hint}</span>}
               </>
             )}
           </button>
@@ -88,7 +88,7 @@ function TogglePart({ label, description, defaultOn = false }: { label: string; 
     <div className="flex items-center justify-between gap-4 px-3 py-2.5 border border-border bg-background">
       <div className="flex-1 min-w-0">
         <p className="text-[11px] font-medium">{label}</p>
-        {description && <p className="text-[10px] text-muted-foreground mt-0.5 leading-relaxed">{description}</p>}
+        {description && <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{description}</p>}
       </div>
       <button
         onClick={() => setOn(v => !v)}
@@ -120,13 +120,13 @@ function DocumentPart({ title, filetype, size, note }: { title: string; filetype
   const [downloaded, setDownloaded] = useState(false)
   return (
     <div className="flex items-start gap-3 px-3 py-2.5 border border-border bg-background">
-      <div className={`w-10 h-12 flex items-center justify-center text-[9px] font-bold shrink-0 ${fileTypeTint(filetype)}`}>
+      <div className={`w-10 h-12 flex items-center justify-center text-[11px] font-bold shrink-0 ${fileTypeTint(filetype)}`}>
         {filetype.slice(0, 4).toUpperCase()}
       </div>
       <div className="flex-1 min-w-0">
         <p className="text-[11px] font-medium truncate">{title}</p>
-        <p className="text-[10px] text-muted-foreground">{filetype} · {size}</p>
-        {note && <p className="text-[10px] text-muted-foreground mt-1 leading-relaxed">{note}</p>}
+        <p className="text-xs text-muted-foreground">{filetype} · {size}</p>
+        {note && <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{note}</p>}
       </div>
       <button
         disabled={downloaded}
@@ -158,8 +158,8 @@ function ReportPart({
   return (
     <div className="border border-border bg-background">
       <div className="px-3 py-2 border-b border-border bg-muted/30">
-        <p className="text-[10px] uppercase tracking-[0.12em] text-muted-foreground">{title}</p>
-        {subtitle && <p className="text-[10px] text-muted-foreground mt-0.5">{subtitle}</p>}
+        <p className="text-xs text-muted-foreground">{title}</p>
+        {subtitle && <p className="text-xs text-muted-foreground mt-0.5">{subtitle}</p>}
       </div>
       <div>
         {rows.map((r, i) => (
@@ -190,10 +190,10 @@ function CandidateRefPart({ candidateId, note }: { candidateId: string; note?: s
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 flex-wrap">
           <p className="text-[11px] font-medium">{c.name}</p>
-          <span className="text-[10px] text-muted-foreground">{roleTitle(c.roleId)}</span>
-          <span className="text-[10px] text-muted-foreground">· {c.completedAt}</span>
+          <span className="text-xs text-muted-foreground">{roleTitle(c.roleId)}</span>
+          <span className="text-xs text-muted-foreground">· {c.completedAt}</span>
         </div>
-        {note && <p className="text-[10px] text-muted-foreground mt-1">{note}</p>}
+        {note && <p className="text-xs text-muted-foreground mt-1">{note}</p>}
       </div>
     </div>
   )
@@ -205,7 +205,7 @@ function EvidencePart({ quote, source, date }: { quote: string; source: string; 
   return (
     <div className="border-l-2 border-accent-blue bg-accent-blue/[0.04] pl-3 pr-3 py-2">
       <p className="text-[11px] leading-relaxed italic text-foreground">"{quote}"</p>
-      <p className="text-[10px] text-muted-foreground mt-1.5">
+      <p className="text-xs text-muted-foreground mt-1.5">
         — {source}{date && <span> · {date}</span>}
       </p>
     </div>
@@ -235,7 +235,7 @@ function ChecklistPart({
     <div className="border border-border bg-background">
       {title && (
         <div className="px-3 py-2 border-b border-border bg-muted/30">
-          <p className="text-[10px] uppercase tracking-[0.12em] text-muted-foreground">{title}</p>
+          <p className="text-xs text-muted-foreground">{title}</p>
         </div>
       )}
       <div>
@@ -254,7 +254,7 @@ function ChecklistPart({
               <span className="flex-1 min-w-0">
                 <p className={`text-[11px] ${on ? "text-foreground" : "text-muted-foreground"}`}>{item.label}</p>
                 {item.description && (
-                  <p className="text-[10px] text-muted-foreground mt-0.5 leading-relaxed">{item.description}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{item.description}</p>
                 )}
               </span>
             </button>
@@ -262,7 +262,7 @@ function ChecklistPart({
         })}
       </div>
       <div className="px-3 py-2 border-t border-border flex items-center justify-between gap-2 bg-muted/20">
-        <span className="text-[10px] text-muted-foreground">
+        <span className="text-xs text-muted-foreground">
           {applied
             ? `Applied ${selectedCount} · undo within 5s`
             : `${selectedCount} of ${items.length} selected`}

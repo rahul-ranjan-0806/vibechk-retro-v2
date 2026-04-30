@@ -118,7 +118,7 @@ export function GitGraphOverlay() {
           <Button variant="outline" size="icon" className="h-7 w-7" onClick={fetchData} title="Refresh">
             <RefreshCw className="w-3.5 h-3.5" />
           </Button>
-          <span className="text-[10px] font-mono text-muted-foreground px-1">esc</span>
+          <span className="text-xs font-mono text-muted-foreground px-1">esc</span>
           <Button variant="outline" size="icon" className="h-7 w-7" onClick={() => setOpen(false)} title="Close">
             <X className="w-3.5 h-3.5" />
           </Button>
@@ -144,7 +144,7 @@ export function GitGraphOverlay() {
       </div>
 
       {/* Footer */}
-      <div className="px-4 py-1.5 border-t border-border bg-card text-[10px] font-mono text-muted-foreground flex items-center gap-4">
+      <div className="px-4 py-1.5 border-t border-border bg-card text-xs font-mono text-muted-foreground flex items-center gap-4">
         <span>scroll = zoom</span>
         <span>middle-click drag = pan</span>
         <span>click branch = expand / collapse</span>

@@ -541,7 +541,7 @@ export function ChatPage() {
                       )}
                     </div>
                     <div className="flex items-center justify-between px-4 py-2 border-t border-border/50">
-                      <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
                         {readyToExpand ? (
                           <span className="px-1.5 py-0.5 border border-foreground/30 rounded text-foreground/70 animate-pulse">tab again to fill details</span>
                         ) : (
@@ -549,7 +549,7 @@ export function ChatPage() {
                         )}
                       </div>
                       <button onClick={promptTemplate ? handleTemplateSend : () => send()} disabled={promptTemplate ? false : (!input.trim() || isTyping)}
-                        className="text-[10px] px-3 py-1.5 bg-foreground text-background rounded-md hover:opacity-90 disabled:opacity-30 transition-opacity">
+                        className="text-xs px-3 py-1.5 bg-foreground text-background rounded-md hover:opacity-90 disabled:opacity-30 transition-opacity">
                         Send
                       </button>
                     </div>
@@ -619,7 +619,7 @@ export function ChatPage() {
                                             ? null
                                             : { id: `${m.id}-tool-${ti}`, from: "assistant", text: tc.name, editableData: tc.editableData }
                                         )}
-                                        className={`text-[10px] px-2 py-1 rounded-md transition-colors ${
+                                        className={`text-xs px-2 py-1 rounded-md transition-colors ${
                                           editSidebar?.id === `${m.id}-tool-${ti}`
                                             ? "bg-foreground text-background"
                                             : "border border-border text-muted-foreground hover:text-foreground hover:border-foreground/40"
@@ -679,7 +679,7 @@ export function ChatPage() {
                         <div className="w-1.5 h-1.5 bg-muted-foreground/40 rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
                         <div className="w-1.5 h-1.5 bg-muted-foreground/40 rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
                       </div>
-                      <span className="text-[10px]">Alt is thinking...</span>
+                      <span className="text-xs">Alt is thinking...</span>
                     </div>
                   )}
                 </ConversationContent>
@@ -741,7 +741,7 @@ export function ChatPage() {
                       </div>
                       {readyToExpand && !promptTemplate && (
                         <div className="px-3 pb-1.5">
-                          <span className="text-[9px] text-foreground/50 animate-pulse">tab again to fill details</span>
+                          <span className="text-[11px] text-foreground/50 animate-pulse">tab again to fill details</span>
                         </div>
                       )}
                     </div>
@@ -791,7 +791,7 @@ export function ChatPage() {
                     const isStatus = keyLower === "status"
                     return (
                       <div key={key}>
-                        <label className="text-[9px] uppercase tracking-widest text-muted-foreground mb-1 block">{key}</label>
+                        <label className="text-xs text-muted-foreground mb-1 block">{key}</label>
                         <select
                           value={isStatus ? roleStatus : undefined}
                           defaultValue={isStatus ? undefined : val}
@@ -808,23 +808,23 @@ export function ChatPage() {
                     return (
                       <div key={key}>
                         <div className="flex items-center justify-between mb-1">
-                          <label className="text-[9px] uppercase tracking-widest text-muted-foreground">{key}</label>
-                          <span className="text-[9px] text-muted-foreground/60">with sources</span>
+                          <label className="text-xs text-muted-foreground">{key}</label>
+                          <span className="text-[11px] text-muted-foreground/60">with sources</span>
                         </div>
                         <textarea defaultValue={val} rows={12}
                           className="w-full text-sm border border-border rounded-lg px-3 py-2.5 bg-background outline-none focus:border-foreground/40 resize-none leading-relaxed" />
                         <div className="mt-2 flex flex-col gap-1">
-                          <p className="text-[9px] uppercase tracking-widest text-muted-foreground">Sources used</p>
+                          <p className="text-xs text-muted-foreground">Sources used</p>
                           {[
                             { label: "Slack #hiring-product", icon: "#", color: "#4A154B" },
                             { label: "LinkedIn job template", icon: "in", color: "#0A66C2" },
                             { label: "Existing: Product Designer role", icon: "◎", color: "#666" },
                           ].map(src => (
                             <div key={src.label} className="flex items-center gap-2 px-2 py-1.5 bg-muted/30 border border-border rounded-md">
-                              <div className="w-4 h-4 flex items-center justify-center text-[7px] font-bold text-white rounded shrink-0" style={{ background: src.color }}>
+                              <div className="w-4 h-4 flex items-center justify-center text-[11px] font-bold text-white rounded shrink-0" style={{ background: src.color }}>
                                 {src.icon}
                               </div>
-                              <span className="text-[10px] text-muted-foreground">{src.label}</span>
+                              <span className="text-xs text-muted-foreground">{src.label}</span>
                             </div>
                           ))}
                         </div>
@@ -834,7 +834,7 @@ export function ChatPage() {
 
                   return (
                     <div key={key}>
-                      <label className="text-[9px] uppercase tracking-widest text-muted-foreground mb-1 block">{key}</label>
+                      <label className="text-xs text-muted-foreground mb-1 block">{key}</label>
                       <input defaultValue={val} className="w-full text-sm border border-border rounded-lg px-3 py-2 bg-background outline-none focus:border-foreground/40" />
                     </div>
                   )
@@ -903,12 +903,12 @@ export function ChatPage() {
                         <>
                           {/* Alt assignment */}
                           <div>
-                            <p className="text-[9px] uppercase tracking-[0.15em] text-muted-foreground mb-2">Assigned Alt</p>
+                            <p className="text-xs text-muted-foreground mb-2">Assigned Alt</p>
                             <div className="flex items-center gap-3 px-3 py-2.5 border border-border rounded-lg bg-card">
-                              <div className="w-8 h-8 rounded-full bg-foreground flex items-center justify-center text-[10px] font-medium text-background">SG</div>
+                              <div className="w-8 h-8 rounded-full bg-foreground flex items-center justify-center text-xs font-medium text-background">SG</div>
                               <div className="flex-1 min-w-0">
                                 <p className="text-sm font-medium">Sashank's Alt</p>
-                                <p className="text-[10px] text-muted-foreground">Active · 85% trained</p>
+                                <p className="text-xs text-muted-foreground">Active · 85% trained</p>
                               </div>
                               <select defaultValue="sashank" className="text-[11px] border border-border rounded-md px-2 py-1 bg-background">
                                 <option value="sashank">Sashank's Alt</option>
@@ -919,19 +919,19 @@ export function ChatPage() {
 
                           {/* Interview duration */}
                           <div>
-                            <label className="text-[9px] uppercase tracking-widest text-muted-foreground mb-1 block">Interview duration</label>
+                            <label className="text-xs text-muted-foreground mb-1 block">Interview duration</label>
                             <div className="w-full text-sm border border-border rounded-lg px-3 py-2 bg-muted/20 text-muted-foreground">{data["Interview duration"] || "~22 min"}</div>
                           </div>
 
                           {/* Interview flow */}
                           <div>
-                            <p className="text-[9px] uppercase tracking-[0.15em] text-muted-foreground mb-2">Interview flow</p>
+                            <p className="text-xs text-muted-foreground mb-2">Interview flow</p>
                             <div className="flex flex-col gap-1.5">
                               {interviewFlow ? (
                                 Object.entries(interviewFlow).map(([step, desc], i) => (
                                   <div key={step} className="flex items-center gap-2.5 group">
                                     <div className="flex flex-col items-center shrink-0">
-                                      <div className="w-6 h-6 rounded-full border-2 border-foreground/20 bg-background flex items-center justify-center text-[9px] font-medium text-muted-foreground">{i + 1}</div>
+                                      <div className="w-6 h-6 rounded-full border-2 border-foreground/20 bg-background flex items-center justify-center text-[11px] font-medium text-muted-foreground">{i + 1}</div>
                                       {i < Object.keys(interviewFlow).length - 1 && <div className="w-px h-3 bg-border" />}
                                     </div>
                                     <input defaultValue={desc} className="flex-1 text-sm border border-border rounded-lg px-3 py-2 bg-background outline-none focus:border-foreground/40" />
@@ -946,8 +946,8 @@ export function ChatPage() {
                           {/* Eval criteria */}
                           <div>
                             <div className="flex items-center justify-between mb-2">
-                              <p className="text-[9px] uppercase tracking-[0.15em] text-muted-foreground">Eval criteria</p>
-                              <span className="text-[9px] text-muted-foreground/60">{evalCriteria ? Object.keys(evalCriteria).length : 0} criteria</span>
+                              <p className="text-xs text-muted-foreground">Eval criteria</p>
+                              <span className="text-[11px] text-muted-foreground/60">{evalCriteria ? Object.keys(evalCriteria).length : 0} criteria</span>
                             </div>
                             <div className="flex flex-col gap-1.5">
                               {evalCriteria ? (
@@ -955,7 +955,7 @@ export function ChatPage() {
                                   <div key={key} className="flex items-center gap-2 px-3 py-2.5 border border-border rounded-lg bg-card group">
                                     <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-muted-foreground/40 shrink-0 cursor-grab"><path d="M8 6h.01M8 12h.01M8 18h.01M12 6h.01M12 12h.01M12 18h.01"/></svg>
                                     <input defaultValue={val} className="flex-1 text-sm bg-transparent outline-none" />
-                                    <select defaultValue="must" className="text-[9px] border border-border rounded-md px-1.5 py-1 bg-background text-muted-foreground">
+                                    <select defaultValue="must" className="text-[11px] border border-border rounded-md px-1.5 py-1 bg-background text-muted-foreground">
                                       <option value="must">Must-have</option>
                                       <option value="good">Good-to-have</option>
                                       <option value="nice">Nice-to-have</option>
@@ -971,13 +971,13 @@ export function ChatPage() {
                           {/* Leniency */}
                           <div>
                             <div className="flex items-center justify-between mb-1.5">
-                              <p className="text-[9px] uppercase tracking-[0.15em] text-muted-foreground">Leniency</p>
-                              <span className="text-[9px] text-muted-foreground">Balanced</span>
+                              <p className="text-xs text-muted-foreground">Leniency</p>
+                              <span className="text-[11px] text-muted-foreground">Balanced</span>
                             </div>
                             <input type="range" min="0" max="100" defaultValue="50" className="w-full accent-foreground" />
                             <div className="flex justify-between mt-1">
-                              <span className="text-[8px] text-muted-foreground">Strict</span>
-                              <span className="text-[8px] text-muted-foreground">Full trust</span>
+                              <span className="text-[11px] text-muted-foreground">Strict</span>
+                              <span className="text-[11px] text-muted-foreground">Full trust</span>
                             </div>
                           </div>
                         </>

@@ -167,7 +167,7 @@ function Tip({ text, children }: { text?: string; children: React.ReactNode }) {
   return (
     <span className="relative group/tip inline-flex">
       {children}
-      <span className="absolute left-1/2 -translate-x-1/2 px-2 py-1 bg-foreground text-background text-[9px] font-pixel rounded-md whitespace-nowrap opacity-0 group-hover/tip:opacity-100 transition-opacity pointer-events-none z-[100] bottom-full mb-1.5">
+      <span className="absolute left-1/2 -translate-x-1/2 px-2 py-1 bg-foreground text-background text-[11px] font-pixel rounded-md whitespace-nowrap opacity-0 group-hover/tip:opacity-100 transition-opacity pointer-events-none z-[100] bottom-full mb-1.5">
         {text}
         <span className="absolute top-full left-1/2 -translate-x-1/2 -mt-px border-4 border-transparent border-t-foreground" />
       </span>
@@ -480,7 +480,7 @@ export function PromptTemplate({ template, onChange, onSend, onCancel, onSwitchA
         className="flex-1 min-w-[140px] text-sm bg-transparent outline-none text-foreground placeholder:text-muted-foreground/40 ml-0.5"
       />
 
-      <span className="text-[9px] font-pixel text-muted-foreground/40 self-center whitespace-nowrap ml-1">enter to send</span>
+      <span className="text-[11px] font-pixel text-muted-foreground/40 self-center whitespace-nowrap ml-1">enter to send</span>
     </div>
   )
 }

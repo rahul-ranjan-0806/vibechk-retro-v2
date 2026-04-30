@@ -36,14 +36,14 @@ export function OrgPage() {
 
         {/* Hero */}
         <section className="flex items-start gap-5">
-          <div className="w-14 h-14 shrink-0 rounded-xl bg-foreground flex items-center justify-center text-background text-lg font-bold">
+          <div className="w-14 h-14 shrink-0 rounded-md bg-foreground flex items-center justify-center text-background text-lg font-bold">
             A
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1.5">
               <span className="text-[13px] font-semibold text-foreground">Careers</span>
-              <span className="text-[10px] text-muted-foreground">· alt.inc/careers</span>
-              <button className="ml-auto text-[10px] px-2.5 py-1 rounded-md border border-border text-muted-foreground hover:text-foreground hover:border-foreground/40 transition-colors">
+              <span className="text-xs text-muted-foreground">· alt.inc/careers</span>
+              <button className="ml-auto text-xs px-2.5 py-1 rounded-md border border-border text-muted-foreground hover:text-foreground hover:border-foreground/40 transition-colors">
                 Preview page ↗
               </button>
             </div>
@@ -92,7 +92,7 @@ export function OrgPage() {
           <div className="grid grid-cols-2 gap-2">
             {PERKS.map(p => (
               <div key={p.label} className="flex items-start gap-2.5 p-3 rounded-lg border border-border bg-card">
-                <span className="text-accent-blue text-[10px] mt-1 shrink-0">{p.icon}</span>
+                <span className="text-accent-blue text-xs mt-1 shrink-0">{p.icon}</span>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium mb-0.5">{p.label}</p>
                   <p className="text-[11px] text-muted-foreground leading-relaxed">{p.detail}</p>
@@ -106,13 +106,13 @@ export function OrgPage() {
         <section>
           <div className="flex items-center justify-between mb-2">
             <p className="text-[13px] font-semibold text-foreground">Alts</p>
-            <span className="text-[10px] text-muted-foreground">{ORG_ALTS.filter(a => a.status === "active").length} active · {ORG_ALTS.length} total</span>
+            <span className="text-xs text-muted-foreground">{ORG_ALTS.filter(a => a.status === "active").length} active · {ORG_ALTS.length} total</span>
           </div>
           <div className="border border-border rounded-lg overflow-hidden">
             {ORG_ALTS.map((alt, i) => (
               <div key={alt.name} className={`flex items-center gap-3 px-4 py-3 ${i > 0 ? "border-t border-border" : ""}`}>
                 <div className="relative shrink-0">
-                  <div className="w-9 h-9 rounded-lg bg-foreground flex items-center justify-center text-[10px] font-medium text-background">
+                  <div className="w-9 h-9 rounded-lg bg-foreground flex items-center justify-center text-xs font-medium text-background">
                     {alt.owner.split(" ").map(p => p[0]).join("")}
                   </div>
                   <div className={`absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2 border-background ${alt.status === "active" ? "bg-status-success-dot" : "bg-muted-foreground/40"}`} />
@@ -120,7 +120,7 @@ export function OrgPage() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
                     <p className="text-sm font-medium">{alt.name}</p>
-                    <span className={`text-[10px] rounded-md px-1.5 py-0.5 ${alt.status === "active" ? "bg-status-success text-status-success-foreground" : "bg-muted text-muted-foreground"}`}>
+                    <span className={`text-xs rounded-md px-1.5 py-0.5 ${alt.status === "active" ? "bg-status-success text-status-success-foreground" : "bg-muted text-muted-foreground"}`}>
                       {alt.status === "active" ? "Active" : "Setup"}
                     </span>
                   </div>
@@ -129,18 +129,18 @@ export function OrgPage() {
                 <div className="flex items-center gap-4 shrink-0">
                   <div className="text-right">
                     <p className="text-xs font-medium tabular-nums">{alt.interviews}</p>
-                    <p className="text-[10px] text-muted-foreground">interviews</p>
+                    <p className="text-xs text-muted-foreground">interviews</p>
                   </div>
                   <div className="text-right">
                     <p className="text-xs font-medium tabular-nums">{alt.memories}</p>
-                    <p className="text-[10px] text-muted-foreground">memories</p>
+                    <p className="text-xs text-muted-foreground">memories</p>
                   </div>
                   <div className="w-16">
                     <div className="flex items-center gap-1.5">
                       <div className="flex-1 h-1.5 rounded-full bg-muted overflow-hidden">
                         <div className="h-full rounded-full bg-foreground" style={{ width: `${alt.completeness}%` }} />
                       </div>
-                      <span className="text-[10px] text-muted-foreground tabular-nums">{alt.completeness}%</span>
+                      <span className="text-xs text-muted-foreground tabular-nums">{alt.completeness}%</span>
                     </div>
                   </div>
                 </div>
@@ -157,12 +157,12 @@ export function OrgPage() {
               <div key={o.city} className="p-3.5 rounded-lg border border-border bg-card">
                 <div className="flex items-center gap-2 mb-2">
                   <p className="text-sm font-medium">{o.city}</p>
-                  <span className="text-[10px] rounded-md px-1.5 py-0.5 bg-muted text-muted-foreground">{o.type}</span>
+                  <span className="text-xs rounded-md px-1.5 py-0.5 bg-muted text-muted-foreground">{o.type}</span>
                 </div>
                 <p className="text-[11px] text-muted-foreground leading-relaxed mb-1">{o.address}</p>
-                <p className="text-[10px] text-muted-foreground">{o.timezone}</p>
+                <p className="text-xs text-muted-foreground">{o.timezone}</p>
                 {o.hiringHere && (
-                  <span className="inline-block mt-2 text-[10px] rounded-md px-1.5 py-0.5 bg-status-success text-status-success-foreground">Hiring here</span>
+                  <span className="inline-block mt-2 text-xs rounded-md px-1.5 py-0.5 bg-status-success text-status-success-foreground">Hiring here</span>
                 )}
               </div>
             ))}
@@ -181,9 +181,9 @@ export function OrgPage() {
                 </div>
                 <div className="shrink-0 text-right">
                   {h.activeRoles > 0 ? (
-                    <span className="text-[10px] rounded-md px-1.5 py-0.5 bg-status-success text-status-success-foreground">{h.activeRoles} active role{h.activeRoles !== 1 ? "s" : ""}</span>
+                    <span className="text-xs rounded-md px-1.5 py-0.5 bg-status-success text-status-success-foreground">{h.activeRoles} active role{h.activeRoles !== 1 ? "s" : ""}</span>
                   ) : (
-                    <span className="text-[10px] text-muted-foreground">No open roles</span>
+                    <span className="text-xs text-muted-foreground">No open roles</span>
                   )}
                 </div>
               </div>
@@ -195,7 +195,7 @@ export function OrgPage() {
         <section>
           <div className="flex items-center justify-between mb-2">
             <p className="text-[13px] font-semibold text-foreground">Open roles</p>
-            <span className="text-[10px] text-muted-foreground">{OPEN_ROLES.length} open</span>
+            <span className="text-xs text-muted-foreground">{OPEN_ROLES.length} open</span>
           </div>
           <div className="border border-border rounded-lg overflow-hidden">
             {OPEN_ROLES.map((r, i) => (
@@ -204,7 +204,7 @@ export function OrgPage() {
                   <p className="text-sm font-medium truncate">{r.title}</p>
                   <p className="text-[11px] text-muted-foreground">{r.dept} · {r.location} · {r.type}</p>
                 </div>
-                <button className="text-[10px] rounded-md px-2.5 py-1 border border-border text-muted-foreground hover:text-foreground hover:border-foreground/40 transition-colors shrink-0">
+                <button className="text-xs rounded-md px-2.5 py-1 border border-border text-muted-foreground hover:text-foreground hover:border-foreground/40 transition-colors shrink-0">
                   Edit posting →
                 </button>
               </div>

@@ -402,7 +402,7 @@ export function AltChatOverlay({ open, onClose, context, nudgeMessage, prefillIn
               {msgs.map((m, i) => {
                 if (m.from === "user") {
                   return (
-                    <div key={i} className="text-[11px] leading-relaxed rounded-xl px-3.5 py-2.5 max-w-[85%] bg-foreground text-background self-end">
+                    <div key={i} className="text-[11px] leading-relaxed rounded-lg px-3.5 py-2.5 max-w-[85%] bg-foreground text-background self-end">
                       {m.text}
                     </div>
                   )
@@ -411,7 +411,7 @@ export function AltChatOverlay({ open, onClose, context, nudgeMessage, prefillIn
                   <div key={i} className="flex flex-col gap-2 max-w-[85%] self-start w-full">
                     <div className="flex items-start gap-2">
                       <div className="shrink-0 mt-0.5"><PixelSprite size={18} /></div>
-                      <div className="text-[11px] leading-relaxed rounded-xl px-3.5 py-2.5 bg-card border border-border shadow-sm">
+                      <div className="text-[11px] leading-relaxed rounded-lg px-3.5 py-2.5 bg-card border border-border shadow-sm">
                         {m.text}
                       </div>
                     </div>
@@ -449,7 +449,7 @@ export function AltChatOverlay({ open, onClose, context, nudgeMessage, prefillIn
                   {(filteredSlashItems?.length ?? 0) > 0 && (
                     <>
                       <div className="px-3 py-1.5 border-b border-border">
-                        <p className="text-[9px] uppercase tracking-wider text-muted-foreground">Commands</p>
+                        <p className="text-xs text-muted-foreground">Commands</p>
                       </div>
                       {filteredSlashItems!.map((cmd, idx) => (
                         <button key={cmd.key} onClick={() => handleSlashSelectCommand(cmd)}
@@ -458,7 +458,7 @@ export function AltChatOverlay({ open, onClose, context, nudgeMessage, prefillIn
                           <span className="text-sm shrink-0">{cmd.icon}</span>
                           <div className="flex-1 min-w-0">
                             <p className="text-sm font-medium">/{cmd.label.toLowerCase()}</p>
-                            <p className="text-[10px] text-muted-foreground">{cmd.desc}</p>
+                            <p className="text-xs text-muted-foreground">{cmd.desc}</p>
                           </div>
                         </button>
                       ))}
@@ -467,7 +467,7 @@ export function AltChatOverlay({ open, onClose, context, nudgeMessage, prefillIn
                   {filteredConnectorSources.length > 0 && (
                     <>
                       <div className="px-3 py-1.5 border-b border-border">
-                        <p className="text-[9px] uppercase tracking-wider text-muted-foreground">Sources</p>
+                        <p className="text-xs text-muted-foreground">Sources</p>
                       </div>
                       {filteredConnectorSources.map((s, idx) => {
                         const adjustedIdx = (filteredSlashItems?.length ?? 0) + idx
@@ -475,10 +475,10 @@ export function AltChatOverlay({ open, onClose, context, nudgeMessage, prefillIn
                           <button key={s.key} onClick={() => handleSelectConnectorSource(s)}
                             onMouseEnter={() => setSlashIndex(adjustedIdx)}
                             className={`w-full flex items-center gap-3 px-3 py-2 text-left transition-colors ${adjustedIdx === slashIndex ? "bg-accent" : "hover:bg-muted/50"}`}>
-                            <div className="w-6 h-6 flex items-center justify-center text-[9px] font-bold text-white rounded-md shrink-0" style={{ background: s.color }}>{s.icon}</div>
+                            <div className="w-6 h-6 flex items-center justify-center text-[11px] font-bold text-white rounded-md shrink-0" style={{ background: s.color }}>{s.icon}</div>
                             <div className="flex-1 min-w-0">
                               <p className="text-sm font-medium">{s.label}</p>
-                              <p className="text-[10px] text-muted-foreground">{s.desc}</p>
+                              <p className="text-xs text-muted-foreground">{s.desc}</p>
                             </div>
                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-muted-foreground shrink-0"><polyline points="9 18 15 12 9 6" /></svg>
                           </button>
@@ -493,16 +493,16 @@ export function AltChatOverlay({ open, onClose, context, nudgeMessage, prefillIn
                     <button onClick={() => { setSlashSource(null); setSlashIndex(0) }} className="text-muted-foreground hover:text-foreground">
                       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="15 18 9 12 15 6" /></svg>
                     </button>
-                    <p className="text-[10px] font-medium">Connected sources</p>
+                    <p className="text-xs font-medium">Connected sources</p>
                   </div>
                   {filteredConnectorSources.map((s, idx) => (
                     <button key={s.key} onClick={() => handleSelectConnectorSource(s)}
                       onMouseEnter={() => setSlashIndex(idx)}
                       className={`w-full flex items-center gap-3 px-3 py-2 text-left transition-colors ${idx === slashIndex ? "bg-accent" : "hover:bg-muted/50"}`}>
-                      <div className="w-6 h-6 flex items-center justify-center text-[9px] font-bold text-white rounded-md shrink-0" style={{ background: s.color }}>{s.icon}</div>
+                      <div className="w-6 h-6 flex items-center justify-center text-[11px] font-bold text-white rounded-md shrink-0" style={{ background: s.color }}>{s.icon}</div>
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium">{s.label}</p>
-                        <p className="text-[10px] text-muted-foreground">{s.desc}</p>
+                        <p className="text-xs text-muted-foreground">{s.desc}</p>
                       </div>
                       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-muted-foreground shrink-0"><polyline points="9 18 15 12 9 6" /></svg>
                     </button>
@@ -514,8 +514,8 @@ export function AltChatOverlay({ open, onClose, context, nudgeMessage, prefillIn
                     <button onClick={() => { setSlashSource("__sources__"); setSlashIndex(0) }} className="text-muted-foreground hover:text-foreground">
                       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="15 18 9 12 15 6" /></svg>
                     </button>
-                    <div className="w-5 h-5 flex items-center justify-center text-[8px] font-bold text-white rounded-md" style={{ background: activeConnector!.color }}>{activeConnector!.icon}</div>
-                    <p className="text-[10px] font-medium">{activeConnector!.label}</p>
+                    <div className="w-5 h-5 flex items-center justify-center text-[11px] font-bold text-white rounded-md" style={{ background: activeConnector!.color }}>{activeConnector!.icon}</div>
+                    <p className="text-xs font-medium">{activeConnector!.label}</p>
                   </div>
                   {activeConnector!.items.map((item, idx) => (
                     <button key={item.id} onClick={() => handleSelectConnectorItem(activeConnector!, item)}
@@ -523,7 +523,7 @@ export function AltChatOverlay({ open, onClose, context, nudgeMessage, prefillIn
                       className={`w-full flex items-center gap-3 px-3 py-2 text-left transition-colors ${idx === slashIndex ? "bg-accent" : "hover:bg-muted/50"}`}>
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium">{item.label}</p>
-                        <p className="text-[10px] text-muted-foreground">{item.detail}</p>
+                        <p className="text-xs text-muted-foreground">{item.detail}</p>
                       </div>
                     </button>
                   ))}
@@ -534,7 +534,7 @@ export function AltChatOverlay({ open, onClose, context, nudgeMessage, prefillIn
 
           {/* Input bar with inline connector pills */}
           <div
-            className="flex flex-wrap items-center gap-1.5 border border-border rounded-xl bg-card shadow-lg px-4 py-3 min-h-[52px] cursor-text focus-within:border-foreground/40 transition-colors"
+            className="flex flex-wrap items-center gap-1.5 border border-border rounded-lg bg-card shadow-lg px-4 py-3 min-h-[52px] cursor-text focus-within:border-foreground/40 transition-colors"
             onClick={() => inputRef.current?.focus()}
           >
             {/* Connector pills */}
@@ -542,11 +542,11 @@ export function AltChatOverlay({ open, onClose, context, nudgeMessage, prefillIn
               const isHl = highlightedPill === i
               return (
                 <span key={pill.id}
-                  className={`inline-flex items-center gap-1 text-[10px] font-medium px-2 py-0.5 rounded-md text-white shrink-0 transition-all ${pill.parsing ? "link-shimmer" : ""} ${isHl ? "ring-2 ring-destructive ring-offset-1 ring-offset-background" : ""}`}
+                  className={`inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-md text-white shrink-0 transition-all ${pill.parsing ? "link-shimmer" : ""} ${isHl ? "ring-2 ring-destructive ring-offset-1 ring-offset-background" : ""}`}
                   style={{ background: pill.color }}>
                   {pill.label}
                   <button onClick={e => { e.stopPropagation(); setConnectorPills(prev => prev.filter((_, j) => j !== i)); setHighlightedPill(null) }}
-                    className="opacity-70 hover:opacity-100 text-[8px] leading-none">✕</button>
+                    className="opacity-70 hover:opacity-100 text-[11px] leading-none">✕</button>
                 </span>
               )
             })}
@@ -567,7 +567,7 @@ export function AltChatOverlay({ open, onClose, context, nudgeMessage, prefillIn
           </div>
 
           {/* Helper text */}
-          <p className="text-center text-[10px] text-muted-foreground/50">
+          <p className="text-center text-xs text-muted-foreground/50">
             Esc to close · Enter to send · / for commands & sources
           </p>
         </div>

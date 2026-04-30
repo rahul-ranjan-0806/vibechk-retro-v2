@@ -25,7 +25,7 @@ function matchesTime(completed: string, bucket: TimeFilter): boolean {
 function StellarTag({ score }: { score: number }) {
   if (score < 9) return null
   return (
-    <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-md bg-gradient-to-r from-amber-400/20 to-yellow-300/20 text-amber-700 border border-amber-400/40 inline-flex items-center gap-1 dark:text-amber-300 dark:from-amber-400/15 dark:to-yellow-300/15">
+    <span className="text-xs font-medium px-1.5 py-0.5 rounded-md bg-gradient-to-r from-amber-400/20 to-yellow-300/20 text-amber-700 border border-amber-400/40 inline-flex items-center gap-1 dark:text-amber-300 dark:from-amber-400/15 dark:to-yellow-300/15">
       <svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.4H22l-6.2 4.5L18.2 22 12 17.5 5.8 22l2.4-8.1L2 9.4h7.6z"/></svg>
       Stellar
     </span>
@@ -50,11 +50,11 @@ function StatusBadge({ status }: { status: CandidateMini["status"] }) {
     rejected: "Rejected",
     pending: "Your call",
   }
-  return <span className={`text-[10px] font-medium rounded-md px-1.5 py-0.5 ${s[status]}`}>{l[status]}</span>
+  return <span className={`text-xs font-medium rounded-md px-1.5 py-0.5 ${s[status]}`}>{l[status]}</span>
 }
 
 function AltRecBadge({ rec, confidence }: { rec: CandidateMini["altRec"]; confidence: CandidateMini["confidence"] }) {
-  const base = "text-[10px] rounded-md px-1.5 py-0.5"
+  const base = "text-xs rounded-md px-1.5 py-0.5"
   if (rec === "shortlist") return <span className={`${base} bg-status-success text-status-success-foreground`}>Alt: Shortlist ↑</span>
   if (rec === "reject") return <span className={`${base} bg-status-danger text-status-danger-foreground`}>Alt: Pass ↓</span>
   return <span className={`${base} bg-status-warning text-status-warning-foreground`}>{confidence === "low" ? "Alt: Your call" : "Alt: Review"}</span>
@@ -117,16 +117,16 @@ export function CandidatesPage({ onEntityChange }: { onEntityChange?: (e: { type
         <div className="max-w-[1080px] mx-auto px-12 pt-12 pb-4">
           <div className="flex items-baseline gap-3 mb-1">
             <h1 className="text-2xl font-semibold tracking-tight">Candidates</h1>
-            <span className="text-[10px] text-muted-foreground">
+            <span className="text-xs text-muted-foreground">
               {filtered.length} of {SEED_CANDIDATES.length} · across {ROLES.length} roles
             </span>
             {activeFilterCount > 0 && (
-              <button onClick={resetFilters} className="ml-auto text-[10px] text-muted-foreground hover:text-foreground underline">
+              <button onClick={resetFilters} className="ml-auto text-xs text-muted-foreground hover:text-foreground underline">
                 Clear {activeFilterCount} filter{activeFilterCount !== 1 ? "s" : ""}
               </button>
             )}
           </div>
-          <p className="text-[10px] text-muted-foreground mb-3">
+          <p className="text-xs text-muted-foreground mb-3">
             Read-only view. Alt handles shortlisting autonomously — dilemmas are flagged as <strong className="text-foreground">Your call</strong>; resolve them with Alt in chat.
           </p>
 
@@ -139,31 +139,31 @@ export function CandidatesPage({ onEntityChange }: { onEntityChange?: (e: { type
               className="text-xs border border-border rounded-md px-3 py-1.5 bg-background outline-none placeholder:text-muted-foreground w-56 focus:border-foreground/40"
             />
             <select value={roleFilter} onChange={e => setRoleFilter(e.target.value)}
-              className="text-[10px] border border-border rounded-md px-2 py-1.5 bg-background">
+              className="text-xs border border-border rounded-md px-2 py-1.5 bg-background">
               <option value="all">All roles</option>
               {ROLES.map(r => <option key={r.id} value={r.id}>{r.title}</option>)}
             </select>
             <select value={statusFilter} onChange={e => setStatusFilter(e.target.value as StatusFilter)}
-              className="text-[10px] border border-border rounded-md px-2 py-1.5 bg-background">
+              className="text-xs border border-border rounded-md px-2 py-1.5 bg-background">
               <option value="all">All statuses</option>
               <option value="pending">Your call</option>
               <option value="shortlisted">Pushed to ATS</option>
               <option value="rejected">Rejected</option>
             </select>
             <select value={recFilter} onChange={e => setRecFilter(e.target.value as RecFilter)}
-              className="text-[10px] border border-border rounded-md px-2 py-1.5 bg-background">
+              className="text-xs border border-border rounded-md px-2 py-1.5 bg-background">
               <option value="all">All Alt recs</option>
               <option value="shortlist">Shortlist</option>
               <option value="reject">Pass</option>
               <option value="review">Review</option>
             </select>
             <select value={timeFilter} onChange={e => setTimeFilter(e.target.value as TimeFilter)}
-              className="text-[10px] border border-border rounded-md px-2 py-1.5 bg-background">
+              className="text-xs border border-border rounded-md px-2 py-1.5 bg-background">
               <option value="all">Any time</option>
               <option value="today">Last 24h</option>
               <option value="week">Last 7 days</option>
             </select>
-            <div className="flex items-center gap-2 text-[10px]">
+            <div className="flex items-center gap-2 text-xs">
               <span className="text-muted-foreground">Score ≥</span>
               <input type="range" min={1} max={10} step={1} value={minScore}
                 onChange={e => setMinScore(Number(e.target.value))}
@@ -189,22 +189,22 @@ export function CandidatesPage({ onEntityChange }: { onEntityChange?: (e: { type
                 {/* Header row */}
                 <div className="flex items-center gap-3 px-3 py-2 bg-muted/40 border-b border-border">
                   <div className="w-10 shrink-0">
-                    <span className="text-[12px] text-muted-foreground">Score</span>
+                    <span className="text-xs text-muted-foreground">Score</span>
                   </div>
                   <div className="flex-1">
-                    <span className="text-[12px] text-muted-foreground">Candidate</span>
+                    <span className="text-xs text-muted-foreground">Candidate</span>
                   </div>
                   <div className="w-44 shrink-0">
-                    <span className="text-[12px] text-muted-foreground">Role</span>
+                    <span className="text-xs text-muted-foreground">Role</span>
                   </div>
                   <div className="w-28 shrink-0">
-                    <span className="text-[12px] text-muted-foreground">Alt</span>
+                    <span className="text-xs text-muted-foreground">Alt</span>
                   </div>
                   <div className="w-24 shrink-0">
-                    <span className="text-[12px] text-muted-foreground">Status</span>
+                    <span className="text-xs text-muted-foreground">Status</span>
                   </div>
                   <div className="w-16 shrink-0 text-right">
-                    <span className="text-[12px] text-muted-foreground">Time</span>
+                    <span className="text-xs text-muted-foreground">Time</span>
                   </div>
                 </div>
 
@@ -219,7 +219,7 @@ export function CandidatesPage({ onEntityChange }: { onEntityChange?: (e: { type
                     >
                       <div className="w-10 shrink-0">
                         <span className={`text-base font-medium tabular-nums ${scoreColor(c.score)}`}>{c.score}</span>
-                        <span className="text-[9px] text-muted-foreground">/10</span>
+                        <span className="text-[11px] text-muted-foreground">/10</span>
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
@@ -238,7 +238,7 @@ export function CandidatesPage({ onEntityChange }: { onEntityChange?: (e: { type
                         <StatusBadge status={c.status} />
                       </div>
                       <div className="w-16 shrink-0 text-right">
-                        <span className="text-[10px] text-muted-foreground">{c.completedAt}</span>
+                        <span className="text-xs text-muted-foreground">{c.completedAt}</span>
                       </div>
                     </div>
                   )
@@ -294,7 +294,7 @@ export function CandidatesPage({ onEntityChange }: { onEntityChange?: (e: { type
                     { label: "Current status", value: selected.status === "shortlisted" ? "Pushed to ATS" : selected.status === "rejected" ? "Rejected" : "Your call" },
                   ].map((row, i) => (
                     <div key={row.label} className={`flex items-center justify-between px-3 py-2 ${i > 0 ? "border-t border-border" : ""}`}>
-                      <span className="text-[12px] text-muted-foreground">{row.label}</span>
+                      <span className="text-xs text-muted-foreground">{row.label}</span>
                       <span className="text-xs font-medium">{row.value}</span>
                     </div>
                   ))}

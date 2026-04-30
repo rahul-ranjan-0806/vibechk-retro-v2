@@ -75,6 +75,21 @@ module.exports = {
         sm: "4px",
         xs: "3px",
       },
+      fontSize: {
+        display: ["40px", { lineHeight: "48px", letterSpacing: "-0.02em", fontWeight: "700" }],
+        h1: ["32px", { lineHeight: "40px", letterSpacing: "-0.02em", fontWeight: "700" }],
+        h2: ["24px", { lineHeight: "32px", letterSpacing: "-0.01em", fontWeight: "600" }],
+        h3: ["20px", { lineHeight: "28px", letterSpacing: "-0.01em", fontWeight: "600" }],
+        "body-lg": ["16px", { lineHeight: "24px" }],
+        body: ["14px", { lineHeight: "22px" }],
+        ui: ["13px", { lineHeight: "18px" }],
+        small: ["12px", { lineHeight: "18px" }],
+      },
+      maxWidth: {
+        page: "840px",
+        "page-wide": "1080px",
+        conversation: "768px",
+      },
       boxShadow: {
         popover: "0 1px 4px rgba(15,15,15,0.05), 0 4px 12px rgba(15,15,15,0.10)",
         modal: "0 8px 32px rgba(15,15,15,0.14)",

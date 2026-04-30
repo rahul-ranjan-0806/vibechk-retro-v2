@@ -80,7 +80,7 @@ export function AgenticSearch({ onSearch, onClear, onSearchingChange, resultCoun
           <svg width={compact ? "12" : "14"} height={compact ? "12" : "14"} viewBox="0 0 24 24" fill="none" className="text-accent-blue">
             <path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z" fill="currentColor" />
           </svg>
-          <span className={`text-accent-blue font-medium ${compact ? "text-[8px]" : "text-[9px]"}`}>AI</span>
+          <span className={`text-accent-blue font-medium ${compact ? "text-[11px]" : "text-[11px]"}`}>AI</span>
         </div>
 
         <input
@@ -99,7 +99,7 @@ export function AgenticSearch({ onSearch, onClear, onSearchingChange, resultCoun
         )}
 
         {isSearching ? (
-          <div className={`shrink-0 flex items-center gap-1.5 ${compact ? "text-[9px]" : "text-[10px]"} text-accent-blue`}>
+          <div className={`shrink-0 flex items-center gap-1.5 ${compact ? "text-[11px]" : "text-xs"} text-accent-blue`}>
             <div className="w-3 h-3 border-2 border-accent-blue/30 border-t-[#4466ff] rounded-full animate-spin" />
             Searching...
           </div>
@@ -107,7 +107,7 @@ export function AgenticSearch({ onSearch, onClear, onSearchingChange, resultCoun
           <button
             onClick={() => doSearch(input)}
             disabled={!input.trim()}
-            className={`shrink-0 bg-foreground text-background hover:opacity-90 disabled:opacity-30 transition-opacity rounded-md ${compact ? "text-[9px] px-2 py-0.5" : "text-[10px] px-2.5 py-1"}`}
+            className={`shrink-0 bg-foreground text-background hover:opacity-90 disabled:opacity-30 transition-opacity rounded-md ${compact ? "text-[11px] px-2 py-0.5" : "text-xs px-2.5 py-1"}`}
           >
             Search
           </button>
@@ -121,14 +121,14 @@ export function AgenticSearch({ onSearch, onClear, onSearchingChange, resultCoun
             <path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z" fill="currentColor" />
           </svg>
           <div className="flex-1 min-w-0">
-            <p className={`leading-relaxed text-foreground ${compact ? "text-[10px]" : "text-[11px]"}`}>{summary}</p>
+            <p className={`leading-relaxed text-foreground ${compact ? "text-xs" : "text-[11px]"}`}>{summary}</p>
             {resultCount !== undefined && totalCount !== undefined && (
-              <p className={`text-muted-foreground mt-0.5 ${compact ? "text-[8px]" : "text-[9px]"}`}>
+              <p className={`text-muted-foreground mt-0.5 ${compact ? "text-[11px]" : "text-[11px]"}`}>
                 {resultCount} of {totalCount} candidates match
               </p>
             )}
           </div>
-          <button onClick={handleClear} className="text-[10px] text-muted-foreground hover:text-foreground transition-colors shrink-0">
+          <button onClick={handleClear} className="text-xs text-muted-foreground hover:text-foreground transition-colors shrink-0">
             Clear
           </button>
         </div>

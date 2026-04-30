@@ -212,20 +212,20 @@ export function MemoryMindMap({ memories, edges, onNodeClick, selectedId, classN
     <div ref={containerRef} className={cn("w-full h-full relative bg-muted/30 rounded-lg border border-border overflow-hidden", className)}>
       {/* Legend */}
       <div className="absolute top-3 left-3 z-10 flex flex-col gap-1">
-        <p className="text-[8px] uppercase tracking-widest text-muted-foreground mb-0.5">Sources</p>
+        <p className="text-xs text-muted-foreground mb-0.5">Sources</p>
         {Object.entries(colors).map(([key, color]) => (
           <div key={key} className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full" style={{ background: color }} />
-            <span className="text-[9px] text-muted-foreground">{SOURCE_LABELS[key as MemorySource]}</span>
+            <span className="text-[11px] text-muted-foreground">{SOURCE_LABELS[key as MemorySource]}</span>
           </div>
         ))}
       </div>
 
       {/* Category labels */}
       <div className="absolute top-3 right-3 z-10 flex flex-col gap-1 items-end">
-        <p className="text-[8px] uppercase tracking-widest text-muted-foreground mb-0.5">Categories</p>
+        <p className="text-xs text-muted-foreground mb-0.5">Categories</p>
         {Object.entries(CATEGORY_LABELS).map(([key, label]) => (
-          <span key={key} className="text-[9px] text-muted-foreground">{label}</span>
+          <span key={key} className="text-[11px] text-muted-foreground">{label}</span>
         ))}
       </div>
 
@@ -328,9 +328,9 @@ export function MemoryMindMap({ memories, edges, onNodeClick, selectedId, classN
                   width={240}
                   height={55}
                 >
-                  <div className="bg-foreground text-background text-[10px] px-2.5 py-2 rounded-lg shadow-lg leading-relaxed">
+                  <div className="bg-foreground text-background text-xs px-2.5 py-2 rounded-lg shadow-lg leading-relaxed">
                     <p className="font-medium mb-0.5">{node.label}</p>
-                    <p className="opacity-70 text-[9px]">{CATEGORY_LABELS[node.category]} · {SOURCE_LABELS[node.source]} · {node.createdAt}</p>
+                    <p className="opacity-70 text-[11px]">{CATEGORY_LABELS[node.category]} · {SOURCE_LABELS[node.source]} · {node.createdAt}</p>
                   </div>
                 </foreignObject>
               )}

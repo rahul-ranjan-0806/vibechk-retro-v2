@@ -41,7 +41,7 @@ function pipelineStatus(thisWeek: number, lastWeek: number) {
 // ── Alt triage helpers ──────────────────────────────────────
 
 function AltRecPill({ rec, confidence }: { rec: CandidateMini["altRec"]; confidence: CandidateMini["confidence"] }) {
-  const base = "text-[10px] rounded-md px-1.5 py-0.5"
+  const base = "text-xs rounded-md px-1.5 py-0.5"
   if (rec === "shortlist") return <span className={`${base} bg-status-success text-status-success-foreground`}>Alt: Shortlist ↑</span>
   if (rec === "reject") return <span className={`${base} bg-status-danger text-status-danger-foreground`}>Alt: Pass ↓</span>
   return <span className={`${base} bg-status-warning text-status-warning-foreground`}>{confidence === "low" ? "Alt: Your call" : "Alt: Review"}</span>
@@ -50,7 +50,7 @@ function AltRecPill({ rec, confidence }: { rec: CandidateMini["altRec"]; confide
 function StellarTag({ score }: { score: number }) {
   if (score < 9) return null
   return (
-    <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-md bg-gradient-to-r from-amber-400/20 to-yellow-300/20 text-amber-700 border border-amber-400/40 inline-flex items-center gap-1 dark:text-amber-300 dark:from-amber-400/15 dark:to-yellow-300/15">
+    <span className="text-xs font-medium px-1.5 py-0.5 rounded-md bg-gradient-to-r from-amber-400/20 to-yellow-300/20 text-amber-700 border border-amber-400/40 inline-flex items-center gap-1 dark:text-amber-300 dark:from-amber-400/15 dark:to-yellow-300/15">
       <svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.4H22l-6.2 4.5L18.2 22 12 17.5 5.8 22l2.4-8.1L2 9.4h7.6z"/></svg>
       Stellar
     </span>
