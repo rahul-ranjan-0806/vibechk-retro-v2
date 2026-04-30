@@ -212,7 +212,7 @@ export function AltChatOverlay({ open, onClose, context, nudgeMessage, prefillIn
       setSlashFilter("")
       setSendKey(0)
       onClose()
-    }, 150)
+    }, 320)
   }, [onClose])
 
   // Slash command logic
@@ -383,17 +383,19 @@ export function AltChatOverlay({ open, onClose, context, nudgeMessage, prefillIn
 
   return (
     <div className="fixed inset-0 z-[60]" onClick={e => { if (e.target === e.currentTarget) handleClose() }}>
-      {/* Backdrop — gradient mask on open; switches to full-viewport blur on send */}
+      {/* Backdrop — gradient mask on open; switches to full-viewport blur on send.
+          On close, .blurred is dropped so the CSS transition ramps blur back to 0. */}
       <div
-        className={`absolute inset-0 pointer-events-none alt-overlay-backdrop ${msgs.length > 0 ? "blurred" : ""} ${blurClass}`}
+        className={`absolute inset-0 pointer-events-none alt-overlay-backdrop ${msgs.length > 0 && !closing ? "blurred" : ""} ${blurClass}`}
       />
 
       {/* White shimmer sweep — fires once per send (key remount restarts animation) */}
       {sendKey > 0 && !closing && <div key={sendKey} className="alt-overlay-shimmer" />}
 
-      {/* Messages — anchored to TOP, fade in after the shimmer/blur transition */}
+      {/* Messages — anchored to TOP, fade in after the shimmer/blur transition;
+          fade-down with a soft blur on close */}
       {msgs.length > 0 && (
-        <div className="absolute top-0 left-0 right-0 max-h-[60vh] overflow-y-auto pt-16 pb-6 pointer-events-none">
+        <div className={`absolute top-0 left-0 right-0 max-h-[60vh] overflow-y-auto pt-16 pb-6 pointer-events-none ${closing ? "alt-overlay-msg-exit" : ""}`}>
           <div ref={bodyRef} className="max-w-2xl mx-auto px-4 flex flex-col gap-2.5 pointer-events-auto">
             {msgs.map((m, i) => {
               if (m.from === "user") {

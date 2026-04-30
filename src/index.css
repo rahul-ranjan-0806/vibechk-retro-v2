@@ -247,7 +247,7 @@ h1 { letter-spacing: -0.02em; }
   to   { opacity: 0; }
 }
 .alt-overlay-blur-enter { animation: alt-overlay-backdrop-in 0.2s ease-out forwards; }
-.alt-overlay-blur-exit  { animation: alt-overlay-backdrop-out 0.18s ease-in forwards; }
+.alt-overlay-blur-exit  { animation: alt-overlay-backdrop-out 0.32s ease-in forwards; }
 
 /* Backdrop — gradient mask + soft tint by default; full-screen blur once chat starts */
 /* Many stops + cubic easing in the mask reduce 8-bit alpha banding visibly */
@@ -347,25 +347,33 @@ h1 { letter-spacing: -0.02em; }
   animation: alt-overlay-shimmer-sweep 0.55s ease-in forwards;
 }
 
-/* Content reveal — input region: simple opacity in/out */
+/* Content reveal — input region: opacity in / fade-down on close */
 @keyframes alt-overlay-content-in {
   from { opacity: 0; }
   to   { opacity: 1; }
 }
 @keyframes alt-overlay-content-out {
-  0%   { opacity: 1; transform: translateY(0) scale(1); }
-  100% { opacity: 0; transform: translateY(8px) scale(0.97); }
+  0%   { opacity: 1; transform: translateY(0); filter: blur(0px); }
+  100% { opacity: 0; transform: translateY(28px); filter: blur(6px); }
 }
 .alt-overlay-enter { animation: alt-overlay-content-in 0.2s ease-out forwards; }
-.alt-overlay-exit  { animation: alt-overlay-content-out 0.15s ease-in forwards; }
+.alt-overlay-exit  { animation: alt-overlay-content-out 0.32s cubic-bezier(0.4, 0.0, 0.6, 1) forwards; }
 
-/* Per-message fade-in (after the shimmer/blur transition) */
+/* Per-message fade-in (after the shimmer/blur transition) + slight downward
+   blur-fade on close */
 @keyframes alt-overlay-msg-in {
   from { opacity: 0; }
   to   { opacity: 1; }
 }
+@keyframes alt-overlay-msg-out {
+  from { opacity: 1; transform: translateY(0); filter: blur(0px); }
+  to   { opacity: 0; transform: translateY(24px); filter: blur(6px); }
+}
 .alt-overlay-msg {
   animation: alt-overlay-msg-in 0.3s ease-out 0.4s both;
+}
+.alt-overlay-msg-exit {
+  animation: alt-overlay-msg-out 0.32s cubic-bezier(0.4, 0.0, 0.6, 1) forwards;
 }
 
 /* ── Link pill shimmer ─────────────────────────────────────── */
