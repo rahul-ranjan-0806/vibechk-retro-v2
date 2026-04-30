@@ -78,8 +78,8 @@ export function SettingsPage() {
 
   return (
     <div className="overflow-y-auto h-full">
-      <div className="max-w-[840px] mx-auto px-12 pt-16 pb-24">
-      <h1 className="text-[40px] font-bold tracking-[-0.02em] leading-[48px] mb-12">Settings</h1>
+      <div className="max-w-page mx-auto px-12 pt-16 pb-24">
+      <h1 className="text-display mb-12">Settings</h1>
 
       <div className="max-w-xl flex flex-col gap-10">
         <Section title="Appearance">

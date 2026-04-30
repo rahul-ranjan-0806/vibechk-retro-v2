@@ -493,7 +493,7 @@ function JobPostingTab({ status, onStatusChange }: { status: "draft"|"live"; onS
     <div className="flex flex-1 min-h-0">
       <div className="flex-1 min-w-0 overflow-hidden">
         <div className="h-full overflow-y-auto">
-          <div className="max-w-[840px] mx-auto px-12 pt-16 pb-24 flex flex-col gap-10">
+          <div className="max-w-page mx-auto px-12 pt-16 pb-24 flex flex-col gap-10">
 
             {/* JD */}
             <CollapsibleSection title="Job description">
@@ -572,7 +572,7 @@ function InterviewConfigTab() {
   const toggleExpand = (id: string) => setExpanded(p => ({ ...p, [id]: !p[id] }))
 
   return (
-    <div className="overflow-y-auto flex-1"><div className="max-w-[840px] mx-auto px-12 pt-16 pb-24 flex flex-col gap-10">
+    <div className="overflow-y-auto flex-1"><div className="max-w-page mx-auto px-12 pt-16 pb-24 flex flex-col gap-10">
       <div>
         <h3 className="text-xs font-medium mb-2.5">Interviewing Alt</h3>
         <div className="flex items-center gap-3 p-2.5 bg-muted/40 border border-border w-fit">
@@ -923,10 +923,10 @@ function RoleDetail({ role, activeProfile, onProfileOpen, onProfileClose }: { ro
 
       {/* Page title block */}
       <div className="shrink-0">
-        <div className="max-w-[1080px] mx-auto px-12 pt-16 pb-0">
+        <div className="max-w-page-wide mx-auto px-12 pt-16 pb-0">
           <div className="flex items-center gap-3 mb-2">
             <span className="text-2xl">📋</span>
-            <h1 className="text-[40px] font-bold tracking-[-0.02em] leading-[48px]">{role.title}</h1>
+            <h1 className="text-display">{role.title}</h1>
           </div>
           <div className="flex items-center gap-3 mb-10 pl-1">
             <span className="text-sm text-muted-foreground">{role.department}</span>

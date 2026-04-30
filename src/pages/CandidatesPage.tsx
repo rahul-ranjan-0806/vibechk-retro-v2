@@ -114,9 +114,9 @@ export function CandidatesPage({ onEntityChange }: { onEntityChange?: (e: { type
     <div className="h-full flex flex-col overflow-hidden">
       {/* Header */}
       <div className="border-b border-border shrink-0 bg-background">
-        <div className="max-w-[1080px] mx-auto px-12 pt-12 pb-4">
+        <div className="max-w-page-wide mx-auto px-12 pt-16 pb-4">
           <div className="flex items-baseline gap-3 mb-1">
-            <h1 className="text-2xl font-semibold tracking-tight">Candidates</h1>
+            <h1 className="text-display">Candidates</h1>
             <span className="text-xs text-muted-foreground">
               {filtered.length} of {SEED_CANDIDATES.length} · across {ROLES.length} roles
             </span>
@@ -177,7 +177,7 @@ export function CandidatesPage({ onEntityChange }: { onEntityChange?: (e: { type
       {/* Body */}
       <div className="flex-1 overflow-hidden flex">
         <div className="flex-1 min-w-0 overflow-y-auto">
-          <div className="max-w-[1080px] mx-auto px-12 py-6">
+          <div className="max-w-page-wide mx-auto px-12 py-6">
             {filtered.length === 0 ? (
               <div className="border border-border rounded-lg p-8 text-center">
                 <p className="text-xs text-muted-foreground">

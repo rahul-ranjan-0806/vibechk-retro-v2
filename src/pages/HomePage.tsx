@@ -116,13 +116,13 @@ export function HomePage({ onNavigate, onOpenOverlay }: { onNavigate: (p: Page) 
       </div>
 
       <div className="flex-1 overflow-y-auto">
-        <div className="max-w-[840px] mx-auto px-12 pt-20 pb-32">
+        <div className="max-w-page mx-auto px-12 pt-16 pb-24">
 
           {/* ── Page title ──────────────────────────────── */}
           <div className="flex items-center gap-3 mb-1">
             <PixelSprite size={28} />
           </div>
-          <h1 className="text-[40px] font-bold tracking-[-0.02em] leading-[48px] mb-2">Hiring Triage</h1>
+          <h1 className="text-display mb-2">Hiring Triage</h1>
           <p className="text-sm text-muted-foreground mb-12">Sashank's Alt · since yesterday</p>
 
           {/* ── Alt summary ──────────────────────────────── */}

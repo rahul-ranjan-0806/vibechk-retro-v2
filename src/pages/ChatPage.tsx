@@ -483,7 +483,7 @@ export function ChatPage() {
                     <PixelSprite size={36} />
                   </div>
                   <div>
-                    <h1 className="text-[28px] font-bold tracking-tight leading-tight">What can I help with?</h1>
+                    <h1 className="text-display">What can I help with?</h1>
                     <p className="text-sm text-muted-foreground mt-0.5">Sashank's Alt · trained on your decisions</p>
                   </div>
                 </div>
@@ -576,7 +576,7 @@ export function ChatPage() {
               className="flex-1 flex flex-col min-h-0"
             >
               <Conversation className="flex-1 overflow-hidden">
-                <ConversationContent className="max-w-3xl mx-auto px-12 py-10 gap-7">
+                <ConversationContent className="max-w-conversation mx-auto px-12 py-10 gap-7">
                   {msgs.map((m, i) => (
                     <motion.div key={m.id}
                       initial={{ opacity: 0, y: 8 }}
@@ -688,7 +688,7 @@ export function ChatPage() {
 
               {/* Bottom input */}
               <div className="shrink-0 border-t border-border bg-card">
-                <div className="max-w-3xl mx-auto px-12 py-5 relative">
+                <div className="max-w-conversation mx-auto px-12 py-5 relative">
                   <SlashCommandPalette
                     query={slashQuery}
                     onSelect={handleSlashSelect}

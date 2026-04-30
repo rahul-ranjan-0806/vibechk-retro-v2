@@ -1171,7 +1171,7 @@ function AltDetail({ alt }: { alt: AltData }) {
     <div className="flex-1 flex overflow-hidden">
       {/* LEFT COLUMN: Sprite card */}
       <div className="shrink-0 overflow-y-auto border-r border-border/40" style={{ width: 420 }}>
-        <div className="px-10 pt-12 pb-16 flex flex-col gap-7">
+        <div className="px-10 pt-16 pb-24 flex flex-col gap-7">
           {/* Big sprite */}
           <div className="relative border border-border rounded-lg overflow-hidden bg-[#e8eaef]" style={{ height: 500 }}>
             <div className="absolute top-3 left-3 z-10">
@@ -1199,7 +1199,7 @@ function AltDetail({ alt }: { alt: AltData }) {
           {/* Alt identity */}
           <div>
             <div className="flex items-center gap-2.5 mb-1.5">
-              <h2 className="text-2xl font-semibold tracking-tight">{alt.name}</h2>
+              <h2 className="text-display">{alt.name}</h2>
               <span className={`text-xs rounded-md px-1.5 py-0.5 ${alt.status === "active" ? "bg-status-success text-status-success-foreground" : "bg-muted text-muted-foreground"}`}>
                 {alt.status === "active" ? "Active" : "Setup"}
               </span>
@@ -1267,7 +1267,7 @@ function AltDetail({ alt }: { alt: AltData }) {
       {/* RIGHT COLUMN: Memories & Sources */}
       <div className="flex-1 flex flex-col overflow-hidden min-w-0">
         {/* Explore memories button */}
-        <div className="shrink-0 px-10 pt-12 pb-6">
+        <div className="shrink-0 px-10 pt-16 pb-6">
           <button
             onClick={openMapModal}
             className="w-full group relative overflow-hidden rounded-lg border border-border bg-card hover:bg-muted/30 transition-colors"
