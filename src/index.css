@@ -250,23 +250,79 @@ h1 { letter-spacing: -0.02em; }
 .alt-overlay-blur-exit  { animation: alt-overlay-backdrop-out 0.18s ease-in forwards; }
 
 /* Backdrop — gradient mask + soft tint by default; full-screen blur once chat starts */
+/* Many stops + cubic easing in the mask reduce 8-bit alpha banding visibly */
 .alt-overlay-backdrop {
   backdrop-filter: blur(0px);
   -webkit-backdrop-filter: blur(0px);
-  background: linear-gradient(to top, hsl(var(--background) / 0.7) 20%, transparent 70%);
-  -webkit-mask-image: linear-gradient(to top, black 30%, transparent 80%);
-  mask-image: linear-gradient(to top, black 30%, transparent 80%);
+  background:
+    linear-gradient(
+      to top,
+      hsl(var(--background) / 0.72) 0%,
+      hsl(var(--background) / 0.66) 12%,
+      hsl(var(--background) / 0.55) 22%,
+      hsl(var(--background) / 0.40) 33%,
+      hsl(var(--background) / 0.26) 45%,
+      hsl(var(--background) / 0.14) 56%,
+      hsl(var(--background) / 0.06) 65%,
+      hsl(var(--background) / 0.02) 73%,
+      transparent 82%
+    );
+  -webkit-mask-image:
+    linear-gradient(
+      to top,
+      rgba(0,0,0,1) 0%,
+      rgba(0,0,0,0.98) 18%,
+      rgba(0,0,0,0.92) 32%,
+      rgba(0,0,0,0.80) 44%,
+      rgba(0,0,0,0.62) 54%,
+      rgba(0,0,0,0.42) 63%,
+      rgba(0,0,0,0.24) 71%,
+      rgba(0,0,0,0.10) 78%,
+      rgba(0,0,0,0.03) 84%,
+      transparent 90%
+    );
+  mask-image:
+    linear-gradient(
+      to top,
+      rgba(0,0,0,1) 0%,
+      rgba(0,0,0,0.98) 18%,
+      rgba(0,0,0,0.92) 32%,
+      rgba(0,0,0,0.80) 44%,
+      rgba(0,0,0,0.62) 54%,
+      rgba(0,0,0,0.42) 63%,
+      rgba(0,0,0,0.24) 71%,
+      rgba(0,0,0,0.10) 78%,
+      rgba(0,0,0,0.03) 84%,
+      transparent 90%
+    );
   transition:
     backdrop-filter 0.55s ease-in,
     -webkit-backdrop-filter 0.55s ease-in,
     background 0.45s ease-in;
 }
+
+/* Noise overlay — dithers the mask transition to kill residual banding */
+.alt-overlay-backdrop::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.5;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.6 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  background-size: 160px 160px;
+}
+
 .alt-overlay-backdrop.blurred {
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   background: hsl(var(--background) / 0.45);
   -webkit-mask-image: none;
   mask-image: none;
+}
+.alt-overlay-backdrop.blurred::after {
+  /* No banding to dither once the mask is gone */
+  display: none;
 }
 
 /* White shimmer sweep — bottom → top, fires once per send */
