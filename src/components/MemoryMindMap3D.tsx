@@ -318,101 +318,60 @@ function PerfOverlay({ metricsRef, visible, sizeConfig, onSizeChange, perfDOMRef
 
   if (!visible) return null
 
-  const sliderStyle: React.CSSProperties = {
-    width: "100%", height: 3, appearance: "none", WebkitAppearance: "none",
-    background: "#e2e8f0", borderRadius: 2, outline: "none", cursor: "pointer",
-    accentColor: "#1a1a2e",
-  }
-  const labelStyle: React.CSSProperties = {
-    fontSize: 8, fontFamily: "'Press Start 2P', monospace", color: "#6070a0",
-    display: "flex", justifyContent: "space-between", alignItems: "center",
-  }
-
   return (
     <div className="absolute bottom-3 right-3 z-50">
-      <div
+      {/* Forced light surface — sits on a permanently dark 3D scene, so we
+          don't follow theme tokens here (avoids dark-on-dark in light mode). */}
+      <div className="w-[240px] rounded-md border border-black/10 shadow-modal text-neutral-900"
         style={{
-          background: "rgba(255,255,255,0.92)",
+          background: "rgba(255,255,255,0.94)",
           WebkitBackdropFilter: "blur(8px)",
           backdropFilter: "blur(8px)",
-          border: "1px solid rgba(0,0,0,0.08)",
-          borderRadius: 6,
-          padding: "6px 10px",
-          fontFamily: "'Press Start 2P', monospace",
-          boxShadow: "0 1px 4px rgba(0,0,0,0.06)",
-          minWidth: 160,
         }}
       >
-        {/* Live stats — structured DOM, updated via textContent */}
-        <div style={{ marginBottom: 6 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 5, marginBottom: 3 }}>
-            <span ref={statusDotRef} style={{ display: "inline-block", width: 6, height: 6, borderRadius: "50%", background: "#3B6D11" }} />
-            <span ref={statusLabelRef} style={{ fontSize: 9, fontWeight: 600, padding: "1px 5px", borderRadius: 3, color: "#3B6D11", background: "#EAF3DE" }}>Good</span>
-            <span ref={fpsRef} style={{ fontSize: 10, fontWeight: 700, color: "#1a1a2e" }}>0 FPS</span>
+        {/* Header */}
+        <div className="flex items-center justify-between px-3.5 h-9 border-b border-black/10">
+          <p className="text-[11px] font-semibold tracking-wider text-neutral-500">3D MAP</p>
+          <div className="flex items-center gap-1.5">
+            <span ref={statusDotRef} className="inline-block w-1.5 h-1.5 rounded-full" style={{ background: "#3B6D11" }} />
+            <span ref={statusLabelRef} className="text-[10px] font-medium px-1.5 py-0.5 rounded-sm" style={{ color: "#3B6D11", background: "#EAF3DE" }}>Good</span>
+            <span ref={fpsRef} className="text-[11px] font-semibold tabular-nums">0 FPS</span>
           </div>
-          <div ref={detailsRef} style={{ fontSize: 8, color: "#6070a0", lineHeight: 1.5 }} />
         </div>
 
-        {/* Size controls */}
-        <div style={{ borderTop: "1px solid rgba(0,0,0,0.06)", paddingTop: 6, display: "flex", flexDirection: "column", gap: 5 }}>
-          <div>
-            <div style={labelStyle}>
-              <span>Orb size</span>
-              <span>{sizeConfig.baseSize.toFixed(2)}</span>
-            </div>
-            <input type="range" min="0.06" max="0.5" step="0.01"
-              value={sizeConfig.baseSize}
-              onChange={e => onSizeChange({ ...sizeConfig, baseSize: +e.target.value })}
-              style={sliderStyle}
-            />
-          </div>
-          <div>
-            <div style={labelStyle}>
-              <span>Cluster spread</span>
-              <span>{sizeConfig.clusterRadius.toFixed(1)}</span>
-            </div>
-            <input type="range" min="1.5" max="8" step="0.1"
-              value={sizeConfig.clusterRadius}
-              onChange={e => onSizeChange({ ...sizeConfig, clusterRadius: +e.target.value })}
-              style={sliderStyle}
-            />
-          </div>
-          <div>
-            <div style={labelStyle}>
-              <span>Node scatter</span>
-              <span>{sizeConfig.nodeSpread.toFixed(1)}</span>
-            </div>
-            <input type="range" min="0.4" max="4" step="0.1"
-              value={sizeConfig.nodeSpread}
-              onChange={e => onSizeChange({ ...sizeConfig, nodeSpread: +e.target.value })}
-              style={sliderStyle}
-            />
-          </div>
-          <div>
-            <div style={labelStyle}>
-              <span>Fog near</span>
-              <span>{sizeConfig.fogNear.toFixed(0)}</span>
-            </div>
-            <input type="range" min="1" max="12" step="0.5"
-              value={sizeConfig.fogNear}
-              onChange={e => onSizeChange({ ...sizeConfig, fogNear: +e.target.value })}
-              style={sliderStyle}
-            />
-          </div>
-          <div>
-            <div style={labelStyle}>
-              <span>Fog far</span>
-              <span>{sizeConfig.fogFar.toFixed(0)}</span>
-            </div>
-            <input type="range" min="8" max="30" step="0.5"
-              value={sizeConfig.fogFar}
-              onChange={e => onSizeChange({ ...sizeConfig, fogFar: +e.target.value })}
-              style={sliderStyle}
-            />
-          </div>
+        {/* Live details */}
+        <div ref={detailsRef} className="px-3.5 py-2 text-[10px] leading-relaxed text-neutral-500 border-b border-black/10" />
+
+        {/* Sliders */}
+        <div className="p-3.5 flex flex-col gap-3">
+          <PerfSlider label="Orb size"      value={sizeConfig.baseSize}      min={0.06} max={0.5} step={0.01} format={v => v.toFixed(2)} onChange={v => onSizeChange({ ...sizeConfig, baseSize: v })} />
+          <PerfSlider label="Cluster spread" value={sizeConfig.clusterRadius} min={1.5}  max={8}   step={0.1}  format={v => v.toFixed(1)} onChange={v => onSizeChange({ ...sizeConfig, clusterRadius: v })} />
+          <PerfSlider label="Node scatter"   value={sizeConfig.nodeSpread}    min={0.4}  max={4}   step={0.1}  format={v => v.toFixed(1)} onChange={v => onSizeChange({ ...sizeConfig, nodeSpread: v })} />
+          <PerfSlider label="Fog near"       value={sizeConfig.fogNear}       min={1}    max={12}  step={0.5}  format={v => v.toFixed(0)} onChange={v => onSizeChange({ ...sizeConfig, fogNear: v })} />
+          <PerfSlider label="Fog far"        value={sizeConfig.fogFar}        min={8}    max={30}  step={0.5}  format={v => v.toFixed(0)} onChange={v => onSizeChange({ ...sizeConfig, fogFar: v })} />
         </div>
       </div>
     </div>
+  )
+}
+
+function PerfSlider({ label, value, min, max, step, format, onChange }: {
+  label: string; value: number; min: number; max: number; step: number;
+  format: (v: number) => string; onChange: (v: number) => void
+}) {
+  return (
+    <label className="flex flex-col gap-1.5">
+      <div className="flex items-center justify-between text-xs">
+        <span className="text-neutral-500">{label}</span>
+        <span className="tabular-nums text-neutral-900">{format(value)}</span>
+      </div>
+      <input
+        type="range" min={min} max={max} step={step} value={value}
+        onChange={e => onChange(+e.target.value)}
+        className="w-full h-1"
+        style={{ accentColor: "#1a1a2e" }}
+      />
+    </label>
   )
 }
 
