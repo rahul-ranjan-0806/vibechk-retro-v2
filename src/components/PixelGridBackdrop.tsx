@@ -36,6 +36,34 @@ interface Settings {
 const NORMAL: Settings = { spawnRate: 9,   durMin: 1600, durMax: 3800,  opMin: 0.04, opMax: 0.10, budget: 32 }
 const CALM:   Settings = { spawnRate: 1.2, durMin: 5000, durMax: 11000, opMin: 0.02, opMax: 0.04, budget: 12 }
 
+// ── Persisted settings ──────────────────────────────────────────
+const STORAGE_KEY = "vibechk:pixel-grid"
+
+interface PersistedSettings {
+  speed: number
+  density: number
+  seed: number
+  cellSize: number
+}
+
+const DEFAULT_SETTINGS: PersistedSettings = {
+  speed: 1,
+  density: 1,
+  seed: 20260502,
+  cellSize: 32,
+}
+
+function loadSettings(): PersistedSettings {
+  if (typeof window === "undefined") return DEFAULT_SETTINGS
+  try {
+    const raw = window.localStorage.getItem(STORAGE_KEY)
+    if (!raw) return DEFAULT_SETTINGS
+    return { ...DEFAULT_SETTINGS, ...(JSON.parse(raw) as Partial<PersistedSettings>) }
+  } catch {
+    return DEFAULT_SETTINGS
+  }
+}
+
 // ── Seeded PRNG (mulberry32) ─────────────────────────────────────
 // Deterministic, fast, good enough distribution for visual randomness.
 function makePrng(seed: number) {
@@ -60,12 +88,24 @@ export function PixelGridBackdrop({ open, closing, calm }: Props) {
   const twinklesRef = useRef<Twinkle[]>([])
   const settingsRef = useRef<Settings>(NORMAL)
 
-  // ── Dev controls ─────────────────────────────────────────────
+  // ── Dev controls (persisted across opens via localStorage) ───
   const [controlsOpen, setControlsOpen] = useState(false)
-  const [speed, setSpeed] = useState(1)        // 0.1× – 12×
-  const [density, setDensity] = useState(1)    // 0.25× – 20× (scales spawnRate + budget)
-  const [seed, setSeed] = useState(20260502)
-  const [cellSize, setCellSize] = useState(32) // 8 – 64 px
+  const [speed, setSpeed]       = useState<number>(() => loadSettings().speed)     // 0.1× – 12×
+  const [density, setDensity]   = useState<number>(() => loadSettings().density)   // 0.25× – 20× (scales spawnRate + budget)
+  const [seed, setSeed]         = useState<number>(() => loadSettings().seed)
+  const [cellSize, setCellSize] = useState<number>(() => loadSettings().cellSize)  // 8 – 64 px
+
+  // Persist settings whenever any control changes
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify({ speed, density, seed, cellSize } satisfies PersistedSettings),
+      )
+    } catch {
+      // Quota / private mode — silently ignore
+    }
+  }, [speed, density, seed, cellSize])
 
   // Keep refs in sync so the rAF loop reads latest values without restarting
   const speedRef = useRef(speed)
