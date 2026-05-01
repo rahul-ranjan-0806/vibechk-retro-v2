@@ -63,7 +63,7 @@ export function PixelGridBackdrop({ open, closing, calm }: Props) {
   // ── Dev controls ─────────────────────────────────────────────
   const [controlsOpen, setControlsOpen] = useState(false)
   const [speed, setSpeed] = useState(1)        // 0.1× – 12×
-  const [density, setDensity] = useState(1)    // 0.25× – 5× (scales spawnRate + budget)
+  const [density, setDensity] = useState(1)    // 0.25× – 20× (scales spawnRate + budget)
   const [seed, setSeed] = useState(20260502)
   const [cellSize, setCellSize] = useState(32) // 8 – 64 px
 
@@ -225,7 +225,7 @@ export function PixelGridBackdrop({ open, closing, calm }: Props) {
                 <span className="tabular-nums text-foreground">{density.toFixed(2)}×</span>
               </div>
               <input
-                type="range" min={0.25} max={5} step={0.05}
+                type="range" min={0.25} max={20} step={0.25}
                 value={density} onChange={e => setDensity(Number(e.target.value))}
                 className="w-full h-1 accent-foreground"
               />
