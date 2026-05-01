@@ -389,6 +389,12 @@ export function AltChatOverlay({ open, onClose, context, nudgeMessage, prefillIn
         className={`absolute inset-0 pointer-events-none alt-overlay-backdrop ${msgs.length > 0 && !closing ? "blurred" : ""} ${blurClass}`}
       />
 
+      {/* Subtle blinking pixel grid — sparse 6×6 cells, gradient-masked.
+          Slows to "calm" once chat is in flow. */}
+      <div
+        className={`absolute inset-0 pointer-events-none alt-overlay-pixel-grid ${msgs.length > 0 && !closing ? "calm" : ""} ${blurClass}`}
+      />
+
       {/* White shimmer sweep — fires once per send (key remount restarts animation) */}
       {sendKey > 0 && !closing && <div key={sendKey} className="alt-overlay-shimmer" />}
 

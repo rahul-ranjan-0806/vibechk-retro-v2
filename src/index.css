@@ -307,6 +307,65 @@ h1 { letter-spacing: -0.02em; }
   display: none;
 }
 
+/* Subtle blinking pixel grid — sparse 6×6 cells, gradient-masked upward.
+   Two staggered SVG layers create the twinkling impression without per-cell
+   animation. Compositor-only: each layer animates only opacity. Slows and
+   fades toward "almost non-existent" once chat is in flow (.calm). */
+.alt-overlay-pixel-grid {
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(to top, black 0%, transparent 100%);
+  mask-image: linear-gradient(to top, black 0%, transparent 100%);
+  will-change: opacity;
+}
+.alt-overlay-pixel-grid::before,
+.alt-overlay-pixel-grid::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-repeat: repeat;
+  background-size: 24px 24px;
+  image-rendering: pixelated;
+  opacity: 0;
+  will-change: opacity;
+}
+/* Pattern A — 5 cells: (0,0) (12,6) (6,18) (18,12) (0,12) */
+.alt-overlay-pixel-grid::before {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' shape-rendering='crispEdges' width='24' height='24'><g fill='white'><rect x='0' y='0' width='6' height='6'/><rect x='12' y='6' width='6' height='6'/><rect x='6' y='18' width='6' height='6'/><rect x='18' y='12' width='6' height='6'/><rect x='0' y='12' width='6' height='6'/></g></svg>");
+  animation: alt-pixel-twinkle-a 9s ease-in-out infinite;
+}
+/* Pattern B — 5 different cells: (6,0) (18,0) (0,6) (12,12) (18,18) */
+.alt-overlay-pixel-grid::after {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' shape-rendering='crispEdges' width='24' height='24'><g fill='white'><rect x='6' y='0' width='6' height='6'/><rect x='18' y='0' width='6' height='6'/><rect x='0' y='6' width='6' height='6'/><rect x='12' y='12' width='6' height='6'/><rect x='18' y='18' width='6' height='6'/></g></svg>");
+  animation: alt-pixel-twinkle-b 13s ease-in-out infinite;
+}
+@keyframes alt-pixel-twinkle-a {
+  0%, 100% { opacity: 0; }
+  50%      { opacity: 0.12; }
+}
+@keyframes alt-pixel-twinkle-b {
+  0%, 100% { opacity: 0; }
+  50%      { opacity: 0.10; }
+}
+
+/* Calm state — chat in flow. Drastically slow the cycles + lower peak opacity
+   so the grid is barely perceptible. */
+.alt-overlay-pixel-grid.calm::before {
+  animation-duration: 36s;
+  animation-name: alt-pixel-twinkle-a-calm;
+}
+.alt-overlay-pixel-grid.calm::after {
+  animation-duration: 52s;
+  animation-name: alt-pixel-twinkle-b-calm;
+}
+@keyframes alt-pixel-twinkle-a-calm {
+  0%, 100% { opacity: 0; }
+  50%      { opacity: 0.04; }
+}
+@keyframes alt-pixel-twinkle-b-calm {
+  0%, 100% { opacity: 0; }
+  50%      { opacity: 0.035; }
+}
+
 /* White shimmer sweep — bottom → top, fires once per send */
 @keyframes alt-overlay-shimmer-sweep {
   0%   { transform: translateY(100%); opacity: 0; }
