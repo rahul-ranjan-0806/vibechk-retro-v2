@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react"
 import { PixelSprite } from "@/components/PixelSprite"
+import { PixelGridBackdrop } from "@/components/PixelGridBackdrop"
 import { AltMessagePart } from "@/components/AltMessageParts"
 import { matchAltResponse, type AltMsgPart } from "@/lib/mockData"
 
@@ -389,11 +390,9 @@ export function AltChatOverlay({ open, onClose, context, nudgeMessage, prefillIn
         className={`absolute inset-0 pointer-events-none alt-overlay-backdrop ${msgs.length > 0 && !closing ? "blurred" : ""} ${blurClass}`}
       />
 
-      {/* Subtle blinking pixel grid — sparse 6×6 cells, gradient-masked.
+      {/* Subtle blinking pixel grid — Canvas-driven per-cell twinkles, gradient-masked.
           Slows to "calm" once chat is in flow. */}
-      <div
-        className={`absolute inset-0 pointer-events-none alt-overlay-pixel-grid ${msgs.length > 0 && !closing ? "calm" : ""} ${blurClass}`}
-      />
+      <PixelGridBackdrop open={open} closing={closing} calm={msgs.length > 0 && !closing} />
 
       {/* White shimmer sweep — fires once per send (key remount restarts animation) */}
       {sendKey > 0 && !closing && <div key={sendKey} className="alt-overlay-shimmer" />}
