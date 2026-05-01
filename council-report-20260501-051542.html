@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>LLM Council Verdict — Slash commands in the Sabu overlay · 2026-05-01</title>
+<style>
+  :root {
+    --bg: #FFFFFF;
+    --surface: #FAFAF8;
+    --surface-2: #F4F3EE;
+    --text: #2A2620;
+    --text-muted: #6B6354;
+    --border: #E8E4DA;
+    --accent: #2B4FB8;
+    --green: #1F6D5A;
+    --amber: #B47A0B;
+    --red: #B5382A;
+    --purple: #6840B8;
+    --orange: #C25E1F;
+    --neutral: #5A5447;
+    --shadow: 0 1px 2px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.06);
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 56px 40px 96px;
+  }
+  .meta {
+    color: var(--text-muted);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 12px;
+  }
+  h1 {
+    font-size: 32px;
+    line-height: 1.2;
+    margin: 0 0 8px;
+    letter-spacing: -0.02em;
+    font-weight: 700;
+  }
+  .lede {
+    color: var(--text-muted);
+    font-size: 15px;
+    margin: 0 0 40px;
+    max-width: 640px;
+  }
+  .question-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    padding: 16px 20px;
+    border-radius: 8px;
+    margin-bottom: 40px;
+  }
+  .question-block .label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+  .question-block p {
+    margin: 0;
+    font-size: 15px;
+  }
+  h2 {
+    font-size: 22px;
+    line-height: 1.3;
+    margin: 48px 0 14px;
+    letter-spacing: -0.01em;
+    font-weight: 700;
+  }
+  h3 {
+    font-size: 16px;
+    margin: 28px 0 8px;
+    font-weight: 600;
+  }
+  p { margin: 10px 0; font-size: 15px; }
+  ul { padding-left: 22px; margin: 8px 0; }
+  li { margin: 6px 0; font-size: 15px; }
+  code, kbd {
+    font-family: ui-monospace, "JetBrains Mono", Menlo, monospace;
+    font-size: 13px;
+    background: var(--surface-2);
+    padding: 1px 5px;
+    border-radius: 3px;
+  }
+  .verdict {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px 32px;
+    box-shadow: var(--shadow);
+    margin-bottom: 32px;
+  }
+  .verdict h2 { margin-top: 0; }
+  .recommend {
+    background: linear-gradient(180deg, #FAF9F4 0%, #F4F3EE 100%);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin: 24px 0 16px;
+  }
+  .recommend h3 { margin-top: 0; color: var(--accent); }
+  .one-thing {
+    background: var(--accent);
+    color: #fff;
+    padding: 18px 22px;
+    border-radius: 10px;
+    margin-top: 16px;
+  }
+  .one-thing .label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 0.7;
+    margin-bottom: 4px;
+  }
+  .one-thing .body {
+    font-size: 16px;
+    font-weight: 500;
+  }
+  /* Alignment grid */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+    margin: 18px 0 28px;
+  }
+  .advisor-pos {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 12px;
+    text-align: center;
+    font-size: 12px;
+    position: relative;
+    overflow: hidden;
+  }
+  .advisor-pos .name {
+    font-weight: 700;
+    font-size: 13px;
+    margin-bottom: 4px;
+  }
+  .advisor-pos .stance {
+    color: var(--text-muted);
+    line-height: 1.4;
+    font-size: 11.5px;
+    margin-top: 8px;
+  }
+  .stance-pill {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 2px 7px;
+    border-radius: 999px;
+    margin-bottom: 4px;
+  }
+  .stance-kill { background: #F8E0DC; color: var(--red); }
+  .stance-prune { background: #F2E8C5; color: var(--amber); }
+  .stance-keep { background: #D5E2C8; color: var(--green); }
+  .stance-expand { background: #E2D5F1; color: var(--purple); }
+  .stance-hidden { background: #EFE4D2; color: var(--orange); }
+  /* Collapsibles */
+  details {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 10px;
+    background: var(--surface);
+    overflow: hidden;
+  }
+  details summary {
+    padding: 14px 18px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    user-select: none;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--text);
+  }
+  details summary::-webkit-details-marker { display: none; }
+  details summary::before {
+    content: "▸";
+    font-size: 11px;
+    color: var(--text-muted);
+    transition: transform 0.15s ease;
+  }
+  details[open] summary::before { transform: rotate(90deg); }
+  details summary .badge {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 999px;
+    margin-left: auto;
+  }
+  details .body {
+    padding: 0 18px 18px;
+    border-top: 1px solid var(--border);
+    color: var(--text);
+  }
+  details .body p { font-size: 14px; line-height: 1.6; }
+  details .body ul li { font-size: 14px; }
+  .tag-contrarian { background: #F8E0DC; color: var(--red); }
+  .tag-firstprinciples { background: #DEE6F6; color: var(--accent); }
+  .tag-expansionist { background: #E2D5F1; color: var(--purple); }
+  .tag-outsider { background: #EFE4D2; color: var(--orange); }
+  .tag-executor { background: #D5E2C8; color: var(--green); }
+  .tag-reviewer { background: var(--surface-2); color: var(--neutral); }
+  footer {
+    margin-top: 56px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    color: var(--text-muted);
+    font-size: 12px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="meta">LLM Council · 2026-05-01</div>
+  <h1>Should the dashboard ship slash commands?</h1>
+  <p class="lede">A structured, multi-perspective evaluation of <code>/commands</code> in the Sabu Cmd+K overlay for the VIBEcheck dashboard.</p>
+
+  <div class="question-block">
+    <div class="label">The question</div>
+    <p>Is adding <code>/</code> commands a good pattern for the dashboard? And are the current <code>/</code> commands the best ones, or could more be included?</p>
+  </div>
+
+  <h2>Where the council landed</h2>
+  <div class="grid">
+    <div class="advisor-pos">
+      <span class="stance-pill stance-hidden">Hide</span>
+      <div class="name">Outsider</div>
+      <div class="stance">Power-user pattern wrong for primary surface. Keep as hidden accelerator.</div>
+    </div>
+    <div class="advisor-pos">
+      <span class="stance-pill stance-expand">Expand</span>
+      <div class="name">Expansionist</div>
+      <div class="stance">Underplayed. Build the founder's "spellbook" + custom commands.</div>
+    </div>
+    <div class="advisor-pos">
+      <span class="stance-pill stance-kill">Kill</span>
+      <div class="name">Contrarian</div>
+      <div class="stance">Duplicates UI. Kill the menu; let Sabu be conversational.</div>
+    </div>
+    <div class="advisor-pos">
+      <span class="stance-pill stance-prune">Prune</span>
+      <div class="name">Executor</div>
+      <div class="stance">Cut 4, keep 3, add <code>/candidate</code>. Instrument before deciding more.</div>
+    </div>
+    <div class="advisor-pos">
+      <span class="stance-pill stance-kill">Kill</span>
+      <div class="name">First Principles</div>
+      <div class="stance">Wrong question. Trust the AI; <code>/sources</code> as @-mention chip; rest = talking.</div>
+    </div>
+  </div>
+
+  <div class="verdict">
+    <h2>Chairman's verdict</h2>
+
+    <h3>Where the council agrees</h3>
+    <ul>
+      <li><strong>Slash commands are the wrong primary pattern for this user.</strong> 4 of 5 converged independently. Non-technical founders using the product six times a week won't memorize cryptic verbs invoked behind two power-user gestures (<kbd>⌘K</kbd> then <code>/</code>).</li>
+      <li><strong><code>/sources</code> is the one command that earns its keep.</strong> Every advisor singled it out — connectors are a structured-input picker without a natural home in the UI.</li>
+      <li><strong>Most current commands duplicate UI that already exists.</strong> <code>/threshold</code> lives on the leniency slider. <code>/triage</code> IS the home page. <code>/draft</code> belongs on the candidate row.</li>
+      <li><strong>The Alt's NLP layer should carry the load slash commands paper over.</strong> If it can run live pre-screening interviews, it can parse "draft a rejection for Tom."</li>
+    </ul>
+
+    <h3>Where the council clashes</h3>
+    <p>Kill vs. prune vs. expand. Kill (Contrarian, First Principles) takes the strongest stance: the menu undermines the AI's premise. Prune (Executor) is the only path with a falsifiable plan. Expand (Expansionist) sees a missed product opportunity but designs for a power user this segment doesn't have. The disagreement maps cleanly to belief about how the user evolves — six-times-a-week today, daily-driver tomorrow?</p>
+
+    <h3>Blind spots peer review caught</h3>
+    <ul>
+      <li><strong>The "Sabu" / "the Alt" naming collision.</strong> CLAUDE.md is explicit: the agent IS the Alt — "Sashank's Alt suggests…" not "the system suggests." Calling the overlay "Sabu" introduces a second named entity, fracturing the identity model the agentic architecture rests on.</li>
+      <li><strong>Sabu's surface competes with AGENTIC.md's three-surface model</strong> (inline confirmations, ambient drawer, background activity log). A global Cmd+K overlay is a fourth — and most prominent — surface. Founders now have four places to find Alt's output.</li>
+      <li><strong>No mobile/touch story.</strong> Slash menus and Cmd+K are keyboard-only patterns. Founders triage on phones between meetings; the whole flow dies on touch.</li>
+    </ul>
+
+    <div class="recommend">
+      <h3>The recommendation</h3>
+      <p>Side with the Executor's path, anchored to the First Principles reframe.</p>
+      <ul>
+        <li><strong>Cut now</strong> (no instrumentation needed — no defensible job): <code>/export</code>, <code>/calibrate</code>, <code>/criteria</code>, <code>/triage</code>, <code>/draft</code>. Each duplicates a UI affordance the founder is already on the page for.</li>
+        <li><strong>Keep <code>/sources</code></strong> but reframe it as a chip/<code>@</code>-mention attachment in the input. It's a parameter picker, not a verb.</li>
+        <li><strong>Keep <code>/memory</code></strong> for now — discrete write action, benefits from being explicit. Re-evaluate after instrumentation.</li>
+        <li><strong>Add <code>/candidate</code></strong> (or <code>@candidate</code>) — fuzzy-pick a person to scope the conversation. The one verb that addresses a real gap.</li>
+        <li><strong>Ship instrumentation this week.</strong> Log every slash invocation, every Sabu query without one. Two weeks of behavior beats five advisors' opinions.</li>
+      </ul>
+      <p>Do <em>not</em> build the Expansionist's spellbook — the user segment can't carry it. Re-open only if data shows founders returning to Sabu &gt;5×/day. Address bigger structural bugs in parallel: rename the overlay so the Alt speaks (drop "Sabu"), and decide whether the Cmd+K surface collapses into or replaces the three agentic surfaces in AGENTIC.md.</p>
+    </div>
+
+    <div class="one-thing">
+      <div class="label">The one thing to do first</div>
+      <div class="body">Ship instrumentation on the Sabu overlay this week. Log every slash invocation, every prompt, every open-without-query. Don't redesign the menu before you have two weeks of data — cuts and additions become falsifiable instead of opinions.</div>
+    </div>
+  </div>
+
+  <h2>Advisor responses</h2>
+
+  <details>
+    <summary>The Outsider <span class="badge tag-outsider">Hide as accelerator</span></summary>
+    <div class="body">
+      <p>Slash commands are a power-user pattern. You're shipping them to non-technical founders. That's the whole problem in one sentence.</p>
+      <p>"Sabu" — what is this word? Why isn't it just "Ask Alt"? You already have a character (the Alt). Now there's a second named thing? I'd be lost in 30 seconds.</p>
+      <p>Cmd+K — non-technical founders don't know this shortcut. The slash commands themselves read like internal jargon: <code>/triage</code> (medical?), <code>/calibrate</code> (calibrate what?), <code>/threshold</code> (of what?), <code>/sources</code> (of what?), <code>/draft</code>, <code>/compare</code>. A founder hiring their first engineer types "/", sees seven cryptic verbs, and closes the panel.</p>
+      <p>Founders don't want commands. They want to type "show me the three best candidates for the backend role" and have it work. Keep slash commands as a hidden accelerator for the 5% who discover them. Don't design the primary interface around them.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>The Expansionist <span class="badge tag-expansionist">Build the spellbook</span></summary>
+    <div class="body">
+      <p>Slash commands are a massive underplay. You've built the scaffolding for an agentic OS for hiring and you're treating it like a search shortcut menu.</p>
+      <p>The real opportunity: slash commands become the founder's API to their own taste. Stop thinking "command palette," start thinking "spellbook the founder builds over time."</p>
+      <p>Missing high-value commands:</p>
+      <ul>
+        <li><code>/remember</code> — promote anything in current view into Alt memory</li>
+        <li><code>/why</code> — explain Alt's last decision (trust-building is your moat)</li>
+        <li><code>/pipeline</code> — cross-role view; founders think about humans, not roles</li>
+        <li><code>/clone</code> — duplicate a role's config</li>
+        <li><code>/intro</code> — draft a warm intro to a shortlisted candidate</li>
+        <li><code>/standup</code> — Alt summarizes everything since last login (daily ritual)</li>
+        <li>Custom slash commands users save → marketplace, moat that compounds per customer</li>
+      </ul>
+      <p>Surface commands as ghost suggestions inline so non-technical users discover power. Slash commands are the substrate for the Alt becoming an actual operating partner. Build for that ceiling.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>The Contrarian <span class="badge tag-contrarian">Kill the menu</span></summary>
+    <div class="body">
+      <p>Slash commands are wrong for this audience and you're about to learn it the expensive way. The single most "I am a power user" pattern in software — discovery requires typing a punctuation mark on a hunch. You're importing a developer-tool pattern into a product whose pitch is "you don't need to be technical."</p>
+      <p>Worse: stacked inside Cmd+K (also power-user). Path to your second-most-prominent feature: memorize a shortcut, then a punctuation trigger, then nine cryptic commands.</p>
+      <p>Every command listed is a thing the page should already surface. <code>/threshold</code> belongs on the leniency slider. <code>/compare</code> belongs on candidate selection. <code>/draft</code> belongs on the row. <code>/triage</code> IS the home page. You're building a parallel surface that duplicates the UI — two places to keep in sync.</p>
+      <p><code>/sources</code> is the only one that earns its keep. Kill the slash menu. Let Sabu be conversational. The Alt is supposed to understand intent — make it do that instead of giving people a CLI in a trench coat.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>The Executor <span class="badge tag-executor">Prune + instrument</span></summary>
+    <div class="body">
+      <p>Slash commands are wrong for this user. Founders at 8-person startups don't memorize command palettes — they type "show me Priya's interview" and expect it to work. Cmd+K overlay is fine; the slash menu inside it is engineering theater.</p>
+      <p>You've already built it, so don't rip it out — prune hard and let usage decide.</p>
+      <p><strong>Kill immediately:</strong></p>
+      <ul>
+        <li><code>/export</code> — nobody opens Sabu to export</li>
+        <li><code>/calibrate</code> — too vague</li>
+        <li><code>/criteria</code> — overlaps with the kanban</li>
+        <li><code>/draft</code> — should just happen when you ask</li>
+      </ul>
+      <p><strong>Keep:</strong></p>
+      <ul>
+        <li><code>/sources</code> — genuinely needs structured input</li>
+        <li><code>/compare</code> — real verb that benefits from a picker UI</li>
+        <li><code>/memory</code> — discrete write action</li>
+      </ul>
+      <p><strong>Add:</strong> <code>/candidate</code> (or <code>@candidate</code>) — fuzzy-pick a person.</p>
+      <p><strong>Concrete next step:</strong> ship instrumentation this week. Log every slash invocation and every Sabu query that doesn't use one. In two weeks you'll know which commands are &lt;2% of usage and can cut them with data, not opinions.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>The First Principles Thinker <span class="badge tag-firstprinciples">Reframe + @-mention</span></summary>
+    <div class="body">
+      <p>You're asking the wrong question. The real question isn't "are slash commands the right pattern" — it's: <strong>why does a dashboard built around a natural-language Alt need a command palette at all?</strong></p>
+      <p>Sabu's premise is that the Alt understands intent. If your NLP layer is good enough to run pre-screening interviews, it's good enough to parse "draft a rejection email." Slash commands are an admission that you don't trust your own AI.</p>
+      <p>Founders use the product six times a week, not sixty times a day. The cost of learning eight context-dependent commands exceeds the time saved.</p>
+      <p>Slash commands are doing two distinct jobs:</p>
+      <ul>
+        <li><strong>Discoverability</strong> — solve with a one-time inline hint or rotating placeholder.</li>
+        <li><strong>Precision invocation of structured actions</strong> — <code>/sources</code> picking a connector. That's a parameter picker, not a command. Belongs as a chip-style attachment inside the input, like Linear's @-mentions.</li>
+      </ul>
+      <p>Kill the slash-command framing. Keep <code>/sources</code> as a true picker. Make everything else just talking.</p>
+    </div>
+  </details>
+
+  <h2>Peer review highlights</h2>
+
+  <details>
+    <summary>Reviewer 1 <span class="badge tag-reviewer">D strongest · B blind</span></summary>
+    <div class="body">
+      <p><strong>Strongest: D.</strong> The only one pairing a clear opinion with a shippable plan: name the four to kill, the three to keep, the one to add, plus instrumentation. Everyone else delivers a thesis; D delivers a Monday morning.</p>
+      <p><strong>Blind: B.</strong> "Spellbook" is seductive but ignores users who use the product six times a week. Designing for the Linear/Notion power user this product explicitly rejects.</p>
+      <p><strong>All missed:</strong> nobody asked whether Sabu itself is the right primary surface. They debated the menu without questioning whether founders ever open Cmd+K. Also: voice input — founders driving between meetings would talk to Alt before typing "/triage."</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>Reviewer 2 <span class="badge tag-reviewer">C strongest · B blind</span></summary>
+    <div class="body">
+      <p><strong>Strongest: C.</strong> Names the structural bug others dance around: every slash command duplicates UI that already exists. Two sources of truth to keep in sync.</p>
+      <p><strong>Blind: B.</strong> Custom user-defined commands for non-technical founders is fantasy. Designing for a power user that doesn't exist in this segment.</p>
+      <p><strong>All missed:</strong> the mobile/touch story. Founders triage on phones between meetings. Slash commands and Cmd+K are keyboard-only.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>Reviewer 3 <span class="badge tag-reviewer">E strongest · B blind</span></summary>
+    <div class="body">
+      <p><strong>Strongest: E.</strong> Reframes the question rather than tinkering inside the bad frame. "Slash commands are admitting you don't trust your AI" is the cleanest articulation of the product tension.</p>
+      <p><strong>Blind: B.</strong> Spellbook + marketplace for non-technical founders is fantasy. CLAUDE.md is explicit: founders who want to scale taste, not learn a DSL.</p>
+      <p><strong>All missed:</strong> nobody questioned whether Sabu should exist as a separate surface from the per-page agentic affordances in AGENTIC.md. A global Cmd+K overlay competes with the three-surface model — founders have four places to find Alt's output.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>Reviewer 4 <span class="badge tag-reviewer">E strongest · B blind</span></summary>
+    <div class="body">
+      <p><strong>Strongest: E.</strong> Separates discoverability from structured input and keeps only <code>/sources</code> (the picker that genuinely needs picking). C makes a similar point but stops at "duplication"; E gets to the underlying principle.</p>
+      <p><strong>Blind: B.</strong> Users won't author custom commands — they barely tolerate Cmd+K. Designing for a Linear/Raycast power user that doesn't exist.</p>
+      <p><strong>All missed:</strong> nobody questioned "Sabu." CLAUDE.md says the agent IS the Alt. A second named entity ("Sabu") inside the Alt overlay fractures the identity model. Also missed: the Cmd+K overlay competes with the ambient suggestions drawer in AGENTIC.md.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>Reviewer 5 <span class="badge tag-reviewer">D strongest · B blind</span></summary>
+    <div class="body">
+      <p><strong>Strongest: D.</strong> The only one proposing a falsifiable test instead of asserting a worldview. A/C/E are variations of "kill it," B is "expand it" — none can be wrong. D ships instrumentation in a week and lets behavior decide.</p>
+      <p><strong>Blind: B.</strong> Spellbook + marketplace for non-technical startup founders running &lt;10-person teams is a misread. They will not author custom commands, let alone share them.</p>
+      <p><strong>All missed:</strong> the Sabu/Alt naming collision A barely touched. If the agent IS the Alt (per CLAUDE.md), why is the overlay called "Sabu"? Product-identity bug bigger than any slash-command debate. Also ignored mobile/touch. And nobody asked whether <code>/sources</code> belongs in chat at all versus being a one-time setup in Settings.</p>
+    </div>
+  </details>
+
+  <footer>
+    Generated 2026-05-01 · Council inputs: 5 advisors, 5 peer reviewers, 1 chairman synthesis · Transcript: <code>council-transcript-20260501-051542.md</code>
+  </footer>
+</div>
+</body>
+</html>

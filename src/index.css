@@ -258,34 +258,10 @@ h1 { letter-spacing: -0.02em; }
   /* Same flat dark tint as the post-send state — the upward fade comes purely
      from the mask below, so the bottom darkens to exactly the .blurred level. */
   background: rgba(0, 0, 0, 0.55);
-  -webkit-mask-image:
-    linear-gradient(
-      to top,
-      rgba(0,0,0,1) 0%,
-      rgba(0,0,0,0.98) 18%,
-      rgba(0,0,0,0.92) 32%,
-      rgba(0,0,0,0.80) 44%,
-      rgba(0,0,0,0.62) 54%,
-      rgba(0,0,0,0.42) 63%,
-      rgba(0,0,0,0.24) 71%,
-      rgba(0,0,0,0.10) 78%,
-      rgba(0,0,0,0.03) 84%,
-      transparent 90%
-    );
-  mask-image:
-    linear-gradient(
-      to top,
-      rgba(0,0,0,1) 0%,
-      rgba(0,0,0,0.98) 18%,
-      rgba(0,0,0,0.92) 32%,
-      rgba(0,0,0,0.80) 44%,
-      rgba(0,0,0,0.62) 54%,
-      rgba(0,0,0,0.42) 63%,
-      rgba(0,0,0,0.24) 71%,
-      rgba(0,0,0,0.10) 78%,
-      rgba(0,0,0,0.03) 84%,
-      transparent 90%
-    );
+  /* Pure 2-stop gradient mask: smoothly fades from full coverage at the bottom
+     to transparent at the top. Banding handled by the noise overlay below. */
+  -webkit-mask-image: linear-gradient(to top, black 0%, transparent 100%);
+  mask-image: linear-gradient(to top, black 0%, transparent 100%);
   transition:
     backdrop-filter 0.55s ease-in,
     -webkit-backdrop-filter 0.55s ease-in,

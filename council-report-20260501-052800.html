@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>LLM Council Verdict — Autocomplete + interactive prompts · 2026-05-01</title>
+<style>
+  :root {
+    --bg: #FFFFFF;
+    --surface: #FAFAF8;
+    --surface-2: #F4F3EE;
+    --text: #2A2620;
+    --text-muted: #6B6354;
+    --border: #E8E4DA;
+    --accent: #2B4FB8;
+    --green: #1F6D5A;
+    --amber: #B47A0B;
+    --red: #B5382A;
+    --purple: #6840B8;
+    --orange: #C25E1F;
+    --neutral: #5A5447;
+    --shadow: 0 1px 2px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.06);
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 56px 40px 96px; }
+  .meta { color: var(--text-muted); font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 12px; }
+  h1 { font-size: 32px; line-height: 1.2; margin: 0 0 8px; letter-spacing: -0.02em; font-weight: 700; }
+  .lede { color: var(--text-muted); font-size: 15px; margin: 0 0 40px; max-width: 640px; }
+  .question-block { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--accent); padding: 16px 20px; border-radius: 8px; margin-bottom: 40px; }
+  .question-block .label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); margin-bottom: 6px; }
+  .question-block p { margin: 0; font-size: 15px; }
+  h2 { font-size: 22px; line-height: 1.3; margin: 48px 0 14px; letter-spacing: -0.01em; font-weight: 700; }
+  h3 { font-size: 16px; margin: 28px 0 8px; font-weight: 600; }
+  p { margin: 10px 0; font-size: 15px; }
+  ul { padding-left: 22px; margin: 8px 0; }
+  li { margin: 6px 0; font-size: 15px; }
+  code, kbd { font-family: ui-monospace, "JetBrains Mono", Menlo, monospace; font-size: 13px; background: var(--surface-2); padding: 1px 5px; border-radius: 3px; }
+  .verdict { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 28px 32px; box-shadow: var(--shadow); margin-bottom: 32px; }
+  .verdict h2 { margin-top: 0; }
+  .recommend { background: linear-gradient(180deg, #FAF9F4 0%, #F4F3EE 100%); border: 1px solid var(--border); border-radius: 12px; padding: 24px 28px; margin: 24px 0 16px; }
+  .recommend h3 { margin-top: 0; color: var(--accent); }
+  .one-thing { background: var(--accent); color: #fff; padding: 18px 22px; border-radius: 10px; margin-top: 16px; }
+  .one-thing .label { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.7; margin-bottom: 4px; }
+  .one-thing .body { font-size: 16px; font-weight: 500; }
+  .grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin: 18px 0 28px; }
+  .advisor-pos { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 14px 12px; text-align: center; font-size: 12px; }
+  .advisor-pos .name { font-weight: 700; font-size: 13px; margin-bottom: 4px; }
+  .advisor-pos .stance { color: var(--text-muted); line-height: 1.4; font-size: 11.5px; margin-top: 8px; }
+  .stance-pill { display: inline-block; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; padding: 2px 7px; border-radius: 999px; margin-bottom: 4px; }
+  .stance-kill { background: #F8E0DC; color: var(--red); }
+  .stance-prune { background: #F2E8C5; color: var(--amber); }
+  .stance-keep { background: #D5E2C8; color: var(--green); }
+  .stance-expand { background: #E2D5F1; color: var(--purple); }
+  .stance-hidden { background: #EFE4D2; color: var(--orange); }
+  details { border: 1px solid var(--border); border-radius: 8px; margin-bottom: 10px; background: var(--surface); overflow: hidden; }
+  details summary { padding: 14px 18px; font-weight: 600; font-size: 14px; cursor: pointer; user-select: none; list-style: none; display: flex; align-items: center; gap: 10px; color: var(--text); }
+  details summary::-webkit-details-marker { display: none; }
+  details summary::before { content: "▸"; font-size: 11px; color: var(--text-muted); transition: transform 0.15s ease; }
+  details[open] summary::before { transform: rotate(90deg); }
+  details summary .badge { font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; padding: 2px 7px; border-radius: 999px; margin-left: auto; }
+  details .body { padding: 0 18px 18px; border-top: 1px solid var(--border); color: var(--text); }
+  details .body p { font-size: 14px; line-height: 1.6; }
+  details .body ul li { font-size: 14px; }
+  .tag-contrarian { background: #F8E0DC; color: var(--red); }
+  .tag-firstprinciples { background: #DEE6F6; color: var(--accent); }
+  .tag-expansionist { background: #E2D5F1; color: var(--purple); }
+  .tag-outsider { background: #EFE4D2; color: var(--orange); }
+  .tag-executor { background: #D5E2C8; color: var(--green); }
+  .tag-reviewer { background: var(--surface-2); color: var(--neutral); }
+  footer { margin-top: 56px; padding-top: 20px; border-top: 1px solid var(--border); color: var(--text-muted); font-size: 12px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="meta">LLM Council · 2026-05-01</div>
+  <h1>Autocomplete + interactive prompts in Sabu</h1>
+  <p class="lede">Should the dashboard ship verb autocomplete, sentence-form templates, and contextual chips? A multi-perspective evaluation.</p>
+
+  <div class="question-block">
+    <div class="label">The question</div>
+    <p>Is the autocomplete + interactive prompt-template pattern in the Sabu chat surface good for this dashboard? What's working, what's not, what should change?</p>
+  </div>
+
+  <h2>Where the council landed</h2>
+  <div class="grid">
+    <div class="advisor-pos">
+      <span class="stance-pill stance-kill">Kill templates</span>
+      <div class="name">Contrarian</div>
+      <div class="stance">Form-in-a-sentence is just a worse form. Autocomplete = slash commands without discoverability.</div>
+    </div>
+    <div class="advisor-pos">
+      <span class="stance-pill stance-kill">Wrong frame</span>
+      <div class="name">First Principles</div>
+      <div class="stance">Three layers of indirection to a form that should be a button. Keep chips, kill the rest.</div>
+    </div>
+    <div class="advisor-pos">
+      <span class="stance-pill stance-expand">Promote</span>
+      <div class="name">Expansionist</div>
+      <div class="stance">Accidentally invented the primary creation surface. "Sabu Sentences" replace forms product-wide.</div>
+    </div>
+    <div class="advisor-pos">
+      <span class="stance-pill stance-hidden">Confuse</span>
+      <div class="name">Outsider</div>
+      <div class="stance">Tab-to-accept is unknown convention. 12 invisible verbs. Mobile is dead. Chips are the only usable part.</div>
+    </div>
+    <div class="advisor-pos">
+      <span class="stance-pill stance-prune">Flip trigger</span>
+      <div class="name">Executor</div>
+      <div class="stance">Kill autocomplete. Keep templates triggered by chips/replies/"/". Expand chips per page. Ship in a week.</div>
+    </div>
+  </div>
+
+  <div class="verdict">
+    <h2>Chairman's verdict</h2>
+
+    <h3>Where the council agrees</h3>
+    <ul>
+      <li><strong>The 12-verb autocomplete is dead weight.</strong> Ghost-text + Tab-to-accept is a code-editor convention non-technical founders don't share. It silently competes with the Alt's own intent parsing — which the rest of the product is supposed to trust.</li>
+      <li><strong>Suggestion chips are the highest-leverage element.</strong> Every advisor — including the most enthusiastic about templates — called chips out as the part that obviously earns its keep. Per-page contextual chips ("Why did you flag Tom?") are the cleanest demonstration of Sabu being a colleague.</li>
+      <li><strong>The template has a real interaction problem as a chat input.</strong> Mobile is dead, dropdowns can collide with adjacent fields, dangerous pre-filled defaults invite send-without-reading, and the case where intent is <em>already</em> clear ("shortlist Tom") gets <em>more</em> friction.</li>
+    </ul>
+
+    <h3>Where the council clashes</h3>
+    <p><strong>Templates: kill, reframe, or promote?</strong> The disagreement is whether the templated sentence is a worse form (true as a chat input) or a better form (potentially true as a first-class authoring primitive). As an autocomplete-gated chat input, it's a worse form. As the founder's authoring grammar across roles/JDs/criteria, it could be the bigger play.</p>
+    <p><strong>The Cmd+K surface itself.</strong> First Principles wants it gone for non-conversational work; Expansionist wants it everywhere; Executor wants it pruned. Reasonable advisors disagree on how often founders open Sabu.</p>
+
+    <h3>Blind spots peer review caught</h3>
+    <ul>
+      <li><strong>The Alt identity contract.</strong> CLAUDE.md says the agent IS the Alt. Bracket templates and Tab-completion make Sabu read as a CLI, not a colleague. None of the advisors framed the question as "does this make the Alt more like the founder over time?" — the documented test for any agentic feature.</li>
+      <li><strong>Wrong surface for creation.</strong> AGENTIC.md specifies three agent surfaces — interruptive (inline), ambient (drawer), background (log). Chat is not one of them. Templates reinvent the inline-confirmation pattern in the wrong place.</li>
+      <li><strong>No persona discipline.</strong> Founder-on-mobile-mid-context-switch was never tested. Sabu can't be a triage co-pilot, creation tool, AND onboarding guide with one input.</li>
+    </ul>
+
+    <div class="recommend">
+      <h3>The recommendation</h3>
+      <p>Side with the Executor's path now. Use the Expansionist's reframe as a hypothesis, not a roadmap.</p>
+      <p><strong>This week:</strong></p>
+      <ul>
+        <li><strong>Kill the 12-verb autocomplete.</strong> Single-day win; removes a whole subsystem competing with the Alt's intent parser.</li>
+        <li><strong>Keep the interactive template component, but flip the trigger.</strong> Three new entry points in priority order: (1) Alt's reply detects intent and renders the template inline ("Sounds like you want to create a role — fill this in?"); (2) a suggestion chip click pre-loads the template; (3) "/" remains as an unmarketed power-user escape.</li>
+        <li><strong>Expand suggestion chips per-page</strong>, always visible (not just empty state). On a role page, chips reference that role. On the Alts page, chips probe the selected Alt's calibration.</li>
+        <li><strong>Add instrumentation:</strong> log autocomplete acceptances (going to zero is the proof), template sends, chip clicks, plain-text queries, and template <em>abandons</em>. Two weeks of behavior tells you which templates earn their slot.</li>
+      </ul>
+      <p><strong>Don't do this yet:</strong></p>
+      <ul>
+        <li>Don't promote templates to a "Sabu Sentences" universal form replacement until the chat-triggered version proves out. The reframe is exciting but speculative; the kanban / leniency slider / JD editor are documented locked spec.</li>
+        <li>Don't kill the chat surface for creation entirely. The cross-role late-night-thought-from-Slack use case is real. Chat earns its keep for cross-cutting actions even if per-page work belongs on the page.</li>
+      </ul>
+      <p><strong>Address the structural issues in parallel:</strong> resolve the still-open Sabu/Alt naming collision (templates that say "Sounds like you want to…" should be the Alt speaking, not a system message), and pick Sabu's primary persona for v1 (triage co-pilot is the defensible choice).</p>
+    </div>
+
+    <div class="one-thing">
+      <div class="label">The one thing to do first</div>
+      <div class="body">Wire intent detection into Alt's reply, then ship the template render inline as part of that reply. It's the single change that simultaneously kills the autocomplete-as-discovery problem, keeps the template's value, makes Sabu speak as the Alt instead of as a CLI, and gives you the cleanest signal in instrumentation: did the template render → did the user fill it → did they send.</div>
+    </div>
+  </div>
+
+  <h2>Advisor responses</h2>
+
+  <details>
+    <summary>The Contrarian <span class="badge tag-contrarian">Kill templates</span></summary>
+    <div class="body">
+      <p>This pattern is a trap dressed up as helpfulness. Three fatal flaws:</p>
+      <p><strong>The form pretends to be chat but is actually a worse form.</strong> A non-technical founder typing "create a role" now faces a sentence-shaped questionnaire with seven brackets. Not conversation — a fill-in-the-blank quiz where the blanks are hidden inside prose. A real form on the Roles page would be faster, scannable, tab-navigable.</p>
+      <p><strong>Autocomplete teaches a vocabulary the Alt was supposed to make unnecessary.</strong> The previous council told you the Alt should understand intent. You responded by shipping 12 magic verbs and a Tab-to-accept ritual. "Pass on" autocompletes; "skip" doesn't. "Remember" works; "note that" doesn't. Slash commands without the discoverability of a slash.</p>
+      <p><strong>Two surfaces, same pattern, different muscle memory.</strong> Cmd+K overlay AND Chat tab both doing autocomplete+templates means the founder has to remember which one she's in.</p>
+      <p><strong>Predicted failure:</strong> Someone types "shortlist Tom" expecting it to just happen. Instead a template appears asking for role, confidence, reason. They close it. They never trust Sabu again. The template added friction to the one case where intent was already clear.</p>
+      <p>Kill the templates. Keep autocomplete only if it's invisible suggestion, not Tab-required ritual.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>The First Principles Thinker <span class="badge tag-firstprinciples">Wrong frame</span></summary>
+    <div class="body">
+      <p>You're asking the wrong question. The real question isn't "is this autocomplete + template pattern good?" It's "why does a hiring dashboard for non-technical founders have a command palette at all?"</p>
+      <p>Cmd+K is a power-user convention. Your users are founders who hire maybe 4 people a quarter. They will not memorize 12 verbs. They will not develop muscle memory for "crea→Tab→fill form." The frequency floor for keyboard-driven interfaces is daily use; your users aren't there.</p>
+      <p>The interactive template is a form, disguised as a sentence, gated behind a typed verb, hidden behind autocomplete discovery. Three layers of indirection to reach a "Create Role" form that should be one button on the Roles page.</p>
+      <p>What's actually working: the suggestion chips in the empty state. They teach capability without requiring discovery. "Why did you flag Tom?" is a question only an Alt can answer — that's the chat surface earning its keep.</p>
+      <p>Kill the autocomplete verbs. Kill the inline template forms. Keep Sabu for things that are genuinely conversational. Move "create role" back to a button. Stop building IDE features for people who don't use IDEs.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>The Expansionist <span class="badge tag-expansionist">Promote to primitive</span></summary>
+    <div class="body">
+      <p>You're sitting on something much bigger than a chat input. You've accidentally invented the primary creation surface for the entire product.</p>
+      <p>What you've actually built: a structured-yet-natural way to generate a complex object (a role, a candidate filter, a memory) by filling in semantic blanks. That's not a chat affordance. That's a replacement for forms. Founders hate forms. They love sentences they can edit.</p>
+      <p><strong>The bigger play:</strong> kill the Role tab's form fields. Creating a role IS the templated sentence. Editing a role is the same sentence rendered back. The JD modal? Same pattern. Eval criteria? "Candidates [must have] [3+ years React]." Now your whole product speaks one consistent grammar.</p>
+      <p><strong>Second hidden upside:</strong> these templates are training data goldmines. Every dropdown selection labels what the founder means by "senior" or "draft" or "prioritize." Six weeks in, "Create a role" pre-fills with Sashank as manager. The Alt watches you fill blanks and learns your taste in structured form.</p>
+      <p><strong>Third:</strong> templates are shareable artifacts. A founder can send another founder "the sentence I use to create senior IC roles." Viral loop inside a B2B tool.</p>
+      <p>Promote them to a first-class primitive — "Sabu Sentences" — usable anywhere a form exists today.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>The Outsider <span class="badge tag-outsider">Confuses cold</span></summary>
+    <div class="body">
+      <p>I'm a founder. I run a small team. I know how to use Slack and Google Docs. Here's what hits me cold:</p>
+      <p>The autocomplete confuses me first. I type "crea" and grey text appears. Is that a typo correction? An ad? Tab to accept — I don't know that. We hit Tab to move between form fields. Why is a chat box behaving like code editor autocomplete?</p>
+      <p>The 12 verbs problem: I don't know there are 12. I'll type "kill the role" and get nothing. Then "stop the role" — nothing. Now I think the chat is broken or stupid. The whole promise of chat is "say it however you want."</p>
+      <p>The form-in-a-sentence thing: clever, and I genuinely mean that. But — when I click [Senior Product Designer], does the dropdown cover the next field? On my laptop touchpad, am I going to mis-click [Draft] when I meant [Remote]? Mobile? Forget it. Also: who decided "Product" was my department? If I didn't say it and the system guessed, I will absolutely send it without reading and end up with a Product role I meant to put in Design.</p>
+      <p>The chips in the empty state are the only part I'd actually use. They tell me what this thing can do.</p>
+      <p>One question, honestly: why is this a chat at all? It looks like a form pretending to be a conversation pretending to be a form.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>The Executor <span class="badge tag-executor">Flip the trigger</span></summary>
+    <div class="body">
+      <p>Monday morning reality check: you've built three patterns. One earns its keep, one is a liability, one is a science project.</p>
+      <p><strong>KILL the 12-verb autocomplete.</strong> Founders won't learn a verb vocabulary. They type "can you reject tom" not "reject tom." Ghost-text trains a CLI mental model on people who chose chat specifically because they don't want a CLI. You're competing with the LLM's own intent parsing — and losing.</p>
+      <p><strong>KEEP interactive templates, but flip the trigger.</strong> The form-in-a-sentence pattern is genuinely good. Don't gate it behind autocomplete. Trigger it from: (a) the suggestion chips, (b) Alt's own response when intent is detected ("Sounds like you want to create a role — fill this in?"), (c) a "/" menu for power users. Same component, three entry points matching how people actually arrive at intent.</p>
+      <p><strong>KEEP the chips, expand them.</strong> Make them context-aware per page. Where Sabu feels like a colleague vs. a search box.</p>
+      <p>Monday plan:</p>
+      <ol>
+        <li>Rip out ghost-text autocomplete (1 day, removes a whole subsystem)</li>
+        <li>Wire chips → template forms directly (½ day)</li>
+        <li>Add intent-detection in Alt's reply that offers the template (1-2 days)</li>
+        <li>Keep "/" as a power-user escape hatch, no marketing</li>
+      </ol>
+      <p>Ship in a week. Watch which templates actually get used. Cut unused ones in two weeks.</p>
+    </div>
+  </details>
+
+  <h2>Peer review highlights</h2>
+
+  <details>
+    <summary>Reviewer 1 <span class="badge tag-reviewer">E strongest · C blind</span></summary>
+    <div class="body">
+      <p><strong>Strongest: E.</strong> Only response that separates the three patterns by verdict instead of nuking them as a bundle. Ships a sequenced plan with day estimates and identifies the real bug — autocomplete competes with the LLM's intent parser and loses.</p>
+      <p><strong>Blind: C.</strong> "Sabu Sentences as universal form replacement" ignores that templates ARE forms with worse affordances. Assumes viral founder-to-founder sharing in a 4-hires-a-quarter market.</p>
+      <p><strong>All missed:</strong> the Alt's identity contract. Per CLAUDE.md, "the agent IS the Alt." None framed the question as: does this pattern make Sabu more Alt-like or less?</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>Reviewer 2 <span class="badge tag-reviewer">C strongest · B blind</span></summary>
+    <div class="body">
+      <p><strong>Strongest: C.</strong> Only response that reframes the artifact as an opportunity instead of a defect. Templates-as-shareable-primitives compounds: form replacement, training data, viral loop.</p>
+      <p><strong>Blind: B.</strong> Reflexive "kill the command palette" misses that the target user is a founder juggling 5 roles across tabs — a cross-cutting input surface has real value. "Just put a button on Roles" doesn't help when you're creating a role from a Slack thought at 11pm.</p>
+      <p><strong>All missed:</strong> the Alt identity question. Every response evaluated this as generic chat UX instead of asking whether these patterns make the Alt more like the founder over time.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>Reviewer 3 <span class="badge tag-reviewer">E strongest · C blind</span></summary>
+    <div class="body">
+      <p><strong>Strongest: E.</strong> The only response that distinguishes the three patterns and prescribes per-pattern action. A, B, D collapse into "kill it all"; C floats off into a viral-loop fantasy.</p>
+      <p><strong>Blind: C.</strong> Visionary but ignores the user — non-technical founders want a colleague, not a new primitive to learn. Hand-waves the viral angle in a single-tenant admin tool where there's no one to share with.</p>
+      <p><strong>All missed:</strong> chat surface itself shouldn't host create/shortlist. AGENTIC.md spec lists three agent surfaces (interruptive/ambient/background) — chat isn't one. Templates reinvent the inline-confirmation pattern in the wrong surface.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>Reviewer 4 <span class="badge tag-reviewer">C strongest · B blind</span></summary>
+    <div class="body">
+      <p><strong>Strongest: C.</strong> Only response that reframes failure as discovery. The team accidentally prototyped a structured-creation primitive that could replace forms product-wide.</p>
+      <p><strong>Blind: B.</strong> Reflexively kills the command palette. The team built Cmd+K because forms feel heavy for non-technical founders. "Just use a button" misses that the product's whole pitch is conversational delegation.</p>
+      <p><strong>All missed:</strong> persona context. Non-technical founders on mobile, mid-context-switch, often first-time hirers. None tested against that persona's real session. Also missed: pre-screening implications of training Sabu on founder phrasings — those phrasings could leak into candidate-facing interviews.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>Reviewer 5 <span class="badge tag-reviewer">C strongest · B blind</span></summary>
+    <div class="body">
+      <p><strong>Strongest: C.</strong> Only response that reframes instead of just critiquing. Notices the team accidentally built a structured-input primitive that solves VIBEcheck's actual core problem — form-heavy creation flows.</p>
+      <p><strong>Blind: B.</strong> "Why a command palette at all, just use buttons" is the most confidently wrong take. Misses that VIBEcheck's users are non-technical founders drowning in cross-role triage. Also ignores Sabu's pre-existing role as the proactive nudge surface.</p>
+      <p><strong>All missed:</strong> who Sabu is for across the session. A founder mid-review needs different affordances than a founder onboarding. The autocomplete/template/chip debate is moot until you decide whether Sabu is a triage co-pilot, a creation tool, or an onboarding guide — it can't be all three with one input.</p>
+    </div>
+  </details>
+
+  <footer>
+    Generated 2026-05-01 · Council inputs: 5 advisors, 5 peer reviewers, 1 chairman synthesis · Transcript: <code>council-transcript-20260501-052800.md</code>
+  </footer>
+</div>
+</body>
+</html>
