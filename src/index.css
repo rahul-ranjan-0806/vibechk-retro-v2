@@ -111,6 +111,15 @@ body {
 h1, h2, h3, h4 { letter-spacing: -0.01em; color: hsl(var(--foreground)); }
 h1 { letter-spacing: -0.02em; }
 
+/* Dark mode: drop heading weights one step. Bold (700) reads heavier on a
+   dark surface than on a light one — semibold/medium gives the same visual
+   weight without feeling shouty. Targets the type-scale tokens so any
+   text-display/h1/h2/h3 (page titles + headings) is covered. */
+.dark .text-display { font-weight: 600; }
+.dark .text-h1      { font-weight: 600; }
+.dark .text-h2      { font-weight: 500; }
+.dark .text-h3      { font-weight: 500; }
+
 /* Retro pixel font for game elements */
 .font-pixel { font-family: 'DM Mono', monospace; letter-spacing: 0.04em; }
 
@@ -313,13 +322,65 @@ h1 { letter-spacing: -0.02em; }
    Container opacity ~0.5 so per-cell peak (~0.10) reads ≈ 0.05 visible. */
 .alt-overlay-pixel-grid {
   /* Mask ends at ~65% — by the point the progressive blur becomes
-     imperceptible, the grid is also fully gone. */
-  -webkit-mask-image: linear-gradient(to top, black 0%, transparent 65%);
-  mask-image: linear-gradient(to top, black 0%, transparent 65%);
+     imperceptible, the grid is also fully gone. Multi-stop cubic curve
+     keeps 8-bit alpha steps below the noise floor (no bands). */
+  -webkit-mask-image: linear-gradient(
+    to top,
+    rgba(0,0,0,1)    0%,
+    rgba(0,0,0,0.98) 12%,
+    rgba(0,0,0,0.92) 22%,
+    rgba(0,0,0,0.80) 31%,
+    rgba(0,0,0,0.62) 39%,
+    rgba(0,0,0,0.42) 46%,
+    rgba(0,0,0,0.24) 52%,
+    rgba(0,0,0,0.10) 58%,
+    rgba(0,0,0,0.03) 62%,
+    transparent      65%
+  );
+  mask-image: linear-gradient(
+    to top,
+    rgba(0,0,0,1)    0%,
+    rgba(0,0,0,0.98) 12%,
+    rgba(0,0,0,0.92) 22%,
+    rgba(0,0,0,0.80) 31%,
+    rgba(0,0,0,0.62) 39%,
+    rgba(0,0,0,0.42) 46%,
+    rgba(0,0,0,0.24) 52%,
+    rgba(0,0,0,0.10) 58%,
+    rgba(0,0,0,0.03) 62%,
+    transparent      65%
+  );
   image-rendering: pixelated;
   image-rendering: crisp-edges; /* Safari fallback */
   opacity: 0.5;
   will-change: opacity;
+}
+
+/* Noise dither layer — sibling of the canvas inside PixelGridBackdrop.
+   Same mask + soft-light blend kills any residual banding without any
+   runtime cost (decoded once, GPU-composited tile). */
+.alt-overlay-pixel-grid-dither {
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(
+    to top,
+    rgba(0,0,0,1) 0%,
+    rgba(0,0,0,0.92) 30%,
+    rgba(0,0,0,0.62) 45%,
+    rgba(0,0,0,0.24) 55%,
+    transparent      65%
+  );
+  mask-image: linear-gradient(
+    to top,
+    rgba(0,0,0,1) 0%,
+    rgba(0,0,0,0.92) 30%,
+    rgba(0,0,0,0.62) 45%,
+    rgba(0,0,0,0.24) 55%,
+    transparent      65%
+  );
+  opacity: 0.18;
+  mix-blend-mode: soft-light;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.6 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  background-size: 160px 160px;
 }
 
 /* White shimmer sweep — bottom → top, fires once per send */

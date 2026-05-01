@@ -228,6 +228,12 @@ export function PixelGridBackdrop({ open, closing, calm }: Props) {
         aria-hidden
       />
 
+      {/* Noise dither overlay — kills mask gradient banding without runtime cost */}
+      <div
+        className={`absolute inset-0 alt-overlay-pixel-grid-dither ${blurClass}`}
+        aria-hidden
+      />
+
       {open && !closing && controlsOpen && (
         <div className="absolute top-4 right-4 z-[70] w-[260px] bg-popover/95 backdrop-blur-md border border-border rounded-md shadow-modal text-foreground">
           {/* Header */}
