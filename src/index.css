@@ -163,27 +163,42 @@ h1 { letter-spacing: -0.02em; }
 .retro-input:focus { outline: none; border-color: var(--retro-green); }
 .retro-input::placeholder { color: #556; }
 
-/* ── Theme transition: 60° directional wipe ────────────────── */
+/* ── Theme transition: gradient mask wipe (left → right) ────── */
+/* The new theme reveals through a soft gradient mask that slides across
+   the viewport, so the light→dark transition has a feathered edge rather
+   than a hard clip. Mask is 3× viewport width; visible portion is a
+   black→transparent gradient that travels from right to left. */
+
 ::view-transition-old(root),
 ::view-transition-new(root) {
-  animation-duration: 0.45s;
+  animation-duration: 0.55s;
   animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* Mask wipe: left → right */
-
-::view-transition-new(root) {
-  animation-name: theme-mask-lr;
-  mix-blend-mode: normal;
 }
 
 ::view-transition-old(root) {
   animation: none;
 }
 
-@keyframes theme-mask-lr {
-  from { clip-path: inset(0 100% 0 0); }
-  to   { clip-path: inset(0 0 0 0); }
+::view-transition-new(root) {
+  animation-name: theme-mask-slide;
+  mix-blend-mode: normal;
+  -webkit-mask-image: linear-gradient(to right, black 33%, transparent 67%);
+  mask-image: linear-gradient(to right, black 33%, transparent 67%);
+  -webkit-mask-size: 300% 100%;
+  mask-size: 300% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+}
+
+@keyframes theme-mask-slide {
+  from {
+    -webkit-mask-position: 100% 0;
+    mask-position: 100% 0;
+  }
+  to {
+    -webkit-mask-position: 0% 0;
+    mask-position: 0% 0;
+  }
 }
 
 /* ── Memory modal pop ──────────────────────────────────────── */
