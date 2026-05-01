@@ -62,15 +62,18 @@ export function PixelGridBackdrop({ open, closing, calm }: Props) {
 
   // ── Dev controls ─────────────────────────────────────────────
   const [controlsOpen, setControlsOpen] = useState(false)
-  const [speed, setSpeed] = useState(1)        // 0.25× – 4×
+  const [speed, setSpeed] = useState(1)        // 0.1× – 12×
+  const [density, setDensity] = useState(1)    // 0.25× – 5× (scales spawnRate + budget)
   const [seed, setSeed] = useState(20260502)
   const [cellSize, setCellSize] = useState(32) // 8 – 64 px
 
   // Keep refs in sync so the rAF loop reads latest values without restarting
   const speedRef = useRef(speed)
+  const densityRef = useRef(density)
   const cellSizeRef = useRef(cellSize)
   const rngRef = useRef(makePrng(seed))
   useEffect(() => { speedRef.current = speed }, [speed])
+  useEffect(() => { densityRef.current = density }, [density])
   useEffect(() => { cellSizeRef.current = cellSize }, [cellSize])
   useEffect(() => {
     rngRef.current = makePrng(seed)
@@ -80,13 +83,11 @@ export function PixelGridBackdrop({ open, closing, calm }: Props) {
     settingsRef.current = calm ? CALM : NORMAL
   }, [calm])
 
-  // ── Hotkey H — toggle controls (only when Sabu is open) ──────
+  // ── Hotkey Cmd+/ / Ctrl+/ — toggle controls (only when Sabu is open) ──
   useEffect(() => {
     if (!open || closing) return
     const handler = (e: KeyboardEvent) => {
-      if (e.key !== "h" && e.key !== "H") return
-      const tag = (document.activeElement?.tagName || "").toLowerCase()
-      if (tag === "input" || tag === "textarea" || (document.activeElement as HTMLElement | null)?.isContentEditable) return
+      if (e.key !== "/" || !(e.metaKey || e.ctrlKey)) return
       e.preventDefault()
       setControlsOpen(c => !c)
     }
@@ -132,12 +133,16 @@ export function PixelGridBackdrop({ open, closing, calm }: Props) {
       lastSpawn = now
       const s = settingsRef.current
       const sp = speedRef.current
+      const dn = densityRef.current
       const rng = rngRef.current
-      spawnAccumulator += dt * s.spawnRate * sp
+      // Density scales BOTH spawn rate (more cells lit per second) and
+      // budget (more cells lit at once). The combination = brighter grid.
+      spawnAccumulator += dt * s.spawnRate * sp * dn
       const toSpawn = Math.floor(spawnAccumulator)
       spawnAccumulator -= toSpawn
+      const budget = Math.round(s.budget * dn)
       const tw = twinklesRef.current
-      for (let i = 0; i < toSpawn && tw.length < s.budget; i++) {
+      for (let i = 0; i < toSpawn && tw.length < budget; i++) {
         tw.push({
           x: Math.floor(rng() * cellsW),
           y: Math.floor(rng() * cellsH),
@@ -189,7 +194,7 @@ export function PixelGridBackdrop({ open, closing, calm }: Props) {
           <div className="flex items-center justify-between px-3.5 h-9 border-b border-border">
             <p className="text-[11px] font-semibold tracking-wider text-muted-foreground">PIXEL GRID</p>
             <div className="flex items-center gap-1">
-              <kbd className="font-sans text-[10px] px-1.5 py-0.5 rounded-sm border border-border bg-muted/60 text-muted-foreground leading-none">H</kbd>
+              <kbd className="font-sans text-[10px] px-1.5 py-0.5 rounded-sm border border-border bg-muted/60 text-muted-foreground leading-none">⌘ /</kbd>
               <button
                 onClick={() => setControlsOpen(false)}
                 className="w-5 h-5 flex items-center justify-center rounded-sm text-muted-foreground hover:text-foreground hover:bg-muted/60"
@@ -208,8 +213,20 @@ export function PixelGridBackdrop({ open, closing, calm }: Props) {
                 <span className="tabular-nums text-foreground">{speed.toFixed(2)}×</span>
               </div>
               <input
-                type="range" min={0.25} max={4} step={0.05}
+                type="range" min={0.1} max={12} step={0.1}
                 value={speed} onChange={e => setSpeed(Number(e.target.value))}
+                className="w-full h-1 accent-foreground"
+              />
+            </label>
+
+            <label className="flex flex-col gap-1.5">
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-muted-foreground">Density</span>
+                <span className="tabular-nums text-foreground">{density.toFixed(2)}×</span>
+              </div>
+              <input
+                type="range" min={0.25} max={5} step={0.05}
+                value={density} onChange={e => setDensity(Number(e.target.value))}
                 className="w-full h-1 accent-foreground"
               />
             </label>
