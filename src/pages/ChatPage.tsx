@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from "react"
 import { motion, AnimatePresence } from "motion/react"
 import { PixelSprite } from "@/components/PixelSprite"
-import { PixelGridBackdrop } from "@/components/PixelGridBackdrop"
 import { HighlightedText } from "@/components/chat/KeywordHighlighter"
 import { SlashCommandPalette, type SlashCommand } from "@/components/chat/SlashCommandPalette"
 import { ActionDropdown, detectAction, getItemsForAction, type ActionTrigger, type DropdownItem } from "@/components/chat/ActionDropdown"
@@ -466,11 +465,7 @@ export function ChatPage() {
   }
 
   return (
-    <div className="h-full flex overflow-hidden bg-background relative">
-      {/* Subtle blinking pixel grid — same component as the Sabu overlay,
-          shares persisted speed/density/seed/cell-size via localStorage. */}
-      <PixelGridBackdrop open={true} closing={false} calm={hasMessages} />
-
+    <div className="h-full flex overflow-hidden bg-background">
       {/* Main chat area */}
       <div className="flex-1 flex flex-col min-w-0 relative">
         <AnimatePresence mode="wait">
