@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react"
 import { CANDIDATES, ROLES, ALTS_MINI, roleTitle } from "@/lib/mockData"
+import { AnimatedSelect } from "@/components/ui/animated-select"
 
 // ── Decision categories ────────────────────────────────────────
 
@@ -297,16 +298,24 @@ export function DecisionsLog({ open, onClose, onNavigateToCandidate, onNavigateT
         <div className="shrink-0 px-5 py-3 flex items-center gap-3 text-xs">
           <div className="flex items-center gap-1.5">
             <span className="text-muted-foreground">Alt</span>
-            <select value={altFilter} onChange={e => setAltFilter(e.target.value)} className="bg-background border border-border rounded-sm px-2 py-0.5 outline-none focus:border-foreground/40">
-              <option value="all">All</option>
-              {ALTS_MINI.map(a => <option key={a.id} value={a.id}>{a.name}</option>)}
-            </select>
+            <AnimatedSelect
+              size="sm"
+              value={altFilter}
+              onChange={setAltFilter}
+              options={[
+                { value: "all", label: "All" },
+                ...ALTS_MINI.map(a => ({ value: a.id, label: a.name })),
+              ]}
+            />
           </div>
           <div className="flex items-center gap-1.5">
             <span className="text-muted-foreground">Time</span>
-            <select value={timeFilter} onChange={e => setTimeFilter(e.target.value as TimeWindow)} className="bg-background border border-border rounded-sm px-2 py-0.5 outline-none focus:border-foreground/40">
-              {(Object.keys(TIME_LABELS) as TimeWindow[]).map(t => <option key={t} value={t}>{TIME_LABELS[t]}</option>)}
-            </select>
+            <AnimatedSelect<TimeWindow>
+              size="sm"
+              value={timeFilter}
+              onChange={setTimeFilter}
+              options={(Object.keys(TIME_LABELS) as TimeWindow[]).map(t => ({ value: t, label: TIME_LABELS[t] }))}
+            />
           </div>
           {(altFilter !== "all" || timeFilter !== "all" || categoryFilter !== "all") && (
             <button
