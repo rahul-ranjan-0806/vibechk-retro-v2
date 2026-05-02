@@ -1169,10 +1169,30 @@ function AltDetail({ alt }: { alt: AltData }) {
     : "Opens interview in new tab"
 
   return (
-    <div className="flex-1 flex overflow-hidden">
-      {/* LEFT COLUMN: Sprite card */}
-      <div className="shrink-0 overflow-y-auto border-r border-border/40" style={{ width: 420 }}>
-        <div className="px-10 pt-16 pb-24 flex flex-col gap-7">
+    <div className="h-full flex flex-col overflow-hidden">
+      <div className="flex-1 overflow-y-auto">
+        <div className="max-w-page-wide mx-auto px-12 pt-16 pb-24">
+
+          {/* ── Page title ──────────────────────────────── */}
+          <div className="flex items-center gap-3 mb-2">
+            <h1 className="text-h1">{alt.name}</h1>
+            <StatusPill status={alt.status === "active" ? "success" : "neutral"}>
+              {alt.status === "active" ? "Active" : "Setup"}
+            </StatusPill>
+          </div>
+          <div className="flex items-center gap-2 mb-12">
+            <p className="text-sm text-muted-foreground">{alt.owner}</p>
+            <span className="text-sm text-muted-foreground">·</span>
+            <div className="w-32 h-1.5 rounded-full bg-muted overflow-hidden">
+              <div className="h-full rounded-full bg-foreground transition-all" style={{ width: `${alt.completeness}%` }} />
+            </div>
+            <span className="text-sm text-muted-foreground tabular-nums">{alt.completeness}% trained</span>
+          </div>
+
+          {/* ── Two-column body ─────────────────────────── */}
+          <div className="flex gap-10">
+            {/* LEFT COLUMN: Sprite card */}
+            <div className="shrink-0 w-[420px] flex flex-col gap-7">
           {/* Big sprite */}
           <div className="relative border border-border rounded-lg overflow-hidden bg-[#e8eaef]" style={{ height: 500 }}>
             <div className="absolute top-3 left-3 z-10">
@@ -1194,24 +1214,6 @@ function AltDetail({ alt }: { alt: AltData }) {
                   <span className="text-xs text-muted-foreground/60">Upload a photo to generate sprite</span>
                 </div>
               )}
-            </div>
-          </div>
-
-          {/* Alt identity */}
-          <div>
-            <div className="flex items-center gap-2.5 mb-1.5">
-              <h2 className="text-display">{alt.name}</h2>
-              <StatusPill status={alt.status === "active" ? "success" : "neutral"}>
-                {alt.status === "active" ? "Active" : "Setup"}
-              </StatusPill>
-            </div>
-            <p className="text-xs text-muted-foreground mb-2">{alt.owner}</p>
-            <div className="flex items-center gap-2">
-              <span className="text-xs text-muted-foreground">Trained</span>
-              <div className="w-32 h-1.5 rounded-full bg-muted overflow-hidden">
-                <div className="h-full rounded-full bg-foreground transition-all" style={{ width: `${alt.completeness}%` }} />
-              </div>
-              <span className="text-xs text-muted-foreground tabular-nums">{alt.completeness}%</span>
             </div>
           </div>
 
@@ -1262,31 +1264,28 @@ function AltDetail({ alt }: { alt: AltData }) {
               <span className="text-sm">Configure</span>
             </button>
           </div>
-        </div>
-      </div>
-
-      {/* RIGHT COLUMN: Memories & Sources */}
-      <div className="flex-1 flex flex-col overflow-hidden min-w-0">
-        {/* Explore memories button */}
-        <div className="shrink-0 px-10 pt-16 pb-6">
-          <button
-            onClick={openMapModal}
-            className="w-full group relative overflow-hidden rounded-lg border border-border bg-card hover:bg-muted/30 transition-colors"
-            style={{ height: 160 }}
-          >
-            <div className="absolute inset-0 flex flex-col items-center justify-center gap-2">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-muted-foreground group-hover:text-foreground transition-colors">
-                <circle cx="12" cy="12" r="2" /><circle cx="5" cy="8" r="1.5" /><circle cx="19" cy="8" r="1.5" /><circle cx="7" cy="18" r="1.5" /><circle cx="17" cy="18" r="1.5" />
-                <path d="M7 9.5l3.5 1.5M14.5 11l3-2M8 16.5l2.5-3.5M15 13.5l1 3" strokeOpacity="0.4" />
-              </svg>
-              <span className="text-sm font-medium text-muted-foreground group-hover:text-foreground transition-colors">Explore memories</span>
-              <span className="text-xs text-muted-foreground">{MOCK_MEMORIES.length} memories mapped</span>
             </div>
-          </button>
-        </div>
 
-        {/* Scrollable content */}
-        <div className="flex-1 overflow-y-auto px-10 pb-16">
+            {/* RIGHT COLUMN: Memories & Sources */}
+            <div className="flex-1 min-w-0 flex flex-col gap-10">
+              {/* Explore memories button */}
+              <button
+                onClick={openMapModal}
+                className="w-full group relative overflow-hidden rounded-lg border border-border bg-card hover:bg-muted/30 transition-colors"
+                style={{ height: 160 }}
+              >
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-2">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-muted-foreground group-hover:text-foreground transition-colors">
+                    <circle cx="12" cy="12" r="2" /><circle cx="5" cy="8" r="1.5" /><circle cx="19" cy="8" r="1.5" /><circle cx="7" cy="18" r="1.5" /><circle cx="17" cy="18" r="1.5" />
+                    <path d="M7 9.5l3.5 1.5M14.5 11l3-2M8 16.5l2.5-3.5M15 13.5l1 3" strokeOpacity="0.4" />
+                  </svg>
+                  <span className="text-sm font-medium text-muted-foreground group-hover:text-foreground transition-colors">Explore memories</span>
+                  <span className="text-xs text-muted-foreground">{MOCK_MEMORIES.length} memories mapped</span>
+                </div>
+              </button>
+
+              {/* Memories + sources content */}
+              <div>
           {/* Top memories */}
           {topMemories.length > 0 && (
             <div className="mb-10">
@@ -1425,6 +1424,9 @@ function AltDetail({ alt }: { alt: AltData }) {
             </div>
           )
         })()}
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Modals & Sheets */}
@@ -1454,11 +1456,5 @@ export function AltsPage({ onEntityChange, selectedAltId }: { onEntityChange?: (
     onEntityChange?.({ type: "alt", name: selectedAlt.name, meta: { id: selectedAlt.id, status: selectedAlt.status, completeness: String(selectedAlt.completeness) } })
   }, [selectedId])
 
-  return (
-    <div className="h-full flex overflow-hidden bg-background">
-      <div className="flex-1 overflow-hidden flex flex-col">
-        <AltDetail key={selectedId} alt={selectedAlt} />
-      </div>
-    </div>
-  )
+  return <AltDetail key={selectedId} alt={selectedAlt} />
 }

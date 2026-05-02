@@ -97,31 +97,11 @@ export function HomePage({ onNavigate, onOpenOverlay, onNavigateToCandidate, onN
 
   return (
     <div className="h-full flex flex-col overflow-hidden">
-      {/* Notion-style breadcrumb header */}
-      <div className="shrink-0 h-11 flex items-center justify-between px-3 border-b border-border/40">
-        <div className="flex items-center gap-1.5 text-[13px] text-muted-foreground">
-          <span className="hover:bg-muted px-1.5 py-0.5 rounded-sm cursor-default">Home</span>
-        </div>
-        <div className="flex items-center gap-1 text-xs text-muted-foreground">
-          <span>Edited just now</span>
-          <button className="px-2 py-1 hover:bg-muted rounded-sm">Share</button>
-          <button className="w-7 h-7 flex items-center justify-center hover:bg-muted rounded-sm" title="Comments">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-          </button>
-          <button className="w-7 h-7 flex items-center justify-center hover:bg-muted rounded-sm" title="Favorite">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-          </button>
-          <button className="w-7 h-7 flex items-center justify-center hover:bg-muted rounded-sm" title="More">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg>
-          </button>
-        </div>
-      </div>
-
       <div className="flex-1 overflow-y-auto">
         <div className="max-w-page-wide mx-auto px-12 pt-16 pb-24">
 
           {/* ── Page title ──────────────────────────────── */}
-          <h1 className="text-display mb-2">Hiring Triage</h1>
+          <h1 className="text-h1 mb-2">Hiring Triage</h1>
           <p className="text-sm text-muted-foreground mb-12">Sashank's Alt · since yesterday</p>
 
           {/* ── Alt summary ──────────────────────────────── */}
@@ -221,7 +201,7 @@ export function HomePage({ onNavigate, onOpenOverlay, onNavigateToCandidate, onN
                             <p className="text-sm text-foreground flex-1 truncate">{item.title}</p>
                             {item.ctaTarget && (
                               <button onClick={() => onNavigate(item.ctaTarget!)}
-                                className="text-xs text-muted-foreground hover:text-foreground transition-colors shrink-0">
+                                className="text-xs px-2 py-0.5 rounded-sm border border-border text-muted-foreground hover:text-foreground hover:border-foreground/40 hover:bg-muted/40 transition-colors shrink-0">
                                 {item.cta}
                               </button>
                             )}

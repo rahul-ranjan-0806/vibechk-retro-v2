@@ -146,26 +146,26 @@ export function ActionDropdown({ items, onSelect, onClose, visible, filter }: Ac
 
   return (
     <div ref={listRef}
-      className="absolute bottom-full left-0 right-0 mb-2 bg-background border border-border rounded-lg shadow-lg overflow-hidden z-50"
+      className="absolute bottom-full left-0 right-0 mb-2 border border-border rounded-md shadow-lg overflow-hidden z-50 bg-gradient-to-b from-background via-background to-muted dark:from-popover dark:via-popover dark:to-muted"
     >
-      <div className="max-h-56 overflow-y-auto">
+      <div className="max-h-56 overflow-y-auto p-1">
         {filtered.map((item, i) => (
           <button
             key={item.id}
             ref={i === activeIndex ? activeRef : undefined}
             onClick={() => onSelect(item)}
             onMouseEnter={() => setActiveIndex(i)}
-            className={`w-full flex items-center gap-3 px-3 py-2.5 text-left transition-colors ${
-              i === activeIndex ? "bg-muted/60" : "hover:bg-muted/30"
-            } ${i > 0 ? "border-t border-border/50" : ""}`}
+            className={`w-full flex items-center gap-2 px-2 py-1.5 rounded-sm text-left transition-colors ${
+              i === activeIndex ? "bg-accent text-accent-foreground" : "hover:bg-muted/40"
+            }`}
           >
-            <span className="w-5 h-5 flex items-center justify-center text-xs text-muted-foreground shrink-0">
+            <span className="w-4 h-4 flex items-center justify-center text-xs text-muted-foreground shrink-0">
               {item.icon}
             </span>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium truncate">{item.label}</p>
+              <p className="text-xs font-medium truncate">{item.label}</p>
               {item.detail && (
-                <p className="text-xs text-muted-foreground truncate">{item.detail}</p>
+                <p className="text-[11px] text-muted-foreground truncate">{item.detail}</p>
               )}
             </div>
             {i === activeIndex && (
@@ -174,7 +174,7 @@ export function ActionDropdown({ items, onSelect, onClose, visible, filter }: Ac
           </button>
         ))}
       </div>
-      <div className="px-3 py-1.5 border-t border-border bg-muted/20 flex items-center gap-3 text-[11px] text-muted-foreground">
+      <div className="px-2.5 py-1.5 border-t border-border bg-muted/20 flex items-center gap-3 text-[11px] text-muted-foreground">
         <span>↑↓ navigate</span>
         <span>↵ select</span>
         <span>esc dismiss</span>

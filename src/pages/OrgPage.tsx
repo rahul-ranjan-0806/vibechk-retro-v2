@@ -31,8 +31,9 @@ const HIRING_LOCATIONS = [
 
 export function OrgPage() {
   return (
-    <div className="h-full overflow-y-auto">
-      <div className="max-w-page mx-auto px-12 pt-16 pb-24 flex flex-col gap-12">
+    <div className="h-full flex flex-col overflow-hidden">
+      <div className="flex-1 overflow-y-auto">
+        <div className="max-w-page-wide mx-auto px-12 pt-16 pb-24 flex flex-col gap-12">
 
         {/* Hero */}
         <section className="flex items-start gap-5">
@@ -47,7 +48,7 @@ export function OrgPage() {
                 Preview page ↗
               </button>
             </div>
-            <h1 className="text-display mb-2">Alt Inc.</h1>
+            <h1 className="text-h1 mb-2">Alt Inc.</h1>
             <p className="text-sm leading-relaxed text-foreground max-w-2xl">
               We're building AI avatars that scale founder taste. Our Alts conduct pre-screening conversations
               so small teams can hire like they have a recruiting org behind them — without losing the signal
@@ -212,6 +213,7 @@ export function OrgPage() {
           </div>
         </section>
 
+        </div>
       </div>
     </div>
   )

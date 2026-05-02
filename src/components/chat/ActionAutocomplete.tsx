@@ -77,8 +77,8 @@ export function ActionAutocomplete({ input, onAccept, onDismiss, visible }: Acti
   const typed = input.trim()
 
   return (
-    <div className="absolute bottom-full left-0 right-0 mb-2 bg-background border border-border rounded-lg shadow-lg overflow-hidden z-50">
-      <div className="max-h-48 overflow-y-auto">
+    <div className="absolute bottom-full left-0 right-0 mb-2 border border-border rounded-md shadow-lg overflow-hidden z-50 bg-gradient-to-b from-background via-background to-muted dark:from-popover dark:via-popover dark:to-muted">
+      <div className="max-h-48 overflow-y-auto p-1">
         {suggestions.map((s, i) => {
           // Split the suggestion into typed (dimmed) and remaining (highlighted) parts
           const matchLen = typed.length
@@ -91,24 +91,19 @@ export function ActionAutocomplete({ input, onAccept, onDismiss, visible }: Acti
               ref={i === activeIndex ? activeRef : undefined}
               onClick={() => onAccept(s)}
               onMouseEnter={() => setActiveIndex(i)}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 text-left transition-colors ${
-                i === activeIndex ? "bg-muted/60" : "hover:bg-muted/30"
-              } ${i > 0 ? "border-t border-border/50" : ""}`}
+              className={`w-full flex items-center gap-2 px-2 py-1.5 rounded-sm text-left transition-colors ${
+                i === activeIndex ? "bg-accent text-accent-foreground" : "hover:bg-muted/40"
+              }`}
             >
               <div className="flex-1 min-w-0">
-                <p className="text-sm">
+                <p className="text-xs">
                   <span className="text-muted-foreground">{typedPart}</span>
-                  <span className="font-semibold text-foreground">{remainingPart}</span>
+                  <span className="font-medium text-foreground">{remainingPart}</span>
                 </p>
-                <p className="text-xs text-muted-foreground">{s.description}</p>
+                <p className="text-[11px] text-muted-foreground truncate">{s.description}</p>
               </div>
               {i === activeIndex && (
-                <div className="flex items-center gap-1.5 shrink-0">
-                  <span className="text-[11px] text-muted-foreground px-1.5 py-0.5 border border-border rounded">tab</span>
-                  <span className="text-[11px] text-muted-foreground/50">·</span>
-                  <span className="text-[11px] text-muted-foreground/60 px-1.5 py-0.5 border border-border/50 rounded">tab tab</span>
-                  <span className="text-[11px] text-muted-foreground/50">fill details</span>
-                </div>
+                <span className="text-[11px] text-muted-foreground px-1.5 py-0.5 border border-border rounded shrink-0">tab</span>
               )}
             </button>
           )

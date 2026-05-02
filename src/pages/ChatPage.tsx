@@ -174,6 +174,11 @@ const SUGGESTIONS = [
 
 // ── Chat page ────────────────────────────────────────────────
 
+// Module-level flag — flips to true after the empty-state stagger animation
+// plays once. Persists across tab switches within a session so re-mounts of
+// ChatPage skip the entry animation. A hard refresh resets it.
+let chatEntryAnimationPlayed = false
+
 export function ChatPage() {
   const [input, setInput] = useState("")
   const [msgs, setMsgs] = useState<ChatMsg[]>([])
@@ -209,6 +214,11 @@ export function ChatPage() {
   const msgIdRef = useRef(0)
 
   const hasMessages = msgs.length > 0
+
+  // Only the first mount of ChatPage in this session gets the entry stagger.
+  // Subsequent mounts (tab switches) skip straight to the resting state.
+  const playEntryAnimation = useRef(!chatEntryAnimationPlayed).current
+  useEffect(() => { chatEntryAnimationPlayed = true }, [])
 
   useEffect(() => { inputRef.current?.focus() }, [])
 
@@ -497,7 +507,7 @@ export function ChatPage() {
             >
               <motion.div
                 className="w-full max-w-2xl flex flex-col items-center gap-10"
-                initial="hidden"
+                initial={playEntryAnimation ? "hidden" : "show"}
                 animate="show"
                 variants={{
                   hidden: {},

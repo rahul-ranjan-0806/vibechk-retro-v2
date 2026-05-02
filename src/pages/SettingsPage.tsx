@@ -77,11 +77,12 @@ export function SettingsPage() {
   const [slackExceptional, setSlackExceptional] = useState(false)
 
   return (
-    <div className="overflow-y-auto h-full">
-      <div className="max-w-page mx-auto px-12 pt-16 pb-24">
-      <h1 className="text-display mb-12">Settings</h1>
+    <div className="h-full flex flex-col overflow-hidden">
+      <div className="flex-1 overflow-y-auto">
+        <div className="max-w-page-wide mx-auto px-12 pt-16 pb-24">
+      <h1 className="text-h1 mb-12">Settings</h1>
 
-      <div className="max-w-xl flex flex-col gap-10">
+      <div className="flex flex-col gap-10">
         <Section title="Appearance">
           <SettingRow label="Theme" description="Choose between light, system, or dark mode.">
             <ThemeToggle />
@@ -128,6 +129,7 @@ export function SettingsPage() {
           </SettingRow>
         </Section>
       </div>
+        </div>
       </div>
     </div>
   )

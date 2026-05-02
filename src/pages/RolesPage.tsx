@@ -319,7 +319,7 @@ function JDEditorModal({ open, onClose }: { open: boolean; onClose: () => void }
     <div className={`fixed inset-0 z-50 flex items-center justify-center ${closing ? "modal-backdrop-exit" : "modal-backdrop-enter"}`}
       style={{ background: "hsl(var(--background) / 0.6)", backdropFilter: "blur(4px)", WebkitBackdropFilter: "blur(4px)" }}
       onClick={e => { if (e.target === e.currentTarget) handleClose() }}>
-      <div className={`bg-card border border-border rounded-lg shadow-modal flex overflow-hidden ${closing ? "modal-pop-exit" : "modal-pop-enter"}`}
+      <div className={`bg-background border border-border rounded-lg shadow-modal flex overflow-hidden ${closing ? "modal-pop-exit" : "modal-pop-enter"}`}
         style={{ width: "95vw", height: "95vh" }}>
 
         {/* Left — Notion-style JD editor */}
@@ -500,7 +500,7 @@ function JobPostingTab({ status, onStatusChange }: { status: "draft"|"live"; onS
     <div className="flex flex-1 min-h-0">
       <div className="flex-1 min-w-0 overflow-hidden">
         <div className="h-full overflow-y-auto">
-          <div className="max-w-page-wide mx-auto px-12 pt-16 pb-24 flex flex-col gap-10">
+          <div className="max-w-page-wide mx-auto px-12 pt-8 pb-24 flex flex-col gap-10">
 
             {/* JD */}
             <CollapsibleSection title="Job description">
@@ -590,7 +590,7 @@ function InterviewConfigTab() {
   const toggleExpand = (id: string) => setExpanded(p => ({ ...p, [id]: !p[id] }))
 
   return (
-    <div className="overflow-y-auto flex-1"><div className="max-w-page-wide mx-auto px-12 pt-16 pb-24 flex flex-col gap-10">
+    <div className="overflow-y-auto flex-1"><div className="max-w-page-wide mx-auto px-12 pt-8 pb-24 flex flex-col gap-10">
       <CollapsibleSection title="Interviewing Alt">
         <div className="flex items-center gap-3 p-2.5 bg-muted/40 border border-border rounded-lg w-fit">
           <div className="w-8 h-8 bg-accent-blue/10 text-accent-blue flex items-center justify-center text-xs font-medium rounded-md">SG</div>
@@ -1083,7 +1083,7 @@ function RoleDetail({ role, activeProfile, onProfileOpen, onProfileClose, onBack
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-3 mb-1">
                 <span className="text-2xl">📋</span>
-                <h1 className="text-display">{role.title}</h1>
+                <h1 className="text-h1">{role.title}</h1>
               </div>
               <div className="flex items-center gap-3 pl-1">
                 <span className="text-sm text-muted-foreground">{role.department}</span>
@@ -1097,7 +1097,10 @@ function RoleDetail({ role, activeProfile, onProfileOpen, onProfileClose, onBack
             </div>
             <div className="flex items-center gap-1 text-xs text-muted-foreground shrink-0 pt-1">
               <span>Edited just now</span>
-              <button className="px-2 py-1 hover:bg-muted rounded-sm">Share</button>
+              <button className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-foreground text-background text-xs font-medium hover:opacity-90 transition-opacity">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+                Share with Candidate
+              </button>
               <button className="w-7 h-7 flex items-center justify-center hover:bg-muted rounded-sm" title="More">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg>
               </button>

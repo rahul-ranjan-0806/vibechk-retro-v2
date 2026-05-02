@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Council Verdict — global Candidates tab</title>
+<style>
+  :root {
+    --fg: #1a1a2e;
+    --muted: #6b7280;
+    --border: #e5e7eb;
+    --bg: #ffffff;
+    --kill: #dc2626;
+    --keep: #059669;
+    --reframe: #7c3aed;
+    --soft: #f9fafb;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 32px 24px;
+    font: 14px/1.55 -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", sans-serif;
+    color: var(--fg); background: var(--bg);
+    max-width: 880px; margin-left: auto; margin-right: auto;
+  }
+  h1 { font-size: 22px; margin: 0 0 4px; letter-spacing: -0.01em; }
+  h2 { font-size: 15px; margin: 28px 0 10px; letter-spacing: -0.005em; }
+  h3 { font-size: 13px; margin: 18px 0 8px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; }
+  p { margin: 8px 0; }
+  .question {
+    background: var(--soft); border: 1px solid var(--border); border-radius: 8px;
+    padding: 14px 16px; margin: 16px 0 24px;
+    font-size: 13px; color: var(--muted);
+  }
+  .question strong { color: var(--fg); display: block; margin-bottom: 4px; font-weight: 600; }
+  .verdict {
+    border: 2px solid var(--fg); border-radius: 10px;
+    padding: 18px 20px; margin: 16px 0 28px;
+  }
+  .verdict h2 { margin-top: 0; font-size: 16px; }
+  .stance {
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px;
+    margin: 12px 0 24px;
+  }
+  .stance .col {
+    border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px;
+    background: var(--soft);
+  }
+  .stance .col.kill { border-color: var(--kill); background: #fef2f2; }
+  .stance .col.keep { border-color: var(--keep); background: #ecfdf5; }
+  .stance .col.reframe { border-color: var(--reframe); background: #f5f3ff; }
+  .stance .label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin-bottom: 4px; font-weight: 600; }
+  .stance .vote { font-size: 12px; font-weight: 600; }
+  .stance .vote.kill { color: var(--kill); }
+  .stance .vote.keep { color: var(--keep); }
+  .stance .vote.reframe { color: var(--reframe); }
+  .advisor {
+    margin: 8px 0; border: 1px solid var(--border); border-radius: 8px;
+  }
+  .advisor summary {
+    padding: 10px 14px; cursor: pointer; font-weight: 600; font-size: 13px;
+    list-style: none;
+  }
+  .advisor summary::-webkit-details-marker { display: none; }
+  .advisor summary::before { content: "▸ "; color: var(--muted); }
+  .advisor[open] summary::before { content: "▾ "; }
+  .advisor .body {
+    padding: 0 16px 16px; font-size: 13px;
+    border-top: 1px solid var(--border); padding-top: 12px;
+  }
+  .advisor .body p { margin: 8px 0; }
+  .pill {
+    display: inline-block; font-size: 10px; padding: 1px 8px; border-radius: 999px;
+    margin-left: 6px; font-weight: 600; vertical-align: middle;
+  }
+  .pill.kill { background: #fee2e2; color: var(--kill); }
+  .pill.keep { background: #d1fae5; color: var(--keep); }
+  .pill.reframe { background: #ede9fe; color: var(--reframe); }
+  .reviews { background: var(--soft); border: 1px solid var(--border); border-radius: 8px; padding: 14px 18px; }
+  .reviews summary { cursor: pointer; font-weight: 600; font-size: 13px; list-style: none; }
+  .reviews summary::-webkit-details-marker { display: none; }
+  .reviews summary::before { content: "▸ "; color: var(--muted); }
+  .reviews[open] summary::before { content: "▾ "; }
+  .reviews .body { margin-top: 12px; font-size: 12px; color: #374151; }
+  .reviews ul { padding-left: 20px; margin: 6px 0; }
+  .reviews li { margin: 3px 0; }
+  footer { margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--border); font-size: 11px; color: var(--muted); }
+</style>
+</head>
+<body>
+
+<h1>Council Verdict</h1>
+<p style="color: var(--muted); margin: 0;">Should the global Candidates tab be removed from the dashboard nav?</p>
+
+<div class="question">
+  <strong>The question</strong>
+  Is it worth keeping the candidates tab when the candidates exist in the roles tab for each role?
+</div>
+
+<h2>How the council voted</h2>
+<div class="stance">
+  <div class="col kill"><div class="label">Contrarian</div><div class="vote kill">Kill</div></div>
+  <div class="col reframe"><div class="label">First Principles</div><div class="vote reframe">Reframe → Kill</div></div>
+  <div class="col keep"><div class="label">Expansionist</div><div class="vote keep">Keep</div></div>
+  <div class="col kill"><div class="label">Outsider</div><div class="vote kill">Kill</div></div>
+  <div class="col kill"><div class="label">Executor</div><div class="vote kill">Kill</div></div>
+</div>
+
+<div class="verdict">
+  <h2>The recommendation</h2>
+  <p><strong>Kill the global Candidates tab.</strong> Four of five advisors converged independently, and all five peer reviewers judged the First Principles reframe (B) as the strongest analysis: <em>the duplication is a data-model problem leaking into nav, and Home is already declared the cross-role triage surface in CLAUDE.md.</em> A second cross-role surface is a vote of no-confidence in Home.</p>
+  <p>The Expansionist's argument (talent pooling, Alt portfolio, hiring intelligence) is real but misdirected — those features have different shapes (a Talent Pool tab, an Alt Activity surface) and shouldn't squat the slot of a feature that doesn't exist yet.</p>
+  <h3 style="color: var(--fg); margin-top: 18px; font-size: 12px;">The one thing to do first</h3>
+  <p>Before deleting code, <strong>add one paragraph to CLAUDE.md</strong> declaring "the unit of work is the dilemma; Home owns cross-role surfaces; per-role pages own per-role work." That single decision resolves the model confusion that produced the duplicate tab — and it locks in the IA before the next nav debate recreates the same redundancy elsewhere.</p>
+</div>
+
+<h2>Where the council agrees</h2>
+<ul>
+  <li>The global tab is read-only — every click ends with the user leaving for the role page.</li>
+  <li>Home already owns cross-role triage by spec; a second one undermines it.</li>
+  <li>Two surfaces named "Candidates" is a naming collision an outsider can't resolve without trial-and-error.</li>
+  <li>Maintaining duplicate filter UIs and row components is real ongoing tax (every change is 2×).</li>
+</ul>
+
+<h2>Where the council clashes</h2>
+<p><strong>Expansionist vs everyone else</strong> on whether the slot is worth holding for future features. The Expansionist sees strategic moat; the other four see a placeholder for things that don't exist yet and will likely take a different shape.</p>
+<p><strong>First Principles vs the rest</strong> on which surface is actually redundant. If Home owns triage and Alt owns portfolio, the per-role Candidates sub-tab might be as suspect as the global one.</p>
+
+<h2>Blind spots the peer review caught</h2>
+<ul>
+  <li><strong>Candidate identity is undefined.</strong> If one person applies to two roles, are they one record or two? Determines whether "global candidates" is even coherent.</li>
+  <li><strong>Talent pool is a different object.</strong> The strongest pro-keep argument (rejected-for-A, perfect-for-B) belongs in a future Talent Pool surface — not a read-only flat all-candidates table.</li>
+  <li><strong>Migration cost was unaddressed.</strong> No one asked who currently uses /candidates, whether the team's go-live checklist references it, or if it was a deliberate vs leftover decision.</li>
+</ul>
+
+<h2>Full advisor responses</h2>
+
+<details class="advisor"><summary>The Contrarian <span class="pill kill">Kill</span></summary>
+<div class="body">
+<p>Kill it. And while you're at it, interrogate why you built it in the first place — that's the real bug.</p>
+<p>The global Candidates tab is a prop. It looks powerful in a demo ("see every candidate in one view!") but it does nothing the product actually needs. Three problems you're glossing over:</p>
+<ol>
+<li><strong>It's a read-only dead-end.</strong> Every click on this tab ends with the user leaving it for the role page where the actual work happens.</li>
+<li><strong>Home already does the only job that matters.</strong> "Needs your call" surfaces cross-role dilemmas. The global Candidates tab competes with Home and loses.</li>
+<li><strong>It contradicts the product thesis.</strong> A global flat list is the pre-Alt mental model — the spreadsheet view ATS users are escaping. It tells users "you should still be reviewing everyone."</li>
+</ol>
+<p>Cut it. If cross-role triage matters later, it belongs as a Home widget, not a nav slot.</p>
+</div>
+</details>
+
+<details class="advisor"><summary>The First Principles Thinker <span class="pill reframe">Reframe → Kill</span></summary>
+<div class="body">
+<p>You're asking the wrong question entirely. The real question isn't "global tab or no global tab." It's: <strong>what is the primary unit of work in this product?</strong></p>
+<p>If the unit is the role → global tab is a category error, kill it.<br>
+If the unit is the candidate → kill the per-role sub-tab and make role pages link to a filtered global view.<br>
+You're trying to have it both ways and that's why you've built the same table twice.</p>
+<p>Given everything else in your spec, the unit of work you've actually committed to is <strong>the dilemma</strong>. Home is already the cross-cutting triage surface (CLAUDE.md says so). The global Candidates tab isn't a second triage surface — it's a confession you don't trust Home to do its job. Fix Home or kill the tab. Don't ship both.</p>
+</div>
+</details>
+
+<details class="advisor"><summary>The Expansionist <span class="pill keep">Keep</span></summary>
+<div class="body">
+<p>Keep the global Candidates tab. You're undervaluing what it becomes. Three things get unlocked:</p>
+<p><strong>Talent pooling.</strong> Candidates rejected for Role A are often perfect for Role B. An Alt that surfaces this is a wedge into recruiting CRM territory.</p>
+<p><strong>The Alt's portfolio view.</strong> "Your Alt screened 47 people this week, flagged 6, you decided on 4." That's the dopamine hit that makes founders trust the Alt with more roles.</p>
+<p><strong>Hiring intelligence.</strong> Pattern recognition only works across roles: "candidates from these schools convert 3x," "your Alt's leniency drifts on senior roles." That's the founder-taste-amplifier vision.</p>
+<p>Linear keeps Inbox and Issues as separate top-level nav even though Inbox is "just" a filtered view — because the cognitive mode is different. Don't kill the slot. Make it carry weight.</p>
+</div>
+</details>
+
+<details class="advisor"><summary>The Outsider <span class="pill kill">Kill</span></summary>
+<div class="body">
+<p>Walking in cold: I see "Candidates" in the top nav and "Roles" right next to it. I click Candidates first because that's the noun I care about. Land on a flat table, click a row, get a thin slide-over, feel underwhelmed. Then I find Roles → role → Candidates and get the actual rich panel.</p>
+<p>Now I'm confused. Why are there two Candidates pages? Which is the "real" one? That's the killer — naming collision in top nav is the kind of thing users never quite forgive. Cut it. If someone wants to scan everyone, that's a filter view inside Roles or a saved view on Home, not a nav slot competing with the richer page that shares its name.</p>
+</div>
+</details>
+
+<details class="advisor"><summary>The Executor <span class="pill kill">Kill</span></summary>
+<div class="body">
+<p>Kill it. Monday morning:</p>
+<ol>
+<li>Delete the Candidates route from the nav.</li>
+<li>On Home, add a "View all candidates needing review" link on the "Needs your call" section.</li>
+<li>Add a Cmd+P shortcut for global candidate search/jump — typeahead by name, jumps into the role's detail panel.</li>
+<li>Grep for /candidates references and CandidatesPage imports; redirect them all.</li>
+</ol>
+<p>2–3 hours of work. The real cost of keeping both isn't the nav slot — it's divergence drift over the next 6 months as you maintain two filter UIs and two row components. If cross-role triage turns out to be a real need, you'll know within two weeks of real users; add it back then with evidence.</p>
+</div>
+</details>
+
+<details class="reviews">
+<summary>Peer review highlights</summary>
+<div class="body">
+<p><strong>Strongest response (5/5):</strong> First Principles. It refuses the framing and forces the upstream question, then uses CLAUDE.md against itself to land the killer point.</p>
+<p><strong>Biggest blind spot (5/5):</strong> Expansionist. Conflates "we might want X someday" with "keep this specific tab now" — defending a slot, not a feature.</p>
+<p><strong>What all five missed:</strong></p>
+<ul>
+<li>Candidate identity model — if one person applies to two roles, are they one record or two?</li>
+<li>The role-scoped sub-tab might be the redundant one, not the global one (council assumed role-scoped is sacred).</li>
+<li>Migration cost — bookmarks, Slack-shared URLs, the team's go-live checklist.</li>
+<li>Was the global tab a deliberate Abhishek/Kinnari decision or an IA leftover from before Home existed?</li>
+<li>Talent Pool is a different object (rejected-but-revisitable) — not a nav redesign.</li>
+</ul>
+</div>
+</details>
+
+<footer>
+  Council session · 2026-05-02 08:49 · 5 advisors + 5 peer reviewers · synthesis by Chairman<br>
+  Transcript: <code>council-transcript-20260502-084941.md</code>
+</footer>
+
+</body>
+</html>

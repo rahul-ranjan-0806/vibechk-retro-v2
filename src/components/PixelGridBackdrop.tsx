@@ -44,6 +44,10 @@ interface PersistedSettings {
   density: number
   seed: number
   cellSize: number
+  enterDur: number
+  enterEase: string
+  exitDur: number
+  exitEase: string
 }
 
 const DEFAULT_SETTINGS: PersistedSettings = {
@@ -51,7 +55,26 @@ const DEFAULT_SETTINGS: PersistedSettings = {
   density: 1,
   seed: 20260502,
   cellSize: 32,
+  enterDur: 0.2,
+  enterEase: "ease-out",
+  exitDur: 0.16,
+  exitEase: "cubic-bezier(0.4, 0.0, 0.6, 1)",
 }
+
+// Common cubic-bezier presets for the easing dropdown. Labels are short so
+// they fit the compact controls panel.
+const EASING_PRESETS: { label: string; value: string }[] = [
+  { label: "linear",        value: "linear" },
+  { label: "ease",          value: "ease" },
+  { label: "ease-in",       value: "ease-in" },
+  { label: "ease-out",      value: "ease-out" },
+  { label: "ease-in-out",   value: "ease-in-out" },
+  { label: "smooth-out",    value: "cubic-bezier(0.2, 0.8, 0.2, 1)" },
+  { label: "expo-out",      value: "cubic-bezier(0.16, 1, 0.3, 1)" },
+  { label: "back-out",      value: "cubic-bezier(0.34, 1.56, 0.64, 1)" },
+  { label: "decel",         value: "cubic-bezier(0.4, 0.0, 0.6, 1)" },
+  { label: "accel",         value: "cubic-bezier(0.4, 0.0, 1, 1)" },
+]
 
 function loadSettings(): PersistedSettings {
   if (typeof window === "undefined") return DEFAULT_SETTINGS
@@ -81,9 +104,12 @@ interface Props {
   open: boolean
   closing: boolean
   calm: boolean
+  /** Drop the gradient mask so the grid fills the entire overlay — used while
+   *  Sabu is composing a reply, so the twinkle ambience shows the agent is alive. */
+  expanded?: boolean
 }
 
-export function PixelGridBackdrop({ open, closing, calm }: Props) {
+export function PixelGridBackdrop({ open, closing, calm, expanded = false }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const twinklesRef = useRef<Twinkle[]>([])
   const settingsRef = useRef<Settings>(NORMAL)
@@ -94,18 +120,34 @@ export function PixelGridBackdrop({ open, closing, calm }: Props) {
   const [density, setDensity]   = useState<number>(() => loadSettings().density)   // 0.25× – 20× (scales spawnRate + budget)
   const [seed, setSeed]         = useState<number>(() => loadSettings().seed)
   const [cellSize, setCellSize] = useState<number>(() => loadSettings().cellSize)  // 8 – 64 px
+  // Cmd+K chat overlay enter / exit timing — applied via CSS variables on
+  // :root so the index.css overlay animations pick them up automatically.
+  const [enterDur, setEnterDur]   = useState<number>(() => loadSettings().enterDur)   // 0.05 – 1.5 s
+  const [enterEase, setEnterEase] = useState<string>(() => loadSettings().enterEase)
+  const [exitDur, setExitDur]     = useState<number>(() => loadSettings().exitDur)    // 0.05 – 1.5 s
+  const [exitEase, setExitEase]   = useState<string>(() => loadSettings().exitEase)
+
+  // Push the overlay timing into CSS variables so existing keyframe rules
+  // (`.alt-overlay-blur-enter`, `.alt-overlay-exit`, etc.) read them at runtime.
+  useEffect(() => {
+    const root = document.documentElement
+    root.style.setProperty("--alt-overlay-enter-dur", `${enterDur}s`)
+    root.style.setProperty("--alt-overlay-enter-ease", enterEase)
+    root.style.setProperty("--alt-overlay-exit-dur", `${exitDur}s`)
+    root.style.setProperty("--alt-overlay-exit-ease", exitEase)
+  }, [enterDur, enterEase, exitDur, exitEase])
 
   // Persist settings whenever any control changes
   useEffect(() => {
     try {
       window.localStorage.setItem(
         STORAGE_KEY,
-        JSON.stringify({ speed, density, seed, cellSize } satisfies PersistedSettings),
+        JSON.stringify({ speed, density, seed, cellSize, enterDur, enterEase, exitDur, exitEase } satisfies PersistedSettings),
       )
     } catch {
       // Quota / private mode — silently ignore
     }
-  }, [speed, density, seed, cellSize])
+  }, [speed, density, seed, cellSize, enterDur, enterEase, exitDur, exitEase])
 
   // Keep refs in sync so the rAF loop reads latest values without restarting
   const speedRef = useRef(speed)
@@ -231,7 +273,7 @@ export function PixelGridBackdrop({ open, closing, calm }: Props) {
     <>
       <canvas
         ref={canvasRef}
-        className={`absolute top-0 left-0 pointer-events-none alt-overlay-pixel-grid ${blurClass}`}
+        className={`absolute top-0 left-0 pointer-events-none alt-overlay-pixel-grid ${expanded ? "expanded" : ""} ${blurClass}`}
         aria-hidden
         style={{
           // 5% white outline per cell — drawn as a CSS background grid,
@@ -243,19 +285,15 @@ export function PixelGridBackdrop({ open, closing, calm }: Props) {
 
       {open && !closing && controlsOpen && (
         <div className="absolute top-4 right-4 z-[70] w-[260px] bg-popover/95 backdrop-blur-md border border-border rounded-md shadow-modal text-foreground">
-          {/* Header */}
+          {/* Header — Cmd+/ is the only way to toggle this panel; no X button
+              and no Esc handler here. Esc still closes the chat overlay itself
+              (handled in AltChatOverlay), but doesn't dismiss this panel. */}
           <div className="flex items-center justify-between px-3.5 h-9 border-b border-border">
             <p className="text-[11px] font-semibold tracking-wider text-muted-foreground">PIXEL GRID</p>
-            <div className="flex items-center gap-1">
-              <kbd className="font-sans text-[10px] px-1.5 py-0.5 rounded-sm border border-border bg-muted/60 text-muted-foreground leading-none">⌘ /</kbd>
-              <button
-                onClick={() => setControlsOpen(false)}
-                className="w-5 h-5 flex items-center justify-center rounded-sm text-muted-foreground hover:text-foreground hover:bg-muted/60"
-                aria-label="Close"
-              >
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 6 6 18M6 6l12 12"/></svg>
-              </button>
-            </div>
+            <kbd
+              className="font-sans text-[10px] px-1.5 py-0.5 rounded-sm border border-border bg-muted/60 text-muted-foreground leading-none"
+              title="Press ⌘/ to close"
+            >⌘ /</kbd>
           </div>
 
           {/* Body */}
@@ -316,6 +354,66 @@ export function PixelGridBackdrop({ open, closing, calm }: Props) {
                   ↻
                 </button>
               </div>
+            </div>
+
+            {/* ── Sabu overlay timing — controls the Cmd+K chat overlay's
+                enter/exit duration + easing via CSS variables. */}
+            <div className="pt-3 mt-1 border-t border-border flex flex-col gap-3">
+              <p className="text-[10px] font-semibold tracking-wider text-muted-foreground">SABU OVERLAY</p>
+
+              <label className="flex flex-col gap-1.5">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-muted-foreground">Enter duration</span>
+                  <span className="tabular-nums text-foreground">{enterDur.toFixed(2)}s</span>
+                </div>
+                <input
+                  type="range" min={0.05} max={1.5} step={0.05}
+                  value={enterDur} onChange={e => setEnterDur(Number(e.target.value))}
+                  className="w-full h-1 accent-foreground"
+                />
+              </label>
+
+              <label className="flex flex-col gap-1.5">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-muted-foreground">Enter easing</span>
+                </div>
+                <select
+                  value={enterEase}
+                  onChange={e => setEnterEase(e.target.value)}
+                  className="text-xs bg-background border border-border rounded-sm px-2 py-1 outline-none focus:border-foreground/40"
+                >
+                  {EASING_PRESETS.map(p => (
+                    <option key={p.value} value={p.value}>{p.label}</option>
+                  ))}
+                </select>
+              </label>
+
+              <label className="flex flex-col gap-1.5">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-muted-foreground">Exit duration</span>
+                  <span className="tabular-nums text-foreground">{exitDur.toFixed(2)}s</span>
+                </div>
+                <input
+                  type="range" min={0.05} max={1.5} step={0.05}
+                  value={exitDur} onChange={e => setExitDur(Number(e.target.value))}
+                  className="w-full h-1 accent-foreground"
+                />
+              </label>
+
+              <label className="flex flex-col gap-1.5">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-muted-foreground">Exit easing</span>
+                </div>
+                <select
+                  value={exitEase}
+                  onChange={e => setExitEase(e.target.value)}
+                  className="text-xs bg-background border border-border rounded-sm px-2 py-1 outline-none focus:border-foreground/40"
+                >
+                  {EASING_PRESETS.map(p => (
+                    <option key={p.value} value={p.value}>{p.label}</option>
+                  ))}
+                </select>
+              </label>
             </div>
           </div>
         </div>

@@ -224,7 +224,9 @@ export function AltChatOverlay({ open, onClose, context, nudgeMessage, prefillIn
       setSlashFilter("")
       setSendKey(0)
       onClose()
-    }, 420)
+      // Matches the longest --alt-overlay-exit-dur fallback (210 ms) so cleanup
+      // fires just after the fade-out completes, even on the slowest exit branch.
+    }, 220)
   }, [onClose])
 
   // Slash command logic
@@ -405,8 +407,9 @@ export function AltChatOverlay({ open, onClose, context, nudgeMessage, prefillIn
       />
 
       {/* Subtle blinking pixel grid — Canvas-driven per-cell twinkles, gradient-masked.
-          Slows to "calm" once chat is in flow. */}
-      <PixelGridBackdrop open={open} closing={closing} calm={msgs.length > 0 && !closing} />
+          Slows to "calm" once chat is in flow; expands full-overlay (no mask) while
+          Sabu is composing a reply, so the twinkle ambience signals that the agent is alive. */}
+      <PixelGridBackdrop open={open} closing={closing} calm={msgs.length > 0 && !closing && !isWaiting} expanded={isWaiting} />
 
       {/* White shimmer sweep — fires once per send (key remount restarts animation) */}
       {sendKey > 0 && !closing && <div key={sendKey} className="alt-overlay-shimmer" />}
@@ -471,7 +474,7 @@ export function AltChatOverlay({ open, onClose, context, nudgeMessage, prefillIn
 
           {/* Slash command dropdown — above input */}
           {slashOpen && (
-            <div className="w-80 bg-popover border border-border rounded-lg shadow-lg overflow-hidden max-h-[300px] overflow-y-auto">
+            <div className="w-80 border border-border rounded-md shadow-lg overflow-hidden max-h-[300px] overflow-y-auto bg-gradient-to-b from-background via-background to-muted dark:from-popover dark:via-popover dark:to-muted">
               {!showSourcesList && !showConnectorItems ? (
                 <>
                   {/* Top-level: page commands + connector sources */}

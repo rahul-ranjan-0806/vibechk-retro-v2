@@ -269,12 +269,14 @@ h1 { letter-spacing: -0.02em; }
   to   { opacity: 1; }
 }
 @keyframes alt-overlay-backdrop-out {
-  0%   { opacity: 1; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
-  55%  { opacity: 0.85; backdrop-filter: blur(28px); -webkit-backdrop-filter: blur(28px); }
-  100% { opacity: 0; backdrop-filter: blur(28px); -webkit-backdrop-filter: blur(28px); }
+  from { opacity: 1; }
+  to   { opacity: 0; }
 }
-.alt-overlay-blur-enter { animation: alt-overlay-backdrop-in 0.2s ease-out forwards; }
-.alt-overlay-blur-exit  { animation: alt-overlay-backdrop-out 0.42s cubic-bezier(0.4, 0.0, 0.6, 1) forwards; }
+/* Duration + easing are exposed as CSS variables so the Cmd+/ controls panel
+   in PixelGridBackdrop can override them at runtime. Defaults match the
+   original timings. */
+.alt-overlay-blur-enter { animation: alt-overlay-backdrop-in var(--alt-overlay-enter-dur, 0.2s) var(--alt-overlay-enter-ease, ease-out) forwards; }
+.alt-overlay-blur-exit  { animation: alt-overlay-backdrop-out var(--alt-overlay-exit-dur, 0.21s) var(--alt-overlay-exit-ease, cubic-bezier(0.4, 0.0, 0.6, 1)) forwards; }
 
 /* Backdrop — progressive blur + dark tint by default (both fade upward via mask);
    full uniform blur + flat dark tint once chat starts. Many gradient stops with a
@@ -285,10 +287,11 @@ h1 { letter-spacing: -0.02em; }
   /* Same flat dark tint as the post-send state — the upward fade comes purely
      from the mask below, so the bottom darkens to exactly the .blurred level. */
   background: rgba(0, 0, 0, 0.55);
-  /* Pure 2-stop gradient mask: smoothly fades from full coverage at the bottom
-     to transparent at the top. Banding handled by the noise overlay below. */
-  -webkit-mask-image: linear-gradient(to top, black 0%, transparent 100%);
-  mask-image: linear-gradient(to top, black 0%, transparent 100%);
+  /* Pure 2-stop gradient mask: full coverage at the bottom, fades up to 25%
+     opacity at the top so the upper portion of the page stays partially
+     veiled instead of fully visible. */
+  -webkit-mask-image: linear-gradient(to top, black 0%, rgba(0, 0, 0, 0.25) 100%);
+  mask-image: linear-gradient(to top, black 0%, rgba(0, 0, 0, 0.25) 100%);
   transition:
     backdrop-filter 0.55s ease-in,
     -webkit-backdrop-filter 0.55s ease-in,
@@ -439,7 +442,42 @@ h1 { letter-spacing: -0.02em; }
   image-rendering: pixelated;
   image-rendering: crisp-edges; /* Safari fallback */
   opacity: 0.5;
-  will-change: opacity;
+  will-change: opacity, mask-image;
+  transition: -webkit-mask-image 700ms cubic-bezier(0.4, 0, 0.2, 1),
+              mask-image         700ms cubic-bezier(0.4, 0, 0.2, 1),
+              opacity            500ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Sabu is composing — radial bloom centered at the bottom-edge midpoint of
+   the viewport. 80% mask alpha at the center, fading out by 25% from the
+   top of the viewport (= 75 vh of vertical reach upward). Multi-stop linear
+   ramp keeps banding below the noise floor on 8-bit alpha. */
+.alt-overlay-pixel-grid.expanded {
+  -webkit-mask-image: radial-gradient(
+    ellipse 50vw 75vh at 50% 100%,
+    rgba(0,0,0,0.80) 0%,
+    rgba(0,0,0,0.72) 12%,
+    rgba(0,0,0,0.62) 24%,
+    rgba(0,0,0,0.50) 38%,
+    rgba(0,0,0,0.38) 50%,
+    rgba(0,0,0,0.26) 62%,
+    rgba(0,0,0,0.14) 75%,
+    rgba(0,0,0,0.05) 88%,
+    rgba(0,0,0,0)    100%
+  );
+  mask-image: radial-gradient(
+    ellipse 50vw 75vh at 50% 100%,
+    rgba(0,0,0,0.80) 0%,
+    rgba(0,0,0,0.72) 12%,
+    rgba(0,0,0,0.62) 24%,
+    rgba(0,0,0,0.50) 38%,
+    rgba(0,0,0,0.38) 50%,
+    rgba(0,0,0,0.26) 62%,
+    rgba(0,0,0,0.14) 75%,
+    rgba(0,0,0,0.05) 88%,
+    rgba(0,0,0,0)    100%
+  );
+  opacity: 0.85;
 }
 
 /* (Removed: pixel-grid dither sibling. Cubic-curve mask handles banding
@@ -473,27 +511,26 @@ h1 { letter-spacing: -0.02em; }
   to   { opacity: 1; }
 }
 @keyframes alt-overlay-content-out {
-  0%   { opacity: 1; transform: translateY(0); filter: blur(0px); }
-  100% { opacity: 0; transform: translateY(28px); filter: blur(6px); }
+  from { opacity: 1; }
+  to   { opacity: 0; }
 }
-.alt-overlay-enter { animation: alt-overlay-content-in 0.2s ease-out forwards; }
-.alt-overlay-exit  { animation: alt-overlay-content-out 0.32s cubic-bezier(0.4, 0.0, 0.6, 1) forwards; }
+.alt-overlay-enter { animation: alt-overlay-content-in var(--alt-overlay-enter-dur, 0.2s) var(--alt-overlay-enter-ease, ease-out) forwards; }
+.alt-overlay-exit  { animation: alt-overlay-content-out var(--alt-overlay-exit-dur, 0.16s) var(--alt-overlay-exit-ease, cubic-bezier(0.4, 0.0, 0.6, 1)) forwards; }
 
-/* Per-message fade-in (after the shimmer/blur transition) + slight downward
-   blur-fade on close */
+/* Per-message fade-in / fade-out — plain opacity, no translation or blur. */
 @keyframes alt-overlay-msg-in {
   from { opacity: 0; }
   to   { opacity: 1; }
 }
 @keyframes alt-overlay-msg-out {
-  from { opacity: 1; transform: translateY(0); filter: blur(0px); }
-  to   { opacity: 0; transform: translateY(24px); filter: blur(6px); }
+  from { opacity: 1; }
+  to   { opacity: 0; }
 }
 .alt-overlay-msg {
   animation: alt-overlay-msg-in 0.3s ease-out 0.4s both;
 }
 .alt-overlay-msg-exit {
-  animation: alt-overlay-msg-out 0.32s cubic-bezier(0.4, 0.0, 0.6, 1) forwards;
+  animation: alt-overlay-msg-out var(--alt-overlay-exit-dur, 0.16s) var(--alt-overlay-exit-ease, cubic-bezier(0.4, 0.0, 0.6, 1)) forwards;
 }
 
 /* ── Link pill shimmer ─────────────────────────────────────── */
