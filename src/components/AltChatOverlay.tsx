@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback } from "react"
 import { PixelSprite } from "@/components/PixelSprite"
 import { PixelGridBackdrop } from "@/components/PixelGridBackdrop"
 import { AltMessagePart } from "@/components/AltMessageParts"
+import { StreamLoader } from "@/components/StreamLoader"
 import { matchAltResponse, type AltMsgPart } from "@/lib/mockData"
 
 // ── Types ────────────────────────────────────────────────────
@@ -156,6 +157,16 @@ export function AltChatOverlay({ open, onClose, context, nudgeMessage, prefillIn
   const [slashSource, setSlashSource] = useState<string | null>(null)
   const [slashIndex, setSlashIndex] = useState(0)
   const [sendKey, setSendKey] = useState(0)  // increments each send → remounts shimmer
+  const [isWaiting, setIsWaiting] = useState(false)
+  // Track Sabu's response timeout so the user can interrupt with the stop button.
+  const replyTimeoutRef = useRef<number | null>(null)
+  const stopWaiting = () => {
+    if (replyTimeoutRef.current !== null) {
+      clearTimeout(replyTimeoutRef.current)
+      replyTimeoutRef.current = null
+    }
+    setIsWaiting(false)
+  }
 
   const bodyRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -213,7 +224,7 @@ export function AltChatOverlay({ open, onClose, context, nudgeMessage, prefillIn
       setSlashFilter("")
       setSendKey(0)
       onClose()
-    }, 320)
+    }, 420)
   }, [onClose])
 
   // Slash command logic
@@ -307,7 +318,8 @@ export function AltChatOverlay({ open, onClose, context, nudgeMessage, prefillIn
     setInput("")
     setConnectorPills([])
     setHighlightedPill(null)
-    setTimeout(() => {
+    setIsWaiting(true)
+    replyTimeoutRef.current = window.setTimeout(() => {
       const reply = matchAltResponse(fullMsg)
       const isComplex = /create|configure|set up|build/i.test(fullMsg)
       const parts = [...(reply.parts || [])]
@@ -315,7 +327,9 @@ export function AltChatOverlay({ open, onClose, context, nudgeMessage, prefillIn
         parts.push({ kind: "cta", label: "Continue in full chat →", semantic: "info" })
       }
       setMsgs(p => [...p, { from: "alt", text: reply.text, parts: parts.length ? parts : undefined }])
-    }, 600)
+      setIsWaiting(false)
+      replyTimeoutRef.current = null
+    }, 60000)
   }
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -400,7 +414,7 @@ export function AltChatOverlay({ open, onClose, context, nudgeMessage, prefillIn
       {/* Messages — anchored to TOP, fade in after the shimmer/blur transition;
           fade-down with a soft blur on close */}
       {msgs.length > 0 && (
-        <div className={`absolute top-0 left-0 right-0 max-h-[60vh] overflow-y-auto pt-16 pb-6 pointer-events-none ${closing ? "alt-overlay-msg-exit" : ""}`}>
+        <div className={`absolute top-0 left-0 right-0 bottom-[180px] overflow-y-auto pt-16 pb-6 pointer-events-none ${closing ? "alt-overlay-msg-exit" : ""}`}>
           <div ref={bodyRef} className="max-w-2xl mx-auto px-4 flex flex-col gap-2.5 pointer-events-auto">
             {msgs.map((m, i) => {
               if (m.from === "user") {
@@ -428,6 +442,13 @@ export function AltChatOverlay({ open, onClose, context, nudgeMessage, prefillIn
                 </div>
               )
             })}
+
+            {/* Inline thinking indicator — bare, no surrounding bubble. */}
+            {isWaiting && (
+              <div className="alt-overlay-msg self-start">
+                <StreamLoader />
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -568,9 +589,18 @@ export function AltChatOverlay({ open, onClose, context, nudgeMessage, prefillIn
               className="flex-1 min-w-[120px] text-sm bg-transparent outline-none placeholder:text-muted-foreground"
             />
 
-            <button onClick={() => send()} disabled={!input.trim() && !connectorPills.length}
-              className="shrink-0 w-8 h-8 flex items-center justify-center rounded-lg bg-foreground text-background hover:opacity-90 disabled:opacity-30 transition-opacity">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="22" y1="2" x2="11" y2="13" /><polygon points="22 2 15 22 11 13 2 9 22 2" /></svg>
+            <button
+              onClick={isWaiting ? stopWaiting : () => send()}
+              disabled={!isWaiting && !input.trim() && !connectorPills.length}
+              aria-label={isWaiting ? "Stop generating" : "Send"}
+              title={isWaiting ? "Stop" : "Send"}
+              className="shrink-0 w-8 h-8 flex items-center justify-center rounded-lg bg-foreground text-background hover:opacity-90 disabled:opacity-30 transition-opacity"
+            >
+              {isWaiting ? (
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden><rect x="6" y="6" width="12" height="12" rx="1.5" /></svg>
+              ) : (
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="22" y1="2" x2="11" y2="13" /><polygon points="22 2 15 22 11 13 2 9 22 2" /></svg>
+              )}
             </button>
           </div>
 

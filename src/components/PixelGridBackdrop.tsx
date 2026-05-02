@@ -152,6 +152,13 @@ export function PixelGridBackdrop({ open, closing, calm }: Props) {
       cellsH = Math.ceil(window.innerHeight / cs)
       canvas.width = cellsW
       canvas.height = cellsH
+      // Lock the displayed size to an exact multiple of cellSize so each
+      // canvas pixel upscales to a full cs × cs CSS cell. Without this,
+      // ceil() makes the canvas slightly larger than the viewport and the
+      // browser stretches the upscale factor unevenly in width vs height,
+      // putting the lit cells off the CSS outline grid.
+      canvas.style.width = `${cellsW * cs}px`
+      canvas.style.height = `${cellsH * cs}px`
     }
     resize()
     window.addEventListener("resize", resize)
@@ -224,14 +231,14 @@ export function PixelGridBackdrop({ open, closing, calm }: Props) {
     <>
       <canvas
         ref={canvasRef}
-        className={`absolute inset-0 w-full h-full pointer-events-none alt-overlay-pixel-grid ${blurClass}`}
+        className={`absolute top-0 left-0 pointer-events-none alt-overlay-pixel-grid ${blurClass}`}
         aria-hidden
-      />
-
-      {/* Noise dither overlay — kills mask gradient banding without runtime cost */}
-      <div
-        className={`absolute inset-0 alt-overlay-pixel-grid-dither ${blurClass}`}
-        aria-hidden
+        style={{
+          // 5% white outline per cell — drawn as a CSS background grid,
+          // which sits behind the canvas raster so lit cells overlay it.
+          backgroundImage: `linear-gradient(to right, rgba(255,255,255,0.01) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.01) 1px, transparent 1px)`,
+          backgroundSize: `${cellSize}px ${cellSize}px`,
+        }}
       />
 
       {open && !closing && controlsOpen && (
