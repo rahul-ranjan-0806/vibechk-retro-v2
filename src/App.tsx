@@ -40,7 +40,7 @@ export default function App() {
   const [navCollapsed, setNavCollapsed] = useState(false)
 
   // Selected entity IDs for sidebar drill-down
-  const [selectedRoleId, setSelectedRoleId] = useState<string>(ROLES[0].id)
+  const [selectedRoleId, setSelectedRoleId] = useState<string | null>(null)
   const [selectedAltId, setSelectedAltId] = useState<string>(ALTS_MINI[0].id)
   const [pendingCandidateName, setPendingCandidateName] = useState<string | null>(null)
 
@@ -148,7 +148,11 @@ export default function App() {
             icon: <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/><path d="M9 9h0M9 12h0M9 15h0M9 18h0"/></svg> },
         ].map(item => {
           const btn = (
-            <button onClick={() => setPage(item.id)}
+            <button onClick={() => {
+              setPage(item.id)
+              // Clicking the Roles tab returns to the blank overview, not whichever role was last open
+              if (item.id === "roles") setSelectedRoleId(null)
+            }}
               className={`w-full flex items-center ${navCollapsed ? "justify-center px-0" : "gap-2 px-3"} h-7 text-[14px] transition-colors text-left rounded-sm ${
                 page === item.id ? "bg-foreground/10 text-foreground font-medium" : "text-foreground/75 hover:bg-foreground/5"
               }`}>
@@ -175,17 +179,22 @@ export default function App() {
               {wrapped}
               {showRoleList && (
                 <div className="flex flex-col gap-0 mt-0.5 mb-1 ml-6">
-                  {ROLES.map(r => (
-                    <button key={r.id} onClick={() => setSelectedRoleId(r.id)}
-                      className={`w-full text-left text-[13px] py-1 px-2 rounded-sm transition-colors truncate flex items-center gap-1.5 ${
-                        selectedRoleId === r.id
-                          ? "bg-foreground/10 text-foreground font-medium"
-                          : "text-foreground/65 hover:bg-foreground/5"
-                      }`}>
-                      <span className="text-foreground/40">📋</span>
-                      <span className="truncate">{r.title}</span>
-                    </button>
-                  ))}
+                  {ROLES.map(r => {
+                    // Sidebar uses mockData IDs (r1/r2/r3); RolesPage stores its own IDs (spd/swe/pmg).
+                    // Bridge through MOCK_ROLE_TO_ROLES_PAGE so the sublist click navigates to the right detail.
+                    const rolesPageId = MOCK_ROLE_TO_ROLES_PAGE[r.id] ?? r.id
+                    return (
+                      <button key={r.id} onClick={() => setSelectedRoleId(rolesPageId)}
+                        className={`w-full text-left text-[13px] py-1 px-2 rounded-sm transition-colors truncate flex items-center gap-1.5 ${
+                          selectedRoleId === rolesPageId
+                            ? "bg-foreground/10 text-foreground font-medium"
+                            : "text-foreground/65 hover:bg-foreground/5"
+                        }`}>
+                        <span className="text-foreground/40">📋</span>
+                        <span className="truncate">{r.title}</span>
+                      </button>
+                    )
+                  })}
                   <button className="w-full text-left text-[13px] py-1 px-2 rounded-sm text-foreground/45 hover:text-foreground hover:bg-foreground/5 transition-colors flex items-center gap-1.5">
                     <span>+</span>
                     <span>Add a role</span>
@@ -245,7 +254,7 @@ export default function App() {
 
       <main className="flex-1 overflow-hidden">
         {page === "home" && <HomePage onNavigate={setPage} onOpenOverlay={openOverlay} onNavigateToCandidate={navigateToCandidate} onNavigateToRole={navigateToRole} />}
-        {page === "roles" && <RolesPage onEntityChange={setEntityContext} selectedRoleId={selectedRoleId} onSelectRole={setSelectedRoleId} initialCandidateName={pendingCandidateName} onCandidateConsumed={() => setPendingCandidateName(null)} />}
+        {page === "roles" && <RolesPage onEntityChange={setEntityContext} selectedRoleId={selectedRoleId} onSelectRole={setSelectedRoleId} onBackToList={() => setSelectedRoleId(null)} initialCandidateName={pendingCandidateName} onCandidateConsumed={() => setPendingCandidateName(null)} />}
         {page === "candidates" && <CandidatesPage onEntityChange={setEntityContext} onNavigateToCandidate={navigateToCandidate} />}
         {page === "alts" && <AltsPage onEntityChange={setEntityContext} selectedAltId={selectedAltId} onSelectAlt={setSelectedAltId} />}
         {page === "chat" && <ChatPage />}

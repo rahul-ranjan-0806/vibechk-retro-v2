@@ -1,5 +1,4 @@
 import { useState } from "react"
-import { PixelSprite } from "@/components/PixelSprite"
 import { DecisionsLog } from "@/components/DecisionsLog"
 import {
   CANDIDATES as SEED_CANDIDATES,
@@ -89,6 +88,7 @@ export function HomePage({ onNavigate, onOpenOverlay, onNavigateToCandidate, onN
   // Setup
   const doneCount = SETUP_ITEMS.filter(i => i.status === "done").length
   const setupComplete = doneCount === SETUP_ITEMS.length
+  const setupPercent = Math.round((doneCount / SETUP_ITEMS.length) * 100)
   const incomplete = SETUP_ITEMS.filter(i => i.status !== "done")
     .sort((a, b) => {
       const rank = (s: SetupItem["status"]) => s === "warning" ? 0 : s === "pending" ? 1 : 2
@@ -121,9 +121,6 @@ export function HomePage({ onNavigate, onOpenOverlay, onNavigateToCandidate, onN
         <div className="max-w-page-wide mx-auto px-12 pt-16 pb-24">
 
           {/* ── Page title ──────────────────────────────── */}
-          <div className="flex items-center gap-3 mb-1">
-            <PixelSprite size={28} />
-          </div>
           <h1 className="text-display mb-2">Hiring Triage</h1>
           <p className="text-sm text-muted-foreground mb-12">Sashank's Alt · since yesterday</p>
 
@@ -153,7 +150,7 @@ export function HomePage({ onNavigate, onOpenOverlay, onNavigateToCandidate, onN
 
           {/* ── Dilemmas (action-required) ────────────────── */}
           {(dilemmas.length > 0 || (!setupComplete && !setupDismissed)) && (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-12 items-start [&>*:only-child]:lg:col-span-2">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-12 items-stretch [&>*:only-child]:lg:col-span-2">
               {dilemmas.length > 0 && (
                 <div>
                   <p className="text-[15px] font-semibold text-foreground mb-3">
@@ -203,36 +200,34 @@ export function HomePage({ onNavigate, onOpenOverlay, onNavigateToCandidate, onN
 
               {/* ── Setup callout ────────────────────────── */}
               {!setupComplete && !setupDismissed && (
-                <div>
+                <div className="flex flex-col">
                   <p className="text-[15px] font-semibold text-foreground mb-3">
-                    Finish setup · {doneCount}/{SETUP_ITEMS.length}
+                    Finish setup · {setupPercent}%
                   </p>
-                  <div className="rounded-md bg-muted/60 px-4 py-3 flex gap-3">
-                    <div className="text-xl pt-0.5 shrink-0">💡</div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="w-full max-w-[140px] h-1 rounded-full bg-foreground/10 overflow-hidden">
-                          <div className="h-full rounded-full bg-foreground transition-all" style={{ width: `${(doneCount / SETUP_ITEMS.length) * 100}%` }} />
-                        </div>
-                        <button onClick={() => setSetupDismissed(true)} className="text-muted-foreground hover:text-foreground w-6 h-6 flex items-center justify-center rounded-sm hover:bg-foreground/5">✕</button>
+                  <div className="rounded-md bg-muted/60 px-4 py-3 flex flex-col flex-1 justify-between gap-3">
+                    <div className="flex items-center gap-3">
+                      <div className="text-xl shrink-0 leading-none">💡</div>
+                      <div className="flex-1 h-1 rounded-full bg-foreground/10 overflow-hidden">
+                        <div className="h-full rounded-full bg-foreground transition-all" style={{ width: `${setupPercent}%` }} />
                       </div>
-                      <div className="flex flex-col gap-1">
-                        {incomplete.map(item => {
-                          const dotColor = item.status === "warning" ? "bg-status-warning-dot" : "bg-border"
-                          return (
-                            <div key={item.id} className="flex items-center gap-2 group">
-                              <div className={`w-1.5 h-1.5 rounded-full shrink-0 ${dotColor}`} />
-                              <p className="text-sm text-foreground flex-1 truncate">{item.title}</p>
-                              {item.ctaTarget && (
-                                <button onClick={() => onNavigate(item.ctaTarget!)}
-                                  className="text-xs text-muted-foreground hover:text-foreground transition-colors shrink-0">
-                                  {item.cta}
-                                </button>
-                              )}
-                            </div>
-                          )
-                        })}
-                      </div>
+                      <button onClick={() => setSetupDismissed(true)} className="text-muted-foreground hover:text-foreground w-6 h-6 flex items-center justify-center rounded-sm hover:bg-foreground/5 shrink-0">✕</button>
+                    </div>
+                    <div className="flex flex-col gap-1">
+                      {incomplete.map(item => {
+                        const dotColor = item.status === "warning" ? "bg-status-warning-dot" : "bg-border"
+                        return (
+                          <div key={item.id} className="flex items-center gap-2 group">
+                            <div className={`w-1.5 h-1.5 rounded-full shrink-0 ${dotColor}`} />
+                            <p className="text-sm text-foreground flex-1 truncate">{item.title}</p>
+                            {item.ctaTarget && (
+                              <button onClick={() => onNavigate(item.ctaTarget!)}
+                                className="text-xs text-muted-foreground hover:text-foreground transition-colors shrink-0">
+                                {item.cta}
+                              </button>
+                            )}
+                          </div>
+                        )
+                      })}
                     </div>
                   </div>
                 </div>

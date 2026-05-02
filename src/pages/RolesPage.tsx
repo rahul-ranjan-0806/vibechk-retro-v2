@@ -1,5 +1,8 @@
 import { useState, useRef, useEffect } from "react"
+import { motion, AnimatePresence } from "motion/react"
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/ui/collapsible"
+import { AnimatedSelect } from "@/components/ui/animated-select"
+import { ScoreRangeFilter } from "@/components/ui/score-range"
 
 // ── Types ─────────────────────────────────────────────────────
 
@@ -24,6 +27,7 @@ const CRITERIA: Criterion[] = [
 ]
 
 const CANDIDATES: Candidate[] = [
+  { id: 13, name: "Alessandro Maximilian Buchanan-Westchester III", score: 9, color: "green", time: "1h ago", agentDecision: "shortlisted" },
   { id: 1, name: "Priya Sharma", score: 9, color: "green", time: "2h ago", agentDecision: "shortlisted" },
   { id: 2, name: "Lena Fischer", score: 9, color: "green", time: "6h ago", agentDecision: "shortlisted" },
   { id: 3, name: "Arjun Mehta", score: 8, color: "green", time: "5h ago", agentDecision: "shortlisted" },
@@ -159,7 +163,7 @@ function ProfilePanel({ profileKey, onClose }: { profileKey: string; onClose: ()
         {/* TLDR */}
         <div>
           <p className="text-xs text-muted-foreground mb-2">TL;DR</p>
-          <p className="text-[11px] leading-relaxed text-foreground bg-muted/40 border border-border p-3">{profile.tldr}</p>
+          <p className="text-[11px] leading-relaxed text-foreground bg-muted/40 border border-border rounded-md p-3">{profile.tldr}</p>
         </div>
 
         {isResume ? (
@@ -167,7 +171,7 @@ function ProfilePanel({ profileKey, onClose }: { profileKey: string; onClose: ()
             {/* Mock PDF preview */}
             <div>
               <p className="text-xs text-muted-foreground mb-2">Resume preview</p>
-              <div className="border border-border bg-card text-foreground p-5 flex flex-col gap-3 shadow-sm">
+              <div className="border border-border rounded-lg bg-card text-foreground p-5 flex flex-col gap-3 shadow-sm">
                 <div className="border-b border-border/40 pb-3">
                   <p className="text-sm font-medium">Priya Sharma</p>
                   <p className="text-xs text-muted-foreground">Senior Product Designer · San Francisco, CA</p>
@@ -194,7 +198,7 @@ function ProfilePanel({ profileKey, onClose }: { profileKey: string; onClose: ()
                 </div>
               </div>
             </div>
-            <button className="flex items-center justify-center gap-2 text-[11px] px-3 py-2 border border-border hover:bg-muted transition-colors">
+            <button className="flex items-center justify-center gap-2 text-[11px] px-3 py-2 border border-border rounded-md hover:bg-muted transition-colors">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
               Download resume (PDF)
             </button>
@@ -205,7 +209,7 @@ function ProfilePanel({ profileKey, onClose }: { profileKey: string; onClose: ()
             <div>
               <p className="text-xs text-muted-foreground mb-2">Source</p>
               <a href={profile.url} target="_blank" rel="noopener noreferrer"
-                className="flex items-center gap-2 text-[11px] px-3 py-2 border border-border hover:bg-muted transition-colors text-link">
+                className="flex items-center gap-2 text-[11px] px-3 py-2 border border-border rounded-md hover:bg-muted transition-colors text-link">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
                 {profile.url}
               </a>
@@ -246,7 +250,7 @@ function RoleList({ selectedId, onSelect, collapsed }: { selectedId: string; onS
     <div className="w-56 shrink-0 border-r border-border flex flex-col overflow-hidden transition-all duration-200">
       <div className="p-4 border-b border-border flex items-center justify-between">
         <h2 className="text-xs font-medium">All roles</h2>
-        <button className="text-xs text-muted-foreground hover:text-foreground border border-border px-2 py-1 transition-colors">+ New</button>
+        <button className="text-xs text-muted-foreground hover:text-foreground border border-border rounded-md px-2 py-1 transition-colors">+ New</button>
       </div>
       <div className="flex-1 overflow-y-auto">
         {ROLES.map(role => (
@@ -266,14 +270,17 @@ function RoleList({ selectedId, onSelect, collapsed }: { selectedId: string; onS
 
 // ── Collapsible Section ──────────────────────────────────────
 
-function CollapsibleSection({ title, defaultOpen = true, children }: { title: string; defaultOpen?: boolean; children: React.ReactNode }) {
+function CollapsibleSection({ title, meta, defaultOpen = true, children }: { title: string; meta?: React.ReactNode; defaultOpen?: boolean; children: React.ReactNode }) {
   const [open, setOpen] = useState(defaultOpen)
   return (
     <Collapsible open={open} onOpenChange={setOpen}>
       <CollapsibleTrigger asChild>
         <button className="w-full flex items-center justify-between py-1.5 group">
           <p className="text-xs text-muted-foreground group-hover:text-foreground transition-colors">{title}</p>
-          <span className={`text-[11px] text-muted-foreground transition-transform ${open ? "rotate-90" : ""}`}>▶</span>
+          <div className="flex items-center gap-2">
+            {meta && <span className="text-xs text-muted-foreground">{meta}</span>}
+            <span className={`text-[11px] text-muted-foreground transition-transform ${open ? "rotate-90" : ""}`}>▶</span>
+          </div>
         </button>
       </CollapsibleTrigger>
       <CollapsibleContent>{children}</CollapsibleContent>
@@ -464,7 +471,7 @@ function JDEditorModal({ open, onClose }: { open: boolean; onClose: () => void }
             {msgs.map((m, i) => (
               <div key={i} className={`text-[11px] leading-relaxed rounded-lg px-3 py-2 ${
                 m.from === "agent"
-                  ? "bg-muted/60 border border-border self-start max-w-[90%]"
+                  ? "bg-muted/60 border border-border rounded-md self-start max-w-[90%]"
                   : "bg-foreground text-background self-end max-w-[85%]"
               }`}>
                 {m.text}
@@ -493,7 +500,7 @@ function JobPostingTab({ status, onStatusChange }: { status: "draft"|"live"; onS
     <div className="flex flex-1 min-h-0">
       <div className="flex-1 min-w-0 overflow-hidden">
         <div className="h-full overflow-y-auto">
-          <div className="max-w-page mx-auto px-12 pt-16 pb-24 flex flex-col gap-10">
+          <div className="max-w-page-wide mx-auto px-12 pt-16 pb-24 flex flex-col gap-10">
 
             {/* JD */}
             <CollapsibleSection title="Job description">
@@ -516,30 +523,41 @@ function JobPostingTab({ status, onStatusChange }: { status: "draft"|"live"; onS
               </div>
             </CollapsibleSection>
 
-            {/* Requirements */}
-            <CollapsibleSection title="Requirements">
-              <div className="border border-border rounded-lg overflow-hidden">
-                {[{ short: "in", label: "LinkedIn", color: "#0A66C2" }, { short: "gh", label: "GitHub", color: "#24292e" }].map((r, i) => (
-                  <div key={r.label} className={`flex items-center justify-between px-3 py-2.5 ${i > 0 ? "border-t border-border" : ""}`}>
-                    <div className="flex items-center gap-2 text-sm">
-                      <span className="text-[11px] font-bold px-1 py-0.5 rounded text-white" style={{ background: r.color }}>{r.short}</span>
-                      {r.label}
-                    </div>
-                    <select className="text-xs border border-border rounded-md px-2 py-1 bg-background text-foreground">
-                      <option>Required</option><option>Optional</option><option>Off</option>
-                    </select>
+            {/* Requirements + Share with candidates — side by side */}
+            <div className="flex gap-6 items-start">
+              <div className="flex-1 min-w-0">
+                <CollapsibleSection title="Requirements">
+                  <div className="border border-border rounded-lg overflow-hidden">
+                    {[{ short: "in", label: "LinkedIn", color: "#0A66C2" }, { short: "gh", label: "GitHub", color: "#24292e" }].map((r, i) => (
+                      <div key={r.label} className={`flex items-center justify-between px-3 py-2.5 ${i > 0 ? "border-t border-border" : ""}`}>
+                        <div className="flex items-center gap-2 text-sm">
+                          <span className="text-[11px] font-bold px-1 py-0.5 rounded text-white" style={{ background: r.color }}>{r.short}</span>
+                          {r.label}
+                        </div>
+                        <AnimatedSelect
+                          size="sm"
+                          defaultValue="required"
+                          options={[
+                            { value: "required", label: "Required" },
+                            { value: "optional", label: "Optional" },
+                            { value: "off", label: "Off" },
+                          ]}
+                        />
+                      </div>
+                    ))}
                   </div>
-                ))}
+                </CollapsibleSection>
               </div>
-            </CollapsibleSection>
 
-            {/* Share with candidates */}
-            <CollapsibleSection title="Share with candidates">
-              <div className="flex items-center gap-2 bg-muted/40 border border-border rounded-lg px-3 py-2.5">
-                <span className="text-xs text-muted-foreground flex-1 overflow-hidden text-ellipsis whitespace-nowrap">alt.inc/apply/senior-product-designer</span>
-                <button className="text-xs border border-border rounded-md px-2 py-1 bg-background text-muted-foreground hover:text-foreground transition-colors shrink-0">Copy</button>
+              <div className="flex-1 min-w-0">
+                <CollapsibleSection title="Share with candidates">
+                  <div className="flex items-center gap-2 bg-muted/40 border border-border rounded-lg px-3 py-2.5">
+                    <span className="text-xs text-muted-foreground flex-1 overflow-hidden text-ellipsis whitespace-nowrap">alt.inc/apply/senior-product-designer</span>
+                    <button className="text-xs border border-border rounded-md px-2 py-1 bg-background text-muted-foreground hover:text-foreground transition-colors shrink-0">Copy</button>
+                  </div>
+                </CollapsibleSection>
               </div>
-            </CollapsibleSection>
+            </div>
 
             {/* Collaborators */}
             <CollapsibleSection title="Collaborators">
@@ -572,24 +590,19 @@ function InterviewConfigTab() {
   const toggleExpand = (id: string) => setExpanded(p => ({ ...p, [id]: !p[id] }))
 
   return (
-    <div className="overflow-y-auto flex-1"><div className="max-w-page mx-auto px-12 pt-16 pb-24 flex flex-col gap-10">
-      <div>
-        <h3 className="text-xs font-medium mb-2.5">Interviewing Alt</h3>
-        <div className="flex items-center gap-3 p-2.5 bg-muted/40 border border-border w-fit">
-          <div className="w-8 h-8 bg-accent-blue/10 text-accent-blue flex items-center justify-center text-xs font-medium">SG</div>
+    <div className="overflow-y-auto flex-1"><div className="max-w-page-wide mx-auto px-12 pt-16 pb-24 flex flex-col gap-10">
+      <CollapsibleSection title="Interviewing Alt">
+        <div className="flex items-center gap-3 p-2.5 bg-muted/40 border border-border rounded-lg w-fit">
+          <div className="w-8 h-8 bg-accent-blue/10 text-accent-blue flex items-center justify-center text-xs font-medium rounded-md">SG</div>
           <div>
             <p className="text-sm font-medium">Sashank's Alt</p>
             <p className="text-[11px] text-muted-foreground">Founder · Active</p>
           </div>
         </div>
-      </div>
+      </CollapsibleSection>
 
-      <div>
-        <div className="flex items-center justify-between mb-2.5">
-          <h3 className="text-xs font-medium">Eval criteria</h3>
-          <span className="text-xs text-muted-foreground">4 criteria · JD + best practices</span>
-        </div>
-        <div className="border border-border overflow-hidden">
+      <CollapsibleSection title="Eval criteria" meta="4 criteria · JD + best practices">
+        <div className="border border-border rounded-lg overflow-hidden">
           {CRITERIA.map((c, i) => (
             <div key={c.id} className={i > 0 ? "border-t border-border" : ""}>
               <button onClick={() => toggleExpand(c.id)} className="w-full flex items-center gap-2 px-3 py-2.5 text-left hover:bg-muted/40 transition-colors">
@@ -616,13 +629,9 @@ function InterviewConfigTab() {
             </div>
           ))}
         </div>
-      </div>
+      </CollapsibleSection>
 
-      <div>
-        <div className="flex items-center justify-between mb-2.5">
-          <h3 className="text-xs font-medium">Interview flow</h3>
-          <span className="text-xs text-muted-foreground">~22 min</span>
-        </div>
+      <CollapsibleSection title="Interview flow" meta="~22 min">
         <div className="flex flex-col gap-1.5">
           {[
             { label: "Intro & warm-up (3 min)", detail: "Alt introduces itself, confirms the role, and eases the candidate in with light conversational prompts." },
@@ -631,8 +640,8 @@ function InterviewConfigTab() {
             { label: "Cross-functional scenario (5 min)", detail: "Alt presents a collaboration or conflict prompt (e.g. eng/design pushback) to gauge communication and stakeholder handling." },
             { label: "Candidate Q&A (2 min)", detail: "Alt answers the candidate's questions about role, team, and culture using founder memories." },
           ].map((step, i) => (
-            <div key={i} className="flex items-start gap-3 px-3 py-2.5 bg-muted/40 border border-border">
-              <div className="w-5 h-5 bg-border flex items-center justify-center text-xs font-medium text-muted-foreground shrink-0 mt-0.5">{i+1}</div>
+            <div key={i} className="flex items-start gap-3 px-3 py-2.5 bg-muted/40 border border-border rounded-lg">
+              <div className="w-5 h-5 bg-border flex items-center justify-center text-xs font-medium text-muted-foreground shrink-0 mt-0.5 rounded-sm">{i+1}</div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm leading-snug">{step.label}</p>
                 <p className="text-[11px] text-muted-foreground leading-relaxed mt-1">{step.detail}</p>
@@ -640,7 +649,7 @@ function InterviewConfigTab() {
             </div>
           ))}
         </div>
-      </div>
+      </CollapsibleSection>
 
     </div></div>
   )
@@ -649,13 +658,50 @@ function InterviewConfigTab() {
 // ── Candidates Tab ────────────────────────────────────────────
 
 function CandidatesTab({ roleTitle, activeProfile, onProfileOpen, onProfileClose, initialCandidateName, onCandidateConsumed }: { roleTitle: string; activeProfile: string | null; onProfileOpen: (key: string) => void; onProfileClose: () => void; initialCandidateName?: string | null; onCandidateConsumed?: () => void }) {
-  // TODO (review): threshold slider icon should move to the candidate column header alongside search/filter
   const [threshold, setThreshold] = useState(7)
   const [thresholdOpen, setThresholdOpen] = useState(false)
-  const [sortBy, setSortBy] = useState<"score"|"time">("score")
   const [selectedId, setSelectedId] = useState<number|null>(null)
   const [overrides] = useState<Record<number, string>>({})
   const [detailTab, setDetailTab] = useState<"transcript"|"linkedin"|"notes">("linkedin")
+
+  // Filter state — mirrors global Candidates page
+  const [search, setSearch] = useState("")
+  const [statusFilter, setStatusFilter] = useState<"all"|"pending"|"shortlisted"|"rejected">("all")
+  const [recFilter, setRecFilter] = useState<"all"|"shortlist"|"reject"|"review">("all")
+  const [scoreMin, setScoreMin] = useState(1)
+  const [scoreMax, setScoreMax] = useState(10)
+
+  // Detail panel width — user-resizable via the divider between table and detail
+  const [detailWidth, setDetailWidth] = useState(420)
+  const splitRef = useRef<HTMLDivElement>(null)
+  const draggingRef = useRef(false)
+  useEffect(() => {
+    const onMove = (e: MouseEvent) => {
+      if (!draggingRef.current || !splitRef.current) return
+      const rect = splitRef.current.getBoundingClientRect()
+      // Mouse x → desired detail width = right edge - mouse - small handle gutter
+      const next = rect.right - e.clientX - 4
+      setDetailWidth(Math.max(280, Math.min(720, next)))
+    }
+    const onUp = () => {
+      if (!draggingRef.current) return
+      draggingRef.current = false
+      document.body.style.cursor = ""
+      document.body.style.userSelect = ""
+    }
+    window.addEventListener("mousemove", onMove)
+    window.addEventListener("mouseup", onUp)
+    return () => {
+      window.removeEventListener("mousemove", onMove)
+      window.removeEventListener("mouseup", onUp)
+    }
+  }, [])
+  const startResize = (e: React.MouseEvent) => {
+    e.preventDefault()
+    draggingRef.current = true
+    document.body.style.cursor = "col-resize"
+    document.body.style.userSelect = "none"
+  }
 
   // Auto-select candidate when navigated from /candidates page
   useEffect(() => {
@@ -670,11 +716,36 @@ function CandidatesTab({ roleTitle, activeProfile, onProfileOpen, onProfileClose
 
   const getStatus = (c: Candidate) => overrides[c.id] || c.agentDecision
 
-  const sorted = [...CANDIDATES].sort((a, b) => {
-    if (sortBy === "score") return b.score - a.score
-    const ord = ["2h ago","5h ago","6h ago","1d ago","1d ago","2d ago","2d ago","3d ago","3d ago","4d ago","5d ago","6d ago"]
-    return ord.indexOf(a.time) - ord.indexOf(b.time)
-  })
+  // Map agentDecision → Alt rec semantics so we can filter on it the same
+  // way the global Candidates page does
+  const altRecOf = (c: Candidate): "shortlist"|"reject"|"review" =>
+    c.agentDecision === "shortlisted" ? "shortlist" :
+    c.agentDecision === "rejected" ? "reject" : "review"
+
+  const filtered = [...CANDIDATES]
+    .filter(c => {
+      if (search && !c.name.toLowerCase().includes(search.toLowerCase())) return false
+      if (statusFilter !== "all" && getStatus(c) !== statusFilter) return false
+      if (recFilter !== "all" && altRecOf(c) !== recFilter) return false
+      if (c.score < scoreMin || c.score > scoreMax) return false
+      return true
+    })
+    .sort((a, b) => b.score - a.score)
+
+  const activeFilterCount = [
+    search !== "",
+    statusFilter !== "all",
+    recFilter !== "all",
+    scoreMin > 1 || scoreMax < 10,
+  ].filter(Boolean).length
+
+  const resetFilters = () => {
+    setSearch("")
+    setStatusFilter("all")
+    setRecFilter("all")
+    setScoreMin(1)
+    setScoreMax(10)
+  }
 
   const selected = CANDIDATES.find(c => c.id === selectedId)
 
@@ -685,84 +756,166 @@ function CandidatesTab({ roleTitle, activeProfile, onProfileOpen, onProfileClose
 
   return (
     <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
-      {/* Threshold panel */}
-      <div className={`shrink-0 border-b border-border bg-muted/30 overflow-hidden transition-all duration-200 ${thresholdOpen ? "max-h-20 py-3 px-4" : "max-h-0"}`}>
-        <div className="flex items-center gap-3">
-          <span className="text-xs text-muted-foreground whitespace-nowrap">Push-to-ATS threshold</span>
-          <input type="range" min={1} max={10} step={1} value={threshold} onChange={e => setThreshold(Number(e.target.value))} className="flex-1 accent-foreground h-1" />
-          <span className="text-sm font-medium w-4 text-center tabular-nums">{threshold}</span>
-          <span className="text-xs text-muted-foreground">/10</span>
+      {/* Filter bar — same shape as global Candidates page */}
+      <div className="shrink-0">
+        <div className="max-w-page-wide mx-auto px-12 pt-8 pb-4 flex items-center gap-2 flex-wrap">
+          <input
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            placeholder="Search candidates..."
+            className="text-xs border border-border rounded-md px-3 py-1.5 bg-background outline-none placeholder:text-muted-foreground w-56 focus:border-foreground/40"
+          />
+          <AnimatedSelect<typeof statusFilter>
+            value={statusFilter}
+            onChange={setStatusFilter}
+            options={[
+              { value: "all", label: "All statuses" },
+              { value: "pending", label: "Your call" },
+              { value: "shortlisted", label: "Pushed to ATS" },
+              { value: "rejected", label: "Rejected" },
+            ]}
+          />
+          <AnimatedSelect<typeof recFilter>
+            value={recFilter}
+            onChange={setRecFilter}
+            options={[
+              { value: "all", label: "All Alt recs" },
+              { value: "shortlist", label: "Shortlist" },
+              { value: "reject", label: "Pass" },
+              { value: "review", label: "Review" },
+            ]}
+          />
+          <ScoreRangeFilter
+            min={1}
+            max={10}
+            lower={scoreMin}
+            upper={scoreMax}
+            onChange={(l, u) => { setScoreMin(l); setScoreMax(u) }}
+          />
+          <button onClick={() => setThresholdOpen(o => !o)}
+            className={`text-xs px-2 py-1.5 border rounded-md transition-colors ml-auto ${thresholdOpen ? "border-foreground bg-muted text-foreground" : "border-border text-muted-foreground hover:text-foreground hover:border-foreground/40"}`}>
+            Threshold
+          </button>
+          {activeFilterCount > 0 && (
+            <button onClick={resetFilters} className="text-xs text-muted-foreground hover:text-foreground underline">
+              Clear {activeFilterCount}
+            </button>
+          )}
         </div>
-        <p className="text-xs text-muted-foreground mt-1.5">
-          Candidates scoring <strong className="text-foreground">{threshold}+</strong> auto-pushed to ATS · Alt decides the rest (reject or flag for your call)
-        </p>
+
+        {/* Threshold panel — collapsible row under the filter bar */}
+        <div className={`overflow-hidden transition-all duration-200 ${thresholdOpen ? "max-h-32" : "max-h-0"}`}>
+          <div className="max-w-page-wide mx-auto px-12 pb-3">
+            <div className="flex items-center gap-3 bg-muted/30 border border-border rounded-md px-3 py-2.5">
+              <span className="text-xs text-muted-foreground whitespace-nowrap">Push-to-ATS threshold</span>
+              <input type="range" min={1} max={10} step={1} value={threshold} onChange={e => setThreshold(Number(e.target.value))} className="flex-1 accent-foreground h-1" />
+              <span className="text-sm font-medium w-4 text-center tabular-nums">{threshold}</span>
+              <span className="text-xs text-muted-foreground">/10</span>
+            </div>
+            <p className="text-xs text-muted-foreground mt-1.5">
+              Candidates scoring <strong className="text-foreground">{threshold}+</strong> auto-pushed to ATS · Alt decides the rest.
+            </p>
+          </div>
+        </div>
       </div>
 
+      {/* Body — page-wide parent stays fixed; table column inside it contracts
+          when the detail panel opens. Resizer sits between them.
+          Profile panel (LinkedIn etc.) still slides in from outside the page-wide cap. */}
       <div className="flex flex-1 min-h-0 overflow-hidden">
-        {/* Candidate list */}
-        <div className="w-72 shrink-0 border-r border-border flex flex-col overflow-hidden">
-          <div className="p-2.5 border-b border-border flex flex-col gap-2 shrink-0">
-            <div className="flex items-center gap-2">
-              <input placeholder="Search candidates..." className="flex-1 text-[11px] border border-border px-2 py-1.5 bg-background outline-none placeholder:text-muted-foreground" />
-              <button onClick={() => setThresholdOpen(o => !o)} title="Push-to-ATS threshold"
-                className={`p-1.5 border transition-colors ${thresholdOpen ? "border-foreground bg-muted text-foreground" : "border-border text-muted-foreground hover:text-foreground hover:border-foreground/40"}`}>
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                  <line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/>
-                  <line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/>
-                  <line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/>
-                  <line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/>
-                  <line x1="17" y1="16" x2="23" y2="16"/>
-                </svg>
-              </button>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <span className="text-xs text-muted-foreground">Sort:</span>
-              {(["score","time"] as const).map(s => (
-                <button key={s} onClick={() => setSortBy(s)} className={`text-xs px-2 py-0.5 border transition-colors ${sortBy === s ? "bg-foreground text-background border-foreground" : "border-border text-muted-foreground"}`}>
-                  {s === "score" ? "Score ↓" : "Time ↓"}
-                </button>
-              ))}
-            </div>
-            <div className="flex gap-1.5">
-              <input placeholder='Filter: e.g. "5+ yrs, Figma"' className="flex-1 text-xs border border-border px-2 py-1 bg-background outline-none placeholder:text-muted-foreground" />
-              <button className="text-xs px-2 py-1 border border-border hover:bg-muted transition-colors">↗</button>
-            </div>
-          </div>
-          <div className="flex-1 overflow-y-auto">
-            {sorted.map(c => {
-              const status = getStatus(c)
-              return (
-                <button key={c.id} onClick={() => selectCandidate(c.id)}
-                  className={`w-full flex items-center gap-2.5 px-3 py-2.5 border-b border-border text-left transition-colors hover:bg-muted/40 border-l-2 ${selectedId === c.id ? "bg-muted/50 border-l-foreground" : "border-l-transparent"}`}>
-                  <div className={`flex flex-col items-center w-8 shrink-0 ${scoreColors[c.color]}`}>
-                    <span className="text-base font-medium leading-none tabular-nums">{c.score}</span>
-                    <span className="text-[11px] text-muted-foreground">/10</span>
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <p className="text-sm font-medium truncate">{c.name}</p>
-                      <StellarTag score={c.score} />
-                    </div>
-                    <p className="text-xs text-muted-foreground">{c.time}</p>
-                  </div>
-                  <div className="flex flex-col items-end gap-1 shrink-0">
-                    <CandStatusBadge status={status} />
-                    <div className={`w-1.5 h-1.5 rounded-full ${dotColors[c.color]}`} />
-                  </div>
-                </button>
-              )
-            })}
-          </div>
-        </div>
+        <div className="flex-1 min-w-0 overflow-hidden">
+          <div ref={splitRef} className="max-w-page-wide mx-auto px-12 pb-6 h-full flex">
+            <div className="flex-1 min-w-0 overflow-y-auto">
+            <AnimatePresence mode="wait" initial={false}>
+            {filtered.length === 0 ? (
+              <motion.div
+                key="empty"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.22, ease: "easeOut" }}
+                className="border border-border rounded-lg p-8 text-center"
+              >
+                <p className="text-xs text-muted-foreground">No candidates match these filters.</p>
+              </motion.div>
+            ) : (
+              <motion.div
+                key="table"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.22, ease: "easeOut" }}
+                className="border border-border rounded-lg overflow-hidden"
+              >
+                {/* Header row */}
+                <div className="flex items-center gap-3 px-3 py-2 bg-muted/40 border-b border-border">
+                  <div className="w-10 shrink-0"><span className="text-xs text-muted-foreground">Score</span></div>
+                  <div className="flex-1"><span className="text-xs text-muted-foreground">Candidate</span></div>
+                  <div className="w-32 shrink-0"><span className="text-xs text-muted-foreground">Alt</span></div>
+                  <div className="w-28 shrink-0"><span className="text-xs text-muted-foreground">Status</span></div>
+                  <div className="w-16 shrink-0 text-right"><span className="text-xs text-muted-foreground">Time</span></div>
+                </div>
 
-        {/* Candidate detail */}
-        <div className="flex-1 overflow-hidden flex flex-col">
-          {!selected ? (
-            <div className="flex-1 flex items-center justify-center">
-              <p className="text-xs text-muted-foreground">Select a candidate to review</p>
+                <AnimatePresence initial={false}>
+                {filtered.map((c, i) => {
+                  const status = getStatus(c)
+                  const rec = altRecOf(c)
+                  const altLabel = rec === "shortlist" ? "Alt: Shortlist ↑" : rec === "reject" ? "Alt: Pass ↓" : "Alt: Your call"
+                  const altCls = rec === "shortlist"
+                    ? "bg-status-success text-status-success-foreground"
+                    : rec === "reject"
+                    ? "bg-status-danger text-status-danger-foreground"
+                    : "bg-status-warning text-status-warning-foreground"
+                  const hideStatus = c.score >= 9 && status === "shortlisted"
+                  return (
+                    <motion.div key={c.id} onClick={() => selectCandidate(c.id)}
+                      layout
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0, transition: { duration: 0.18, ease: "easeIn" } }}
+                      transition={{ duration: 0.22, ease: "easeOut" }}
+                      className={`flex items-center gap-3 px-3 py-2.5 border-b border-border last:border-b-0 cursor-pointer transition-colors overflow-hidden ${
+                        selectedId === c.id ? "bg-muted/50" : i % 2 ? "bg-muted/10" : ""
+                      } hover:bg-muted/40`}
+                    >
+                      <div className="w-10 shrink-0">
+                        <span className={`text-base font-medium tabular-nums ${scoreColors[c.color]}`}>{c.score}</span>
+                        <span className="text-[11px] text-muted-foreground">/10</span>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 min-w-0">
+                          <p className="text-sm font-medium truncate min-w-0">{c.name}</p>
+                          <span className="shrink-0"><StellarTag score={c.score} /></span>
+                        </div>
+                      </div>
+                      <div className="w-32 shrink-0">
+                        <span className={`text-xs rounded-md px-1.5 py-0.5 font-medium ${altCls}`}>{altLabel}</span>
+                      </div>
+                      <div className="w-28 shrink-0">
+                        {!hideStatus && <CandStatusBadge status={status} />}
+                      </div>
+                      <div className="w-16 shrink-0 text-right">
+                        <span className="text-xs text-muted-foreground">{c.time}</span>
+                      </div>
+                    </motion.div>
+                  )
+                })}
+                </AnimatePresence>
+              </motion.div>
+            )}
+            </AnimatePresence>
             </div>
-          ) : (
-            <div className="flex-1 overflow-y-auto"><div className="max-w-2xl mx-auto px-6 py-5">
+
+            {/* Resizer + detail panel — inside the page-wide parent so the
+                parent's width stays fixed; only the table column contracts. */}
+            {selected && (
+              <>
+                <div onMouseDown={startResize}
+                  className="w-1 mx-1 shrink-0 cursor-col-resize bg-border/40 hover:bg-foreground/40 active:bg-foreground/60 transition-colors rounded-full"
+                  title="Drag to resize"
+                />
+                <div style={{ width: detailWidth }} className="shrink-0 overflow-y-auto border border-border rounded-lg">
+                  <div className="px-5 py-5">
               {/* Candidate header — name + role */}
               <div className="flex items-center gap-3 mb-5">
                 <div className={`w-11 h-11 flex items-center justify-center text-sm font-medium text-white shrink-0 ${dotColors[selected.color]}`}>
@@ -776,7 +929,7 @@ function CandidatesTab({ roleTitle, activeProfile, onProfileOpen, onProfileClose
 
               {/* Score card */}
               <CollapsibleSection title="Score summary">
-                <div className="flex items-start gap-4 p-4 bg-muted/30 border border-border mb-4">
+                <div className="flex items-start gap-4 p-4 bg-muted/30 border border-border rounded-lg mb-4">
                   <div className={`text-5xl font-medium leading-none tabular-nums ${scoreColors[selected.color]}`}>
                     {selected.score}<span className="text-lg text-muted-foreground">/10</span>
                   </div>
@@ -793,7 +946,7 @@ function CandidatesTab({ roleTitle, activeProfile, onProfileOpen, onProfileClose
 
               {/* Alt scores */}
               <CollapsibleSection title="Alt scores">
-                <div className="border border-border mb-4">
+                <div className="border border-border rounded-lg overflow-hidden mb-4">
                   {getAltScoresFor(selected).map((row, i) => (
                     <div key={row.criterionId} className={`flex items-start gap-3 px-3 py-2.5 bg-muted/30 ${i > 0 ? "border-t border-border" : ""}`}>
                       <div className={`flex flex-col items-center w-8 shrink-0 ${scoreColors[scoreToColor(row.score)]}`}>
@@ -846,7 +999,7 @@ function CandidatesTab({ roleTitle, activeProfile, onProfileOpen, onProfileClose
                     ].map((b, i) => (
                       <div key={i} className="flex gap-2">
                         <span className="text-[11px] text-muted-foreground w-6 shrink-0 pt-1.5">{b.from}</span>
-                        <div className="flex-1 text-[11px] leading-relaxed bg-muted/40 border border-border px-2.5 py-2">{b.text}</div>
+                        <div className="flex-1 text-[11px] leading-relaxed bg-muted/40 border border-border rounded-md px-2.5 py-2">{b.text}</div>
                       </div>
                     ))}
                   </div>
@@ -862,7 +1015,7 @@ function CandidatesTab({ roleTitle, activeProfile, onProfileOpen, onProfileClose
                       { l: "AI writing detected", v: "Low probability", good: true },
                       { l: "Avg engagement", v: "~140 likes per post", good: null },
                     ].map(s => (
-                      <div key={s.l} className="flex justify-between items-start p-2 bg-muted/30 border border-border">
+                      <div key={s.l} className="flex justify-between items-start p-2 bg-muted/30 border border-border rounded-md">
                         <span className="text-[11px] text-muted-foreground">{s.l}</span>
                         <span className={`text-[11px] text-right max-w-[200px] ${s.good === true ? "text-status-success-foreground" : s.good === false ? "text-status-danger-foreground" : "text-foreground"}`}>{s.v}</span>
                       </div>
@@ -871,13 +1024,13 @@ function CandidatesTab({ roleTitle, activeProfile, onProfileOpen, onProfileClose
                 )}
 
                 {detailTab === "notes" && (
-                  <textarea className="w-full border border-border p-2.5 text-[11px] bg-background outline-none placeholder:text-muted-foreground min-h-[70px] resize-none leading-relaxed" placeholder="Add a private note about this candidate..." />
+                  <textarea className="w-full border border-border rounded-md p-2.5 text-[11px] bg-background outline-none placeholder:text-muted-foreground min-h-[70px] resize-none leading-relaxed" placeholder="Add a private note about this candidate..." />
                 )}
               </CollapsibleSection>
 
               {/* ATS row */}
               <CollapsibleSection title="ATS actions">
-                <div className="flex items-center gap-2 p-3 bg-muted/30 border border-border">
+                <div className="flex items-center gap-2 p-3 bg-muted/30 border border-border rounded-md">
                   {getStatus(selected) === "shortlisted" ? (
                     <span className="text-xs font-medium px-1.5 py-0.5 bg-status-success text-status-success-foreground">Shortlisted to ATS</span>
                   ) : (
@@ -888,8 +1041,11 @@ function CandidatesTab({ roleTitle, activeProfile, onProfileOpen, onProfileClose
                   Manual overrides pause Alt's autonomy for this role · <button className="underline hover:text-foreground transition-colors">Manage in settings</button>
                 </p>
               </CollapsibleSection>
-            </div></div>
-          )}
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
         </div>
 
         {/* Profile panel — slides in from right when a link is clicked */}
@@ -903,7 +1059,7 @@ function CandidatesTab({ roleTitle, activeProfile, onProfileOpen, onProfileClose
 
 // ── Role Detail ───────────────────────────────────────────────
 
-function RoleDetail({ role, activeProfile, onProfileOpen, onProfileClose, initialCandidateName, onCandidateConsumed }: { role: Role; activeProfile: string | null; onProfileOpen: (key: string) => void; onProfileClose: () => void; initialCandidateName?: string | null; onCandidateConsumed?: () => void }) {
+function RoleDetail({ role, activeProfile, onProfileOpen, onProfileClose, onBackToList, initialCandidateName, onCandidateConsumed }: { role: Role; activeProfile: string | null; onProfileOpen: (key: string) => void; onProfileClose: () => void; onBackToList?: () => void; initialCandidateName?: string | null; onCandidateConsumed?: () => void }) {
   const defaultTab = role.status === "live" || initialCandidateName ? "candidates" : "job-posting"
   const [activeTab, setActiveTab] = useState(defaultTab)
   const [status, setStatus] = useState<"draft"|"live">(role.status === "live" ? "live" : "draft")
@@ -916,36 +1072,35 @@ function RoleDetail({ role, activeProfile, onProfileOpen, onProfileClose, initia
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
-      {/* Notion-style breadcrumb header */}
-      <div className="shrink-0 h-11 flex items-center justify-between px-3 border-b border-border/40">
-        <div className="flex items-center gap-1.5 text-[13px] text-muted-foreground">
-          <span className="hover:bg-muted px-1.5 py-0.5 rounded-sm cursor-default">Roles</span>
-          <span className="text-muted-foreground/50">/</span>
-          <span className="hover:bg-muted px-1.5 py-0.5 rounded-sm cursor-default text-foreground">{role.title}</span>
-        </div>
-        <div className="flex items-center gap-1 text-xs text-muted-foreground">
-          <span>Edited just now</span>
-          <button className="px-2 py-1 hover:bg-muted rounded-sm">Share</button>
-          <button className="w-7 h-7 flex items-center justify-center hover:bg-muted rounded-sm" title="More">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg>
-          </button>
-        </div>
-      </div>
-
-      {/* Page title block */}
+      {/* Page title block — back link + name/status on left, doc actions floated right */}
       <div className="shrink-0">
-        <div className="max-w-page-wide mx-auto px-12 pt-16 pb-0">
-          <div className="flex items-center gap-3 mb-2">
-            <span className="text-2xl">📋</span>
-            <h1 className="text-display">{role.title}</h1>
-          </div>
-          <div className="flex items-center gap-3 mb-10 pl-1">
-            <span className="text-sm text-muted-foreground">{role.department}</span>
-            <span className="text-muted-foreground/50">·</span>
-            <span className="text-sm text-muted-foreground">Created {role.createdAt}</span>
-            <div className="flex items-center bg-muted rounded-sm overflow-hidden">
-              <button onClick={() => setStatus("draft")} className={`text-xs px-2.5 py-1 transition-colors ${status === "draft" ? "bg-status-warning text-status-warning-foreground" : "text-muted-foreground hover:text-foreground"}`}>Draft</button>
-              <button onClick={() => setStatus("live")} className={`text-xs px-2.5 py-1 transition-colors ${status === "live" ? "bg-status-success text-status-success-foreground" : "text-muted-foreground hover:text-foreground"}`}>Live</button>
+        <div className="max-w-page-wide mx-auto px-12 pt-8 pb-0">
+          <button onClick={onBackToList} className="text-[13px] text-muted-foreground hover:text-foreground inline-flex items-center gap-1 mb-3 -ml-1 px-1 py-0.5 hover:bg-muted rounded-sm transition-colors">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            Back to roles
+          </button>
+          <div className="flex items-start justify-between gap-6 mb-5">
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-3 mb-1">
+                <span className="text-2xl">📋</span>
+                <h1 className="text-display">{role.title}</h1>
+              </div>
+              <div className="flex items-center gap-3 pl-1">
+                <span className="text-sm text-muted-foreground">{role.department}</span>
+                <span className="text-muted-foreground/50">·</span>
+                <span className="text-sm text-muted-foreground">Created {role.createdAt}</span>
+                <div className="flex items-center bg-muted rounded-sm overflow-hidden">
+                  <button onClick={() => setStatus("draft")} className={`text-xs px-2.5 py-1 transition-colors ${status === "draft" ? "bg-status-warning text-status-warning-foreground" : "text-muted-foreground hover:text-foreground"}`}>Draft</button>
+                  <button onClick={() => setStatus("live")} className={`text-xs px-2.5 py-1 transition-colors ${status === "live" ? "bg-status-success text-status-success-foreground" : "text-muted-foreground hover:text-foreground"}`}>Live</button>
+                </div>
+              </div>
+            </div>
+            <div className="flex items-center gap-1 text-xs text-muted-foreground shrink-0 pt-1">
+              <span>Edited just now</span>
+              <button className="px-2 py-1 hover:bg-muted rounded-sm">Share</button>
+              <button className="w-7 h-7 flex items-center justify-center hover:bg-muted rounded-sm" title="More">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg>
+              </button>
             </div>
           </div>
           <div className="flex items-center gap-1 border-b border-border/60 -mx-2 px-2">
@@ -971,24 +1126,33 @@ function RoleDetail({ role, activeProfile, onProfileOpen, onProfileClose, initia
 
 // ── Main Export ───────────────────────────────────────────────
 
-export function RolesPage({ onEntityChange, selectedRoleId, onSelectRole: _onSelectRole, initialCandidateName, onCandidateConsumed }: { onEntityChange?: (e: { type: "role"|"candidate"|"alt"; name: string; meta?: Record<string,string> } | undefined) => void; selectedRoleId?: string; onSelectRole?: (id: string) => void; initialCandidateName?: string | null; onCandidateConsumed?: () => void }) {
-  const selectedId = selectedRoleId ?? ROLES[0].id
+export function RolesPage({ onEntityChange, selectedRoleId, onSelectRole: _onSelectRole, onBackToList, initialCandidateName, onCandidateConsumed }: { onEntityChange?: (e: { type: "role"|"candidate"|"alt"; name: string; meta?: Record<string,string> } | undefined) => void; selectedRoleId?: string | null; onSelectRole?: (id: string) => void; onBackToList?: () => void; initialCandidateName?: string | null; onCandidateConsumed?: () => void }) {
   const [activeProfile, setActiveProfile] = useState<string | null>(null)
-  const selectedRole = ROLES.find(r => r.id === selectedId) ?? ROLES[0]
+  const selectedRole = selectedRoleId ? ROLES.find(r => r.id === selectedRoleId) ?? null : null
 
   useEffect(() => {
-    onEntityChange?.({ type: "role", name: selectedRole.title, meta: { id: selectedRole.id, status: selectedRole.status, candidateCount: String(selectedRole.candidateCount) } })
-  }, [selectedId])
+    if (selectedRole) {
+      onEntityChange?.({ type: "role", name: selectedRole.title, meta: { id: selectedRole.id, status: selectedRole.status, candidateCount: String(selectedRole.candidateCount) } })
+    } else {
+      onEntityChange?.(undefined)
+    }
+  }, [selectedRoleId])
 
   // Reset profile drilldown when role changes
-  useEffect(() => { setActiveProfile(null) }, [selectedId])
+  useEffect(() => { setActiveProfile(null) }, [selectedRoleId])
 
   const openProfile = (key: string) => setActiveProfile(key)
   const closeProfile = () => setActiveProfile(null)
 
   return (
     <div className="flex h-full overflow-hidden">
-      <RoleDetail key={selectedId} role={selectedRole} activeProfile={activeProfile} onProfileOpen={openProfile} onProfileClose={closeProfile} initialCandidateName={initialCandidateName} onCandidateConsumed={onCandidateConsumed} />
+      {selectedRole ? (
+        <RoleDetail key={selectedRole.id} role={selectedRole} activeProfile={activeProfile} onProfileOpen={openProfile} onProfileClose={closeProfile} onBackToList={onBackToList} initialCandidateName={initialCandidateName} onCandidateConsumed={onCandidateConsumed} />
+      ) : (
+        <div className="flex-1 flex items-center justify-center text-muted-foreground">
+          <p className="text-display">roles page</p>
+        </div>
+      )}
     </div>
   )
 }

@@ -15,7 +15,7 @@ const CTA_BASE =
 const CTA_VARIANTS: Record<CtaSemantic, string> = {
   primary: "bg-foreground text-background hover:opacity-90",
   neutral:
-    "border border-border text-muted-foreground hover:text-foreground hover:border-foreground/40",
+    "border border-border rounded-md text-muted-foreground hover:text-foreground hover:border-foreground/40",
   success: "bg-status-success-dot text-white hover:opacity-90",
   destructive: "bg-status-danger-dot text-white hover:opacity-90",
   warning: "bg-status-warning-dot text-white hover:opacity-90",
@@ -85,7 +85,7 @@ function CtaGroupPart({ options }: { options: CtaOption[] }) {
 function TogglePart({ label, description, defaultOn = false }: { label: string; description?: string; defaultOn?: boolean }) {
   const [on, setOn] = useState(defaultOn)
   return (
-    <div className="flex items-center justify-between gap-4 px-3 py-2.5 border border-border bg-background">
+    <div className="flex items-center justify-between gap-4 px-3 py-2.5 border border-border rounded-md bg-background">
       <div className="flex-1 min-w-0">
         <p className="text-[11px] font-medium">{label}</p>
         {description && <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{description}</p>}
@@ -94,7 +94,7 @@ function TogglePart({ label, description, defaultOn = false }: { label: string; 
         onClick={() => setOn(v => !v)}
         role="switch"
         aria-checked={on}
-        className={`relative shrink-0 w-9 h-4 border border-border transition-colors ${on ? "bg-accent-blue" : "bg-muted"}`}
+        className={`relative shrink-0 w-9 h-4 border border-border rounded-full transition-colors ${on ? "bg-accent-blue" : "bg-muted"}`}
       >
         <span
           className={`absolute top-0 bottom-0 w-[14px] transition-all ${
@@ -119,7 +119,7 @@ function fileTypeTint(t: string) {
 function DocumentPart({ title, filetype, size, note }: { title: string; filetype: string; size: string; note?: string }) {
   const [downloaded, setDownloaded] = useState(false)
   return (
-    <div className="flex items-start gap-3 px-3 py-2.5 border border-border bg-background">
+    <div className="flex items-start gap-3 px-3 py-2.5 border border-border rounded-md bg-background">
       <div className={`w-10 h-12 flex items-center justify-center text-[11px] font-bold shrink-0 ${fileTypeTint(filetype)}`}>
         {filetype.slice(0, 4).toUpperCase()}
       </div>
@@ -156,7 +156,7 @@ function ReportPart({
     return "text-foreground"
   }
   return (
-    <div className="border border-border bg-background">
+    <div className="border border-border rounded-lg overflow-hidden bg-background">
       <div className="px-3 py-2 border-b border-border bg-muted/30">
         <p className="text-xs text-muted-foreground">{title}</p>
         {subtitle && <p className="text-xs text-muted-foreground mt-0.5">{subtitle}</p>}
@@ -183,7 +183,7 @@ function CandidateRefPart({ candidateId, note }: { candidateId: string; note?: s
     c.altRec === "reject" ? "bg-status-danger text-status-danger-foreground" :
     "bg-status-warning text-status-warning-foreground"
   return (
-    <div className="flex items-start gap-3 px-3 py-2.5 border border-border bg-background">
+    <div className="flex items-start gap-3 px-3 py-2.5 border border-border rounded-md bg-background">
       <div className={`w-9 h-9 flex items-center justify-center text-sm font-medium shrink-0 ${scoreBg}`}>
         {c.score}
       </div>
@@ -232,7 +232,7 @@ function ChecklistPart({
   const toggle = (id: string) => setChecked(p => ({ ...p, [id]: !p[id] }))
 
   return (
-    <div className="border border-border bg-background">
+    <div className="border border-border rounded-lg overflow-hidden bg-background">
       {title && (
         <div className="px-3 py-2 border-b border-border bg-muted/30">
           <p className="text-xs text-muted-foreground">{title}</p>
@@ -248,7 +248,7 @@ function ChecklistPart({
               disabled={applied}
               className={`w-full flex items-start gap-3 px-3 py-2 text-left transition-colors ${i > 0 ? "border-t border-border" : ""} ${applied ? "cursor-default" : "hover:bg-muted/30"}`}
             >
-              <span className={`text-[11px] mt-0.5 shrink-0 w-4 h-4 border border-foreground flex items-center justify-center ${on ? "bg-foreground text-background" : "bg-background"}`}>
+              <span className={`text-[11px] mt-0.5 shrink-0 w-4 h-4 border border-foreground rounded-sm flex items-center justify-center ${on ? "bg-foreground text-background" : "bg-background"}`}>
                 {on ? "✓" : ""}
               </span>
               <span className="flex-1 min-w-0">
