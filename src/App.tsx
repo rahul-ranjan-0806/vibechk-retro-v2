@@ -108,7 +108,7 @@ export default function App() {
   return (
     <>
     <div className="flex h-screen bg-background text-foreground overflow-hidden">
-      <aside className={`${navCollapsed ? "w-14" : "w-60"} shrink-0 flex flex-col py-3 gap-0.5 bg-muted/60 transition-all duration-200 ${navCollapsed ? "overflow-visible" : "overflow-hidden"}`}>
+      <aside className={`${navCollapsed ? "w-14" : "w-60"} shrink-0 flex flex-col py-3 gap-1 bg-muted/60 transition-all duration-200 ${navCollapsed ? "overflow-visible" : "overflow-hidden"}`}>
         <div className={`${navCollapsed ? "px-0 flex justify-center" : "px-5 flex items-center justify-between"} mb-5`}>
           {navCollapsed
             ? <button onClick={() => setNavCollapsed(false)} className="text-muted-foreground hover:text-foreground transition-colors p-0.5" title="Expand sidebar">
@@ -153,7 +153,7 @@ export default function App() {
               // Clicking the Roles tab returns to the blank overview, not whichever role was last open
               if (item.id === "roles") setSelectedRoleId(null)
             }}
-              className={`w-full flex items-center ${navCollapsed ? "justify-center px-0" : "gap-2 px-3"} h-8 text-[14px] transition-colors text-left rounded-sm ${
+              className={`w-full flex items-center ${navCollapsed ? "justify-center px-0" : "gap-2.5 px-3"} h-9 text-[14px] transition-colors text-left rounded-md ${
                 page === item.id ? "bg-foreground/10 text-foreground font-medium" : "text-foreground/75 hover:bg-foreground/5"
               }`}>
               <span className="shrink-0 opacity-70">{item.icon}</span>
@@ -175,7 +175,7 @@ export default function App() {
           const showAltList = item.id === "alts" && page === "alts" && !navCollapsed
 
           return (
-            <div key={item.id} className={`flex flex-col ${navCollapsed ? "" : "px-2"}`}>
+            <div key={item.id} className={`flex flex-col ${navCollapsed ? "" : "px-3"}`}>
               {wrapped}
               {showRoleList && (
                 <div className="flex flex-col gap-0 mt-0.5 mb-1 ml-6">
@@ -232,18 +232,22 @@ export default function App() {
         {(() => {
           const settingsBtn = (
             <button onClick={() => setPage("settings")}
-              className={`w-full flex items-center ${navCollapsed ? "justify-center px-0 mt-2" : "gap-2 px-3"} h-8 text-[14px] transition-colors text-left rounded-sm ${
+              className={`w-full flex items-center ${navCollapsed ? "justify-center px-0 mt-2" : "gap-2.5 px-3"} h-9 text-[14px] transition-colors text-left rounded-md ${
                 page === "settings" ? "bg-foreground/10 text-foreground font-medium" : "text-foreground/75 hover:bg-foreground/5"
               }`}>
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
               {!navCollapsed && <span className="flex-1 whitespace-nowrap">Settings</span>}
             </button>
           )
-          return navCollapsed ? <NavTooltip label="Settings" description="Preferences and integrations">{settingsBtn}</NavTooltip> : settingsBtn
+          return (
+            <div className={navCollapsed ? "" : "px-3"}>
+              {navCollapsed ? <NavTooltip label="Settings" description="Preferences and integrations">{settingsBtn}</NavTooltip> : settingsBtn}
+            </div>
+          )
         })()}
 
-        <div className="mt-auto flex flex-col gap-0.5">
-          <button className={`w-full flex items-center ${navCollapsed ? "justify-center px-0" : "gap-2 px-3"} h-8 rounded-sm text-[13px] text-foreground/65 hover:bg-foreground/5 transition-colors`}>
+        <div className={`mt-auto flex flex-col gap-1 ${navCollapsed ? "" : "px-3"}`}>
+          <button className={`w-full flex items-center ${navCollapsed ? "justify-center px-0" : "gap-2.5 px-3"} h-9 rounded-md text-[13px] text-foreground/65 hover:bg-foreground/5 transition-colors`}>
             <span className="opacity-70">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 11h-6M19 8v6"/></svg>
             </span>
