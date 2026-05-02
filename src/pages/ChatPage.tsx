@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState, useCallback } from "react"
 import { motion, AnimatePresence } from "motion/react"
 import { PixelSprite } from "@/components/PixelSprite"
-import { PixelGridBackdrop } from "@/components/PixelGridBackdrop"
+import { StreamLoader } from "@/components/StreamLoader"
+import { AnimatedSelect } from "@/components/ui/animated-select"
 import { HighlightedText } from "@/components/chat/KeywordHighlighter"
 import { SlashCommandPalette, type SlashCommand } from "@/components/chat/SlashCommandPalette"
 import { ActionDropdown, detectAction, getItemsForAction, type ActionTrigger, type DropdownItem } from "@/components/chat/ActionDropdown"
@@ -177,6 +178,22 @@ export function ChatPage() {
   const [input, setInput] = useState("")
   const [msgs, setMsgs] = useState<ChatMsg[]>([])
   const [isTyping, setIsTyping] = useState(false)
+  // Track every setTimeout fired during a response so the user can interrupt
+  // with the stop button.
+  const typingTimeouts = useRef<number[]>([])
+  const trackTimeout = (fn: () => void, ms: number) => {
+    const id = window.setTimeout(() => {
+      typingTimeouts.current = typingTimeouts.current.filter(x => x !== id)
+      fn()
+    }, ms)
+    typingTimeouts.current.push(id)
+    return id
+  }
+  const stopTyping = () => {
+    typingTimeouts.current.forEach(id => clearTimeout(id))
+    typingTimeouts.current = []
+    setIsTyping(false)
+  }
   const [showSlash, setShowSlash] = useState(false)
   const [slashQuery, setSlashQuery] = useState("")
   const [actionDropdown, setActionDropdown] = useState<{ trigger: ActionTrigger; filter: string } | null>(null)
@@ -315,10 +332,10 @@ export function ChatPage() {
             return [...p, partialMsg]
           })
           toolIdx++
-          setTimeout(showNextTool, 800)
+          trackTimeout(showNextTool, 800)
         } else {
           // All tools done, show final response
-          setTimeout(() => {
+          trackTimeout(() => {
             const finalMsg: ChatMsg = {
               id: toolMsgId,
               from: "assistant",
@@ -342,10 +359,10 @@ export function ChatPage() {
           }, 500)
         }
       }
-      setTimeout(showNextTool, 600)
+      trackTimeout(showNextTool, 600)
     } else {
       // No tool calls — direct response
-      setTimeout(() => {
+      trackTimeout(() => {
         const assistantMsg: ChatMsg = {
           id: `m${++msgIdRef.current}`,
           from: "assistant",
@@ -355,7 +372,7 @@ export function ChatPage() {
         }
         setMsgs(p => [...p, assistantMsg])
         setIsTyping(false)
-      }, 1200)
+      }, 60000)
     }
   }, [input])
 
@@ -466,11 +483,7 @@ export function ChatPage() {
   }
 
   return (
-    <div className="h-full flex overflow-hidden bg-background relative">
-      {/* Subtle blinking pixel grid — same component as the Sabu overlay,
-          shares persisted speed/density/seed/cell-size via localStorage. */}
-      <PixelGridBackdrop open={true} closing={false} calm={hasMessages} />
-
+    <div className="h-full flex overflow-hidden bg-background">
       {/* Main chat area */}
       <div className="flex-1 flex flex-col min-w-0 relative">
         <AnimatePresence mode="wait">
@@ -482,8 +495,22 @@ export function ChatPage() {
               exit={{ opacity: 0, y: -20, transition: { duration: 0.2 } }}
               className="flex-1 flex flex-col items-center justify-center px-8"
             >
-              <div className="w-full max-w-2xl flex flex-col items-center gap-10">
-                <div className="flex items-center gap-3">
+              <motion.div
+                className="w-full max-w-2xl flex flex-col items-center gap-10"
+                initial="hidden"
+                animate="show"
+                variants={{
+                  hidden: {},
+                  show: { transition: { staggerChildren: 0.09, delayChildren: 0.05 } },
+                }}
+              >
+                <motion.div
+                  className="flex items-center gap-3"
+                  variants={{
+                    hidden: { opacity: 0, y: 14 },
+                    show: { opacity: 1, y: 0, transition: { duration: 0.42, ease: [0.2, 0.8, 0.2, 1] } },
+                  }}
+                >
                   <div className="border border-border p-2 bg-muted/30 rounded-lg">
                     <PixelSprite size={36} />
                   </div>
@@ -491,10 +518,16 @@ export function ChatPage() {
                     <h1 className="text-h3">What can I help with?</h1>
                     <p className="text-sm text-muted-foreground mt-0.5">Sashank's Alt · trained on your decisions</p>
                   </div>
-                </div>
+                </motion.div>
 
                 {/* Input */}
-                <div className="w-full relative">
+                <motion.div
+                  className="w-full relative"
+                  variants={{
+                    hidden: { opacity: 0, y: 14 },
+                    show: { opacity: 1, y: 0, transition: { duration: 0.42, ease: [0.2, 0.8, 0.2, 1] } },
+                  }}
+                >
                   <SlashCommandPalette
                     query={slashQuery}
                     onSelect={handleSlashSelect}
@@ -548,29 +581,44 @@ export function ChatPage() {
                     <div className="flex items-center justify-between px-4 py-2 border-t border-border/50">
                       <div className="flex items-center gap-2 text-xs text-muted-foreground">
                         {readyToExpand ? (
-                          <span className="px-1.5 py-0.5 border border-foreground/30 rounded text-foreground/70 animate-pulse">tab again to fill details</span>
+                          <span className="px-1.5 py-0.5 border border-foreground/30 rounded-sm text-foreground/70 animate-pulse">tab again to fill details</span>
                         ) : (
-                          <span className="px-1.5 py-0.5 border border-border rounded">/ commands</span>
+                          <span className="px-1.5 py-0.5 border border-border rounded-sm">/ commands</span>
                         )}
                       </div>
-                      <button onClick={promptTemplate ? handleTemplateSend : () => send()} disabled={promptTemplate ? false : (!input.trim() || isTyping)}
-                        className="text-xs px-3 py-1.5 bg-foreground text-background rounded-md hover:opacity-90 disabled:opacity-30 transition-opacity">
-                        Send
+                      <button
+                        onClick={isTyping ? stopTyping : (promptTemplate ? handleTemplateSend : () => send())}
+                        disabled={!isTyping && (promptTemplate ? false : !input.trim())}
+                        aria-label={isTyping ? "Stop generating" : "Send"}
+                        title={isTyping ? "Stop" : "Send"}
+                        className="text-xs px-3 py-1.5 bg-foreground text-background rounded-md hover:opacity-90 disabled:opacity-30 transition-opacity inline-flex items-center gap-1.5"
+                      >
+                        {isTyping ? (
+                          <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden><rect x="6" y="6" width="12" height="12" rx="1.5" /></svg>
+                        ) : (
+                          <>Send</>
+                        )}
                       </button>
                     </div>
                   </div>
-                </div>
+                </motion.div>
 
                 {/* Suggestions */}
-                <div className="flex flex-wrap gap-2 justify-center">
+                <motion.div
+                  className="flex flex-wrap gap-2 justify-center"
+                  variants={{
+                    hidden: { opacity: 0, y: 14 },
+                    show: { opacity: 1, y: 0, transition: { duration: 0.42, ease: [0.2, 0.8, 0.2, 1] } },
+                  }}
+                >
                   {SUGGESTIONS.map(s => (
                     <button key={s} onClick={() => send(s)}
                       className="text-[11px] px-3 py-1.5 border border-border rounded-lg text-muted-foreground hover:text-foreground hover:border-foreground/40 transition-colors">
                       {s}
                     </button>
                   ))}
-                </div>
-              </div>
+                </motion.div>
+              </motion.div>
             </motion.div>
           ) : (
             /* ── Conversation state ── */
@@ -676,16 +724,9 @@ export function ChatPage() {
                     </motion.div>
                   ))}
 
-                  {/* Typing indicator */}
+                  {/* Stream loader — dot-matrix sweep + stepped phase labels */}
                   {isTyping && !msgs.some(m => m.from === "assistant" && m.toolCalls?.some(t => t.status === "running")) && (
-                    <div className="flex items-center gap-2 text-muted-foreground">
-                      <div className="flex gap-1">
-                        <div className="w-1.5 h-1.5 bg-muted-foreground/40 rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
-                        <div className="w-1.5 h-1.5 bg-muted-foreground/40 rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
-                        <div className="w-1.5 h-1.5 bg-muted-foreground/40 rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
-                      </div>
-                      <span className="text-xs">Alt is thinking...</span>
-                    </div>
+                    <StreamLoader />
                   )}
                 </ConversationContent>
                 <ConversationScrollButton className="rounded-lg" />
@@ -750,9 +791,18 @@ export function ChatPage() {
                         </div>
                       )}
                     </div>
-                    <button onClick={promptTemplate ? handleTemplateSend : () => send()} disabled={promptTemplate ? false : (!input.trim() || isTyping)}
-                      className="text-sm px-4 py-2 bg-foreground text-background rounded-lg hover:opacity-90 disabled:opacity-30 transition-opacity shrink-0">
-                      ↑
+                    <button
+                      onClick={isTyping ? stopTyping : (promptTemplate ? handleTemplateSend : () => send())}
+                      disabled={!isTyping && (promptTemplate ? false : !input.trim())}
+                      aria-label={isTyping ? "Stop generating" : "Send"}
+                      title={isTyping ? "Stop" : "Send"}
+                      className="text-sm px-4 py-2 bg-foreground text-background rounded-lg hover:opacity-90 disabled:opacity-30 transition-opacity shrink-0 inline-flex items-center justify-center"
+                    >
+                      {isTyping ? (
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden><rect x="6" y="6" width="12" height="12" rx="1.5" /></svg>
+                      ) : (
+                        <>↑</>
+                      )}
                     </button>
                   </div>
                 </div>
@@ -915,10 +965,14 @@ export function ChatPage() {
                                 <p className="text-sm font-medium">Sashank's Alt</p>
                                 <p className="text-xs text-muted-foreground">Active · 85% trained</p>
                               </div>
-                              <select defaultValue="sashank" className="text-[11px] border border-border rounded-md px-2 py-1 bg-background">
-                                <option value="sashank">Sashank's Alt</option>
-                                <option value="kinnari">Kinnari's Alt</option>
-                              </select>
+                              <AnimatedSelect
+                                size="sm"
+                                defaultValue="sashank"
+                                options={[
+                                  { value: "sashank", label: "Sashank's Alt" },
+                                  { value: "kinnari", label: "Kinnari's Alt" },
+                                ]}
+                              />
                             </div>
                           </div>
 
@@ -960,11 +1014,15 @@ export function ChatPage() {
                                   <div key={key} className="flex items-center gap-2 px-3 py-2.5 border border-border rounded-lg bg-card group">
                                     <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-muted-foreground/40 shrink-0 cursor-grab"><path d="M8 6h.01M8 12h.01M8 18h.01M12 6h.01M12 12h.01M12 18h.01"/></svg>
                                     <input defaultValue={val} className="flex-1 text-sm bg-transparent outline-none" />
-                                    <select defaultValue="must" className="text-[11px] border border-border rounded-md px-1.5 py-1 bg-background text-muted-foreground">
-                                      <option value="must">Must-have</option>
-                                      <option value="good">Good-to-have</option>
-                                      <option value="nice">Nice-to-have</option>
-                                    </select>
+                                    <AnimatedSelect
+                                      size="sm"
+                                      defaultValue="must"
+                                      options={[
+                                        { value: "must", label: "Must-have" },
+                                        { value: "good", label: "Good-to-have" },
+                                        { value: "nice", label: "Nice-to-have" },
+                                      ]}
+                                    />
                                   </div>
                                 ))
                               ) : (

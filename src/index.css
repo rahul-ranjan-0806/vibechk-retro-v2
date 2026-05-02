@@ -261,17 +261,20 @@ h1 { letter-spacing: -0.02em; }
 
 /* ── Alt chat overlay ─────────────────────────────────────── */
 
-/* Backdrop tint/mask: only opacity fade on open, no blur yet */
+/* Backdrop tint/mask: only opacity fade on open. On close, the blur
+   intensifies briefly before the layer clears, so the whole scene
+   dissolves into haze instead of just flicking off. */
 @keyframes alt-overlay-backdrop-in {
   from { opacity: 0; }
   to   { opacity: 1; }
 }
 @keyframes alt-overlay-backdrop-out {
-  from { opacity: 1; }
-  to   { opacity: 0; }
+  0%   { opacity: 1; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+  55%  { opacity: 0.85; backdrop-filter: blur(28px); -webkit-backdrop-filter: blur(28px); }
+  100% { opacity: 0; backdrop-filter: blur(28px); -webkit-backdrop-filter: blur(28px); }
 }
 .alt-overlay-blur-enter { animation: alt-overlay-backdrop-in 0.2s ease-out forwards; }
-.alt-overlay-blur-exit  { animation: alt-overlay-backdrop-out 0.32s ease-in forwards; }
+.alt-overlay-blur-exit  { animation: alt-overlay-backdrop-out 0.42s cubic-bezier(0.4, 0.0, 0.6, 1) forwards; }
 
 /* Backdrop — progressive blur + dark tint by default (both fade upward via mask);
    full uniform blur + flat dark tint once chat starts. Many gradient stops with a
@@ -292,17 +295,9 @@ h1 { letter-spacing: -0.02em; }
     background 0.45s ease-in;
 }
 
-/* Noise overlay — dithers the mask transition; soft-light keeps it from lightening */
-.alt-overlay-backdrop::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  opacity: 0.25;
-  mix-blend-mode: soft-light;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.6 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
-  background-size: 160px 160px;
-}
+/* (Removed: backdrop ::after noise overlay. The 12px blur smooths the
+   mask transition enough on its own — the noise was reading as visible
+   grain instead of invisibly dithering banding.) */
 
 .alt-overlay-backdrop.blurred {
   backdrop-filter: blur(20px);
@@ -311,9 +306,100 @@ h1 { letter-spacing: -0.02em; }
   -webkit-mask-image: none;
   mask-image: none;
 }
-.alt-overlay-backdrop.blurred::after {
-  /* No banding to dither once the mask is gone */
-  display: none;
+
+/* ── Stream loader (AI response generation indicator) ───────────
+   5×5 dot-matrix grid. Columns peak in a ping-pong sweep:
+     col 0 → 1 → 2 → 3 → 4 (forward, 0.7s)
+     col 4 → 3 → 2 → 1 → 0 (backward, 0.7s)
+   Total cycle = 1.4s. Each interior column peaks twice per cycle
+   (once on each pass); the edge columns peak once. */
+.stream-loader-grid {
+  display: inline-grid;
+  grid-template-columns: repeat(5, 3.4px);
+  grid-auto-rows: 3.4px;
+  gap: 3.4px;
+  /* Soft halo around each dot — picks up currentColor so it tracks
+     the surrounding text color in both light and dark mode. */
+  filter: drop-shadow(0 0 2.5px rgb(from currentColor r g b / 0.25));
+}
+
+/* Root container — soft radial halo that washes the area behind the
+   dots and label without rendering as a hard surface. Position relative
+   so the ::before can stretch beyond the content box. */
+.stream-loader-root {
+  position: relative;
+  isolation: isolate;
+}
+.stream-loader-root::before {
+  content: "";
+  position: absolute;
+  inset: -40% -10%;
+  z-index: -1;
+  background: radial-gradient(
+    ellipse at center,
+    rgb(from currentColor r g b / 0.10) 0%,
+    rgb(from currentColor r g b / 0.04) 35%,
+    transparent 70%
+  );
+  pointer-events: none;
+}
+
+.stream-loader-label {
+  /* Matches the dot halo — picks up currentColor at low alpha so it
+     reads as ambient bloom rather than a colored shadow. */
+  text-shadow: 0 0 6px rgb(from currentColor r g b / 0.18);
+}
+
+.stream-loader-cell {
+  width: 3.4px;
+  height: 3.4px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0;
+  animation-duration: 1s;
+  animation-iteration-count: infinite;
+  animation-timing-function: ease-in-out;
+}
+
+/* Edge columns peak once per cycle, at their respective sweep ends.
+   Interior columns peak twice (forward pass + backward pass).
+   Baseline = 0 (cells invisible at rest); peak = 0.8. */
+.stream-loader-col-0 { animation-name: stream-loader-col-0; }
+.stream-loader-col-1 { animation-name: stream-loader-col-1; }
+.stream-loader-col-2 { animation-name: stream-loader-col-2; }
+.stream-loader-col-3 { animation-name: stream-loader-col-3; }
+.stream-loader-col-4 { animation-name: stream-loader-col-4; }
+
+@keyframes stream-loader-col-0 {
+  0%, 100% { opacity: 0.8; }
+  20%      { opacity: 0; }
+  50%      { opacity: 0; }
+  80%      { opacity: 0; }
+}
+@keyframes stream-loader-col-1 {
+  0%, 100% { opacity: 0; }
+  12.5%    { opacity: 0.8; }
+  40%      { opacity: 0; }
+  60%      { opacity: 0; }
+  87.5%    { opacity: 0.8; }
+}
+@keyframes stream-loader-col-2 {
+  0%, 100% { opacity: 0; }
+  25%      { opacity: 0.8; }
+  50%      { opacity: 0; }
+  75%      { opacity: 0.8; }
+}
+@keyframes stream-loader-col-3 {
+  0%, 100% { opacity: 0; }
+  37.5%    { opacity: 0.8; }
+  50%      { opacity: 0.5; }
+  62.5%    { opacity: 0.8; }
+}
+@keyframes stream-loader-col-4 {
+  0%, 100% { opacity: 0; }
+  35%      { opacity: 0; }
+  50%      { opacity: 0.8; }
+  65%      { opacity: 0; }
 }
 
 /* Subtle blinking pixel grid — Canvas-driven twinkles (see
@@ -356,32 +442,8 @@ h1 { letter-spacing: -0.02em; }
   will-change: opacity;
 }
 
-/* Noise dither layer — sibling of the canvas inside PixelGridBackdrop.
-   Same mask + soft-light blend kills any residual banding without any
-   runtime cost (decoded once, GPU-composited tile). */
-.alt-overlay-pixel-grid-dither {
-  pointer-events: none;
-  -webkit-mask-image: linear-gradient(
-    to top,
-    rgba(0,0,0,1) 0%,
-    rgba(0,0,0,0.92) 30%,
-    rgba(0,0,0,0.62) 45%,
-    rgba(0,0,0,0.24) 55%,
-    transparent      65%
-  );
-  mask-image: linear-gradient(
-    to top,
-    rgba(0,0,0,1) 0%,
-    rgba(0,0,0,0.92) 30%,
-    rgba(0,0,0,0.62) 45%,
-    rgba(0,0,0,0.24) 55%,
-    transparent      65%
-  );
-  opacity: 0.18;
-  mix-blend-mode: soft-light;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.6 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
-  background-size: 160px 160px;
-}
+/* (Removed: pixel-grid dither sibling. Cubic-curve mask handles banding
+   on its own; the noise was reading as visible grain on the backdrop.) */
 
 /* White shimmer sweep — bottom → top, fires once per send */
 @keyframes alt-overlay-shimmer-sweep {

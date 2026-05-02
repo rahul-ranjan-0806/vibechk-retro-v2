@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react"
+import { motion, AnimatePresence } from "motion/react"
 import {
   CANDIDATES as SEED_CANDIDATES,
   ROLES,
@@ -7,6 +8,7 @@ import {
 } from "@/lib/mockData"
 import { StatusPill, type StatusVariant } from "@/components/notion"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { AnimatedSelect } from "@/components/ui/animated-select"
 
 type StatusFilter = "all" | "pending" | "shortlisted" | "rejected"
 type RecFilter = "all" | "shortlist" | "reject" | "review"
@@ -139,31 +141,43 @@ export function CandidatesPage({ onEntityChange, onNavigateToCandidate }: { onEn
               placeholder="Search name or role..."
               className="text-xs border border-border rounded-md px-3 py-1.5 bg-background outline-none placeholder:text-muted-foreground w-56 focus:border-foreground/40"
             />
-            <select value={roleFilter} onChange={e => setRoleFilter(e.target.value)}
-              className="text-xs border border-border rounded-md px-2 py-1.5 bg-background">
-              <option value="all">All roles</option>
-              {ROLES.map(r => <option key={r.id} value={r.id}>{r.title}</option>)}
-            </select>
-            <select value={statusFilter} onChange={e => setStatusFilter(e.target.value as StatusFilter)}
-              className="text-xs border border-border rounded-md px-2 py-1.5 bg-background">
-              <option value="all">All statuses</option>
-              <option value="pending">Your call</option>
-              <option value="shortlisted">Pushed to ATS</option>
-              <option value="rejected">Rejected</option>
-            </select>
-            <select value={recFilter} onChange={e => setRecFilter(e.target.value as RecFilter)}
-              className="text-xs border border-border rounded-md px-2 py-1.5 bg-background">
-              <option value="all">All Alt recs</option>
-              <option value="shortlist">Shortlist</option>
-              <option value="reject">Pass</option>
-              <option value="review">Review</option>
-            </select>
-            <select value={timeFilter} onChange={e => setTimeFilter(e.target.value as TimeFilter)}
-              className="text-xs border border-border rounded-md px-2 py-1.5 bg-background">
-              <option value="all">Any time</option>
-              <option value="today">Last 24h</option>
-              <option value="week">Last 7 days</option>
-            </select>
+            <AnimatedSelect
+              value={roleFilter}
+              onChange={setRoleFilter}
+              options={[
+                { value: "all", label: "All roles" },
+                ...ROLES.map(r => ({ value: r.id, label: r.title })),
+              ]}
+            />
+            <AnimatedSelect<StatusFilter>
+              value={statusFilter}
+              onChange={setStatusFilter}
+              options={[
+                { value: "all", label: "All statuses" },
+                { value: "pending", label: "Your call" },
+                { value: "shortlisted", label: "Pushed to ATS" },
+                { value: "rejected", label: "Rejected" },
+              ]}
+            />
+            <AnimatedSelect<RecFilter>
+              value={recFilter}
+              onChange={setRecFilter}
+              options={[
+                { value: "all", label: "All Alt recs" },
+                { value: "shortlist", label: "Shortlist" },
+                { value: "reject", label: "Pass" },
+                { value: "review", label: "Review" },
+              ]}
+            />
+            <AnimatedSelect<TimeFilter>
+              value={timeFilter}
+              onChange={setTimeFilter}
+              options={[
+                { value: "all", label: "Any time" },
+                { value: "today", label: "Last 24h" },
+                { value: "week", label: "Last 7 days" },
+              ]}
+            />
             <div className="flex items-center gap-2 text-xs">
               <span className="text-muted-foreground">Score ≥</span>
               <input type="range" min={1} max={10} step={1} value={minScore}
@@ -179,14 +193,29 @@ export function CandidatesPage({ onEntityChange, onNavigateToCandidate }: { onEn
       <div className="flex-1 overflow-hidden flex">
         <div className="flex-1 min-w-0 overflow-y-auto">
           <div className="max-w-page-wide mx-auto px-12 py-6">
+            <AnimatePresence mode="wait" initial={false}>
             {filtered.length === 0 ? (
-              <div className="border border-border rounded-lg p-8 text-center">
+              <motion.div
+                key="empty"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.22, ease: "easeOut" }}
+                className="border border-border rounded-lg p-8 text-center"
+              >
                 <p className="text-xs text-muted-foreground">
                   No candidates match these filters.
                 </p>
-              </div>
+              </motion.div>
             ) : (
-              <div className="border border-border rounded-lg overflow-hidden">
+              <motion.div
+                key="table"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.22, ease: "easeOut" }}
+                className="border border-border rounded-lg overflow-hidden"
+              >
                 {/* Header row */}
                 <div className="flex items-center gap-3 px-3 py-2 bg-muted/40 border-b border-border">
                   <div className="w-10 shrink-0">
@@ -210,6 +239,7 @@ export function CandidatesPage({ onEntityChange, onNavigateToCandidate }: { onEn
                 </div>
 
                 <TooltipProvider delayDuration={350}>
+                <AnimatePresence initial={false}>
                 {filtered.map((c, i) => {
                   const isOpen = openId === c.id
                   const handleRowClick = () => {
@@ -217,8 +247,13 @@ export function CandidatesPage({ onEntityChange, onNavigateToCandidate }: { onEn
                     else setOpenId(c.id)
                   }
                   return (
-                    <div key={c.id}
-                      className={`flex items-center gap-3 px-3 py-2.5 border-b border-border last:border-b-0 cursor-pointer transition-colors ${
+                    <motion.div key={c.id}
+                      layout
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0, transition: { duration: 0.18, ease: "easeIn" } }}
+                      transition={{ duration: 0.22, ease: "easeOut" }}
+                      className={`flex items-center gap-3 px-3 py-2.5 border-b border-border last:border-b-0 cursor-pointer transition-colors overflow-hidden ${
                         isOpen ? "bg-muted/50" : i % 2 ? "bg-muted/10" : ""
                       } hover:bg-muted/40`}
                       onClick={handleRowClick}
@@ -233,7 +268,7 @@ export function CandidatesPage({ onEntityChange, onNavigateToCandidate }: { onEn
                             <TooltipTrigger asChild>
                               <p className="text-sm font-medium truncate hover:text-accent-blue transition-colors">{c.name}</p>
                             </TooltipTrigger>
-                            <TooltipContent side="right" align="start" sideOffset={8} className="max-w-xs p-0 bg-popover text-popover-foreground border border-border shadow-md">
+                            <TooltipContent side="right" align="start" sideOffset={8} className="max-w-xs p-0 bg-popover text-popover-foreground border border-border rounded-md shadow-md">
                               <div className="px-3.5 py-3 flex flex-col gap-2.5">
                                 <div className="flex items-center gap-2">
                                   <span className={`text-xl font-medium tabular-nums leading-none ${scoreColor(c.score)}`}>{c.score}</span>
@@ -271,12 +306,14 @@ export function CandidatesPage({ onEntityChange, onNavigateToCandidate }: { onEn
                       <div className="w-16 shrink-0 text-right">
                         <span className="text-xs text-muted-foreground">{c.completedAt}</span>
                       </div>
-                    </div>
+                    </motion.div>
                   )
                 })}
+                </AnimatePresence>
                 </TooltipProvider>
-              </div>
+              </motion.div>
             )}
+            </AnimatePresence>
           </div>
         </div>
 
