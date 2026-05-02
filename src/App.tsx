@@ -131,7 +131,7 @@ export default function App() {
           }
         </div>
 
-        {!navCollapsed && <p className="text-xs px-3 mb-1 mt-2 text-muted-foreground/80">Manage</p>}
+        {!navCollapsed && <p className="text-xs px-5 mb-1 mt-2 text-muted-foreground/80">Manage</p>}
 
         {[
           { id: "chat" as Page, label: "Chat", description: "Talk to your Alt",
@@ -149,7 +149,7 @@ export default function App() {
         ].map(item => {
           const btn = (
             <button onClick={() => setPage(item.id)}
-              className={`w-full flex items-center ${navCollapsed ? "justify-center px-0" : "gap-2 px-3"} h-7 text-[14px] transition-colors text-left rounded-sm ${
+              className={`w-full flex items-center ${navCollapsed ? "justify-center px-0" : "gap-2 px-3"} h-8 text-[14px] transition-colors text-left rounded-sm ${
                 page === item.id ? "bg-foreground/10 text-foreground font-medium" : "text-foreground/75 hover:bg-foreground/5"
               }`}>
               <span className="shrink-0 opacity-70">{item.icon}</span>
@@ -171,7 +171,7 @@ export default function App() {
           const showAltList = item.id === "alts" && page === "alts" && !navCollapsed
 
           return (
-            <div key={item.id} className="flex flex-col">
+            <div key={item.id} className={`flex flex-col ${navCollapsed ? "" : "px-2"}`}>
               {wrapped}
               {showRoleList && (
                 <div className="flex flex-col gap-0 mt-0.5 mb-1 ml-6">
@@ -223,7 +223,7 @@ export default function App() {
         {(() => {
           const settingsBtn = (
             <button onClick={() => setPage("settings")}
-              className={`w-full flex items-center ${navCollapsed ? "justify-center px-0 mt-2" : "gap-2 px-3"} h-7 text-[14px] transition-colors text-left rounded-sm ${
+              className={`w-full flex items-center ${navCollapsed ? "justify-center px-0 mt-2" : "gap-2 px-3"} h-8 text-[14px] transition-colors text-left rounded-sm ${
                 page === "settings" ? "bg-foreground/10 text-foreground font-medium" : "text-foreground/75 hover:bg-foreground/5"
               }`}>
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
