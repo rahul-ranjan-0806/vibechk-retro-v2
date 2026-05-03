@@ -92,13 +92,13 @@ export function SettingsPage() {
         <Section title="Candidates">
           <SettingRow
             label="Auto-shortlisting"
-            description="Agent automatically shortlists candidates above the score threshold and pushes them to ATS. Turn off to review and shortlist manually."
+            description="Alt automatically shortlists candidates above the score threshold and sends them to your ATS. Every shortlist is logged and reversible from the Activity log within 30 days."
           >
             <Toggle on={autoShortlist} onChange={setAutoShortlist} />
           </SettingRow>
           <SettingRow
             label="Auto-rejection"
-            description="Agent automatically rejects candidates who score below the threshold without surfacing them for review."
+            description="Alt automatically rejects candidates below the threshold. Every rejection is logged and reversible from the Activity log within 30 days."
           >
             <Toggle on={autoReject} onChange={setAutoReject} />
           </SettingRow>
@@ -124,7 +124,7 @@ export function SettingsPage() {
         </Section>
 
         <Section title="ATS">
-          <SettingRow label="Connected ATS" description="Dover — connected 2 weeks ago">
+          <SettingRow label="Connected ATS" description="Dover — connected Mar 17, 2026">
             <button className="text-xs border border-border rounded-md px-2.5 py-1 text-muted-foreground hover:text-foreground transition-colors">Manage</button>
           </SettingRow>
         </Section>

@@ -43,7 +43,7 @@ function pipelineStatus(thisWeek: number, lastWeek: number) {
 function AltRecPill({ rec, confidence }: { rec: CandidateMini["altRec"]; confidence: CandidateMini["confidence"] }) {
   const base = "text-xs rounded-md px-1.5 py-0.5"
   if (rec === "shortlist") return <span className={`${base} bg-status-success text-status-success-foreground`}>Alt: Shortlist ↑</span>
-  if (rec === "reject") return <span className={`${base} bg-status-danger text-status-danger-foreground`}>Alt: Pass ↓</span>
+  if (rec === "reject") return <span className={`${base} bg-status-danger text-status-danger-foreground`}>Alt: Reject ↓</span>
   return <span className={`${base} bg-status-warning text-status-warning-foreground`}>{confidence === "low" ? "Alt: Your call" : "Alt: Review"}</span>
 }
 
@@ -78,12 +78,12 @@ export function HomePage({ onNavigate, onOpenOverlay, onNavigateToCandidate, onN
 
   // Alt summary sentence
   const summaryParts: string[] = []
-  if (pushed.length) summaryParts.push(`pushed ${pushed.length} to the ATS`)
-  if (rejected.length) summaryParts.push(`filtered ${rejected.length} out`)
+  if (pushed.length) summaryParts.push(`shortlisted ${pushed.length} to the ATS`)
+  if (rejected.length) summaryParts.push(`rejected ${rejected.length}`)
   const autoSentence = summaryParts.length ? `I've ${summaryParts.join(" and ")} since yesterday.` : ""
   const dilemmaClause = dilemmas.length === 0
-    ? "You're caught up — no dilemmas to weigh in on."
-    : `${dilemmas.length} candidate${dilemmas.length !== 1 ? "s" : ""} need${dilemmas.length === 1 ? "s" : ""} your call.`
+    ? "You're caught up — no decisions waiting. Good moment to review the activity log or set up the next role."
+    : `${dilemmas.length} candidate${dilemmas.length !== 1 ? "s are" : " is"} waiting for your decision.`
 
   // Setup
   const doneCount = SETUP_ITEMS.filter(i => i.status === "done").length
@@ -116,7 +116,7 @@ export function HomePage({ onNavigate, onOpenOverlay, onNavigateToCandidate, onN
               <div className="mt-3 flex items-center gap-2">
                 <button onClick={() => onOpenOverlay?.()}
                   className="text-sm rounded-sm px-3 py-1.5 bg-accent-blue text-white hover:opacity-90 transition-opacity inline-flex items-center gap-2">
-                  <span>Ask Sabu</span>
+                  <span>Ask Sashank's Alt</span>
                   <span className="text-[11px] opacity-70">⌘K</span>
                 </button>
                 <button onClick={() => setLogOpen(true)}
@@ -134,7 +134,7 @@ export function HomePage({ onNavigate, onOpenOverlay, onNavigateToCandidate, onN
               {dilemmas.length > 0 && (
                 <div>
                   <p className="text-[15px] font-semibold text-foreground mb-3">
-                    Needs your call · {dilemmas.length}
+                    Waiting for your decision · {dilemmas.length}
                   </p>
                   <div className="flex flex-col gap-3">
                     {dilemmas.map(c => {
@@ -259,7 +259,7 @@ export function HomePage({ onNavigate, onOpenOverlay, onNavigateToCandidate, onN
                         <span className={`text-xs rounded-xs px-1.5 py-0.5 shrink-0 ${
                           isShortlisted ? "bg-status-success text-status-success-foreground" : "bg-status-danger text-status-danger-foreground"
                         }`}>
-                          {isShortlisted ? "Pushed to ATS" : "Rejected"}
+                          {isShortlisted ? "Sent to ATS" : "Rejected"}
                         </span>
                         <span className="text-xs text-muted-foreground shrink-0 tabular-nums">{c.completedAt}</span>
                       </div>

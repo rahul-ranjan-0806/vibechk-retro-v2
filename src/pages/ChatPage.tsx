@@ -204,7 +204,7 @@ export function ChatPage() {
   const [actionDropdown, setActionDropdown] = useState<{ trigger: ActionTrigger; filter: string } | null>(null)
   const [showAutocomplete, setShowAutocomplete] = useState(false)
   const [editSidebar, setEditSidebar] = useState<ChatMsg | null>(null)
-  const [sidebarTab, setSidebarTab] = useState<"role" | "interview" | "candidates">("role")
+  const [sidebarTab, setSidebarTab] = useState<"role" | "interview">("role")
   const [roleStatus, setRoleStatus] = useState("Draft")
   const [actedMsgIds, setActedMsgIds] = useState<Set<string>>(new Set())
   const [confirmAction, setConfirmAction] = useState<{ msg: ChatMsg; action: ActionCTA } | null>(null)
@@ -446,7 +446,7 @@ export function ChatPage() {
     setMsgs(p => [...p, {
       id: `m${++msgIdRef.current}`,
       from: "assistant",
-      text: `Done — **${confirmAction.action.label}** completed successfully.`,
+      text: `Done — **${confirmAction.action.label}**.`,
     }])
   }
 
@@ -581,7 +581,7 @@ export function ChatPage() {
                             value={input}
                             onChange={e => handleInputChange(e.target.value)}
                             onKeyDown={handleKeyDown}
-                            placeholder="Ask anything, or type / for commands..."
+                            placeholder="Ask Sashank's Alt anything… (type / for commands)"
                             rows={1}
                             className={`w-full text-sm bg-transparent outline-none placeholder:text-muted-foreground resize-none leading-relaxed relative z-10 ${input ? "text-transparent caret-foreground" : ""}`}
                           />
@@ -788,7 +788,7 @@ export function ChatPage() {
                               value={input}
                               onChange={e => handleInputChange(e.target.value)}
                               onKeyDown={handleKeyDown}
-                              placeholder="Message your Alt..."
+                              placeholder="Message Sashank's Alt…"
                               rows={1}
                               className={`w-full text-sm bg-transparent outline-none placeholder:text-muted-foreground resize-none leading-relaxed relative z-10 ${input ? "text-transparent caret-foreground" : ""}`}
                             />
@@ -939,12 +939,12 @@ export function ChatPage() {
 
                     {/* Tabs */}
                     <div className="border-b border-border shrink-0 px-5 flex">
-                      {(["role", "interview", "candidates"] as const).map(t => (
+                      {(["role", "interview"] as const).map(t => (
                         <button key={t} onClick={() => setSidebarTab(t)}
                           className={`text-xs px-4 py-2.5 border-b-2 capitalize transition-colors ${
                             sidebarTab === t ? "border-foreground text-foreground font-medium" : "border-transparent text-muted-foreground hover:text-foreground"
                           }`}>
-                          {t === "interview" ? "Interview Config" : t === "candidates" ? "Candidates" : "Role"}
+                          {t === "interview" ? "Interview Config" : "Role"}
                         </button>
                       ))}
                     </div>
@@ -1007,7 +1007,7 @@ export function ChatPage() {
                                   </div>
                                 ))
                               ) : (
-                                <div className="text-xs text-muted-foreground px-3 py-2 border border-border rounded-lg bg-muted/20">No interview flow configured</div>
+                                <div className="text-xs text-muted-foreground px-3 py-2 border border-border rounded-lg bg-muted/20">No flow yet — Alt will use the default 5-step interview until you set one up.</div>
                               )}
                             </div>
                           </div>
@@ -1044,7 +1044,7 @@ export function ChatPage() {
                           {/* Leniency */}
                           <div>
                             <div className="flex items-center justify-between mb-1.5">
-                              <p className="text-xs text-muted-foreground">Leniency</p>
+                              <p className="text-xs text-muted-foreground">How strict should the Alt be?</p>
                               <span className="text-[11px] text-muted-foreground">Balanced</span>
                             </div>
                             <input type="range" min="0" max="100" defaultValue="50" className="w-full accent-foreground" />
@@ -1056,21 +1056,12 @@ export function ChatPage() {
                         </>
                       )}
 
-                      {sidebarTab === "candidates" && (
-                        <div className="flex-1 flex flex-col items-center justify-center text-center py-12">
-                          <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center mb-3">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-muted-foreground"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                          </div>
-                          <p className="text-sm font-medium mb-1">No candidates yet</p>
-                          <p className="text-xs text-muted-foreground max-w-[240px]">Candidates will appear here once the role is live and interviews start coming in.</p>
-                        </div>
-                      )}
                     </div>
 
                     {/* Footer */}
                     <div className="shrink-0 border-t border-border px-5 py-3 flex gap-2">
                       <button onClick={handleSaveRole} className="flex-1 text-[11px] px-3 py-2 bg-foreground text-background rounded-lg hover:opacity-90">
-                        {roleStatus === "Live" ? "Push to live roles" : roleStatus === "Paused" ? "Save as paused" : "Save to drafts"}
+                        {roleStatus === "Live" ? "Make this role live" : roleStatus === "Paused" ? "Keep paused for now" : "Save and review later"}
                       </button>
                       <button onClick={() => setEditSidebar(null)} className="text-[11px] px-3 py-2 border border-border rounded-lg text-muted-foreground hover:text-foreground">Cancel</button>
                     </div>
@@ -1099,9 +1090,9 @@ export function ChatPage() {
               onClick={e => e.stopPropagation()}
               className="bg-background border border-border rounded-lg shadow-modal p-6 max-w-sm w-full mx-4"
             >
-              <h3 className="text-base font-semibold mb-2">Confirm: {confirmAction.action.label}</h3>
+              <h3 className="text-base font-semibold mb-2">{confirmAction.action.label}</h3>
               <p className="text-xs text-muted-foreground leading-relaxed mb-4">
-                This action will take effect immediately. Are you sure you want to proceed?
+                This will take effect immediately. You can undo from the Activity log within 30 days.
               </p>
               <div className="flex gap-2">
                 <button onClick={confirmAndClose}

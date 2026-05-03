@@ -156,9 +156,9 @@ function RocketIcon() {
 
 const CATEGORY: Record<DecisionType, CategoryStyle> = {
   stellar:           { icon: <StellarIcon />,  label: "Stellar",          iconBg: "bg-amber-100 dark:bg-amber-500/20",       iconFg: "text-amber-700 dark:text-amber-300",        accent: "border-amber-400/70",  chipBg: "bg-amber-100 dark:bg-amber-500/20",       chipFg: "text-amber-700 dark:text-amber-300" },
-  dilemma:           { icon: <DilemmaIcon />,  label: "Dilemma",          iconBg: "bg-status-warning",                       iconFg: "text-status-warning-foreground",            accent: "border-status-warning-dot/70", chipBg: "bg-status-warning",                  chipFg: "text-status-warning-foreground" },
-  shortlisted:       { icon: <CheckIcon />,    label: "Auto-shortlisted", iconBg: "bg-status-success",                       iconFg: "text-status-success-foreground",            accent: "border-status-success-dot/60", chipBg: "bg-status-success",                  chipFg: "text-status-success-foreground" },
-  rejected:          { icon: <XIcon />,        label: "Auto-rejected",    iconBg: "bg-status-danger",                        iconFg: "text-status-danger-foreground",             accent: "border-status-danger-dot/60",  chipBg: "bg-status-danger",                   chipFg: "text-status-danger-foreground" },
+  dilemma:           { icon: <DilemmaIcon />,  label: "Waiting on you",   iconBg: "bg-status-warning",                       iconFg: "text-status-warning-foreground",            accent: "border-status-warning-dot/70", chipBg: "bg-status-warning",                  chipFg: "text-status-warning-foreground" },
+  shortlisted:       { icon: <CheckIcon />,    label: "Shortlisted by Alt", iconBg: "bg-status-success",                     iconFg: "text-status-success-foreground",            accent: "border-status-success-dot/60", chipBg: "bg-status-success",                  chipFg: "text-status-success-foreground" },
+  rejected:          { icon: <XIcon />,        label: "Rejected by Alt",  iconBg: "bg-status-danger",                        iconFg: "text-status-danger-foreground",             accent: "border-status-danger-dot/60",  chipBg: "bg-status-danger",                   chipFg: "text-status-danger-foreground" },
   jd_drafted:        { icon: <FileIcon />,     label: "JD drafted",       iconBg: "bg-muted",                                iconFg: "text-foreground",                           accent: "border-border",                chipBg: "bg-muted",                            chipFg: "text-foreground" },
   memory_suggestion: { icon: <BrainIcon />,    label: "Memory",           iconBg: "bg-purple-100 dark:bg-purple-500/20",     iconFg: "text-purple-700 dark:text-purple-300",      accent: "border-purple-400/60", chipBg: "bg-purple-100 dark:bg-purple-500/20",  chipFg: "text-purple-700 dark:text-purple-300" },
   role_published:    { icon: <RocketIcon />,   label: "Role published",   iconBg: "bg-accent-blue/15",                       iconFg: "text-accent-blue",                          accent: "border-accent-blue/50",chipBg: "bg-accent-blue/15",                   chipFg: "text-accent-blue" },
@@ -206,7 +206,7 @@ interface Props {
 const CATEGORY_FILTERS: { id: DecisionType | "all"; label: string }[] = [
   { id: "all", label: "All" },
   { id: "stellar", label: "Stellar" },
-  { id: "dilemma", label: "Dilemmas" },
+  { id: "dilemma", label: "Waiting on you" },
   { id: "shortlisted", label: "Shortlisted" },
   { id: "rejected", label: "Rejected" },
   { id: "jd_drafted", label: "JD activity" },
@@ -331,8 +331,8 @@ export function DecisionsLog({ open, onClose, onNavigateToCandidate, onNavigateT
         <div className="flex-1 overflow-y-auto border-t border-border">
           {filtered.length === 0 ? (
             <div className="h-full flex flex-col items-center justify-center text-center px-8 text-muted-foreground">
-              <p className="text-sm">No activity matches these filters</p>
-              <p className="text-xs mt-1">Try a wider time window or different category.</p>
+              <p className="text-sm">Nothing here yet</p>
+              <p className="text-xs mt-1">Try a wider time window or a different category.</p>
             </div>
           ) : (
             filtered.map((d, i) => (

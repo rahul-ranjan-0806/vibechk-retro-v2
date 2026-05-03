@@ -1,8 +1,17 @@
-const OPEN_ROLES = [
-  { title: "Senior Product Designer", dept: "Product", location: "Remote / SF", type: "Full-time" },
-  { title: "Senior Software Engineer", dept: "Engineering", location: "SF", type: "Full-time" },
-  { title: "Product Manager", dept: "Product", location: "Remote / NYC", type: "Full-time" },
-]
+import { ROLES } from "@/lib/mockData"
+
+// Role metadata not yet on RoleMini — keyed by role id so titles always
+// match the canonical ROLES list (single source of truth) while the org
+// page still controls dept/location/type display.
+const ROLE_META: Record<string, { dept: string; location: string; type: string }> = {
+  r1: { dept: "Product",     location: "Remote / SF",  type: "Full-time" },
+  r2: { dept: "Engineering", location: "SF",           type: "Full-time" },
+  r3: { dept: "Marketing",   location: "Remote / NYC", type: "Full-time" },
+}
+const OPEN_ROLES = ROLES.map(r => ({
+  title: r.title,
+  ...(ROLE_META[r.id] ?? { dept: "—", location: "—", type: "Full-time" }),
+}))
 
 const PERKS = [
   { icon: "●", label: "Remote-first", detail: "Work from anywhere in compatible timezones (PT ±4h)." },

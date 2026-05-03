@@ -272,7 +272,7 @@ export default function App() {
       <button
         onClick={openOverlay}
         className="fixed bottom-6 right-6 z-30 w-11 h-11 rounded-full bg-foreground text-background flex items-center justify-center shadow-lg hover:opacity-90 transition-opacity"
-        title="Ask Sabu (⌘K)"
+        title="Ask Sashank's Alt (⌘K)"
       >
         <PixelSprite size={20} />
         {nudgeBadge && (

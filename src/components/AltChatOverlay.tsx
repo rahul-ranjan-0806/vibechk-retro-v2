@@ -613,7 +613,7 @@ export function AltChatOverlay({ open, onClose, context, nudgeMessage, prefillIn
               value={input}
               onChange={e => handleInputChange(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder={connectorPills.length ? "Ask with this context..." : "Ask Sabu anything... (/ for commands)"}
+              placeholder={connectorPills.length ? "Ask with this context..." : "Ask Sashank's Alt… (/ for commands)"}
               className="flex-1 min-w-[120px] text-sm bg-transparent outline-none placeholder:text-muted-foreground"
             />
 

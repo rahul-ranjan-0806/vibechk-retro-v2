@@ -170,7 +170,7 @@ function StatusBadge({ status }: { status: CandidateMini["status"] }) {
 
 function AltRecBadge({ rec, confidence }: { rec: CandidateMini["altRec"]; confidence: CandidateMini["confidence"] }) {
   if (rec === "shortlist") return <StatusPill status="success">Alt: Shortlist ↑</StatusPill>
-  if (rec === "reject") return <StatusPill status="danger">Alt: Pass ↓</StatusPill>
+  if (rec === "reject") return <StatusPill status="danger">Alt: Reject ↓</StatusPill>
   return <StatusPill status="warning">{confidence === "low" ? "Alt: Your call" : "Alt: Review"}</StatusPill>
 }
 
@@ -351,7 +351,7 @@ export function CandidatesPage({ onEntityChange, onNavigateToCandidate }: { onEn
             {/* ── Page title ──────────────────────────────── */}
             <h1 className="text-h1 mb-2">Candidates</h1>
             <p className="text-sm text-muted-foreground mb-12">
-              {filtered.length} of {SEED_CANDIDATES.length} · across {ROLES.length} roles · read-only — Alt handles shortlisting autonomously
+              {filtered.length} of {SEED_CANDIDATES.length} · across {ROLES.length} roles. Open a role's Candidates tab to act on these.
             </p>
 
             {/* ── Search + filter row ─────────────────────── */}
@@ -386,7 +386,7 @@ export function CandidatesPage({ onEntityChange, onNavigateToCandidate }: { onEn
                 options={[
                   { value: "all", label: "All Alt recs" },
                   { value: "shortlist", label: "Shortlist" },
-                  { value: "reject", label: "Pass" },
+                  { value: "reject", label: "Reject" },
                   { value: "review", label: "Review" },
                 ]}
               />
@@ -424,7 +424,7 @@ export function CandidatesPage({ onEntityChange, onNavigateToCandidate }: { onEn
                 className="border border-border rounded-lg p-8 text-center"
               >
                 <p className="text-xs text-muted-foreground">
-                  No candidates match these filters.
+                  No candidates match these filters. Try clearing search or widening the score range.
                 </p>
               </motion.div>
             ) : (
@@ -754,7 +754,7 @@ export function CandidatesPage({ onEntityChange, onNavigateToCandidate }: { onEn
                     <StatusBadge status={selected.status} />
                   </div>
                   <p className="text-[11px] text-muted-foreground leading-relaxed mb-8">
-                    Manual overrides pause Alt's autonomy for this role · <button className="underline hover:text-foreground transition-colors">Manage in settings</button>
+                    Overriding the Alt's call pauses auto-decisions for this role until you re-enable them · <button className="underline hover:text-foreground transition-colors">Manage in settings</button>
                   </p>
 
                   {/* Assessment detail — tabs for LinkedIn analysis / Transcript / Notes */}
@@ -901,7 +901,7 @@ export function CandidatesPage({ onEntityChange, onNavigateToCandidate }: { onEn
                             <input
                               value={chatInput}
                               onChange={e => setChatInput(e.target.value)}
-                              placeholder="/ commands"
+                              placeholder="Ask the Alt about this candidate… (/ for commands)"
                               className="flex-1 text-sm bg-transparent outline-none placeholder:text-muted-foreground text-center placeholder:text-center focus:text-left"
                             />
                             <button type="submit" disabled={!chatInput.trim()}
@@ -998,7 +998,7 @@ export function CandidatesPage({ onEntityChange, onNavigateToCandidate }: { onEn
                             <input
                               value={chatInput}
                               onChange={e => setChatInput(e.target.value)}
-                              placeholder="/ commands"
+                              placeholder="Ask the Alt about this candidate… (/ for commands)"
                               className="flex-1 text-xs border border-border rounded-md px-3 py-2 bg-background outline-none placeholder:text-muted-foreground focus:border-foreground/40"
                             />
                             <button type="submit" disabled={!chatInput.trim()}
