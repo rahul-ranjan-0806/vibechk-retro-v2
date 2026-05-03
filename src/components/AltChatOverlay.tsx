@@ -394,29 +394,40 @@ export function AltChatOverlay({ open, onClose, context, nudgeMessage, prefillIn
   const animClass = closing ? "alt-overlay-exit" : "alt-overlay-enter"
   const blurClass = closing ? "alt-overlay-blur-exit" : "alt-overlay-blur-enter"
 
+  // Compact-nudge mode: opened with a proactive Alt message and the user
+  // hasn't replied yet. Skip the dark backdrop, pixel grid, and top
+  // message region — show only the bubble inline above the input.
+  // Once the user sends, the full overlay activates with the existing animations.
+  const hasUserSent = msgs.some(m => m.from === "user")
+  const isCompactNudge = !!nudgeMessage && msgs.length > 0 && !hasUserSent && !closing
+  const nudgeBubble = isCompactNudge ? msgs[0] : null
+
   // Build the slash dropdown items
   const showSourcesList = slashSource === "__sources__"
   const showConnectorItems = activeConnector != null
 
   return (
     <div className="fixed inset-0 z-[60]" onClick={e => { if (e.target === e.currentTarget) handleClose() }}>
-      {/* Backdrop — gradient mask on open; switches to full-viewport blur on send.
-          On close, .blurred is dropped so the CSS transition ramps blur back to 0. */}
+      {/* Backdrop, pixel grid, and the top-anchored message region only
+          render once the conversation is in flow. Pure-nudge state stays
+          minimal: just a bubble + chips + input pinned to the bottom. */}
+      {!isCompactNudge && (
       <div
         className={`absolute inset-0 pointer-events-none alt-overlay-backdrop ${msgs.length > 0 && !closing ? "blurred" : ""} ${blurClass}`}
       />
+      )}
 
-      {/* Subtle blinking pixel grid — Canvas-driven per-cell twinkles, gradient-masked.
-          Slows to "calm" once chat is in flow; expands full-overlay (no mask) while
-          Sabu is composing a reply, so the twinkle ambience signals that the agent is alive. */}
+      {!isCompactNudge && (
       <PixelGridBackdrop open={open} closing={closing} calm={msgs.length > 0 && !closing && !isWaiting} expanded={isWaiting} />
+      )}
 
       {/* White shimmer sweep — fires once per send (key remount restarts animation) */}
       {sendKey > 0 && !closing && <div key={sendKey} className="alt-overlay-shimmer" />}
 
       {/* Messages — anchored to TOP, fade in after the shimmer/blur transition;
-          fade-down with a soft blur on close */}
-      {msgs.length > 0 && (
+          fade-down with a soft blur on close. Hidden in compact-nudge mode
+          since the bubble is rendered inline above the input instead. */}
+      {msgs.length > 0 && !isCompactNudge && (
         <div className={`absolute top-0 left-0 right-0 bottom-[180px] overflow-y-auto pt-16 pb-6 pointer-events-none ${closing ? "alt-overlay-msg-exit" : ""}`}>
           <div ref={bodyRef} className="max-w-2xl mx-auto px-4 flex flex-col gap-2.5 pointer-events-auto">
             {msgs.map((m, i) => {
@@ -459,6 +470,17 @@ export function AltChatOverlay({ open, onClose, context, nudgeMessage, prefillIn
       {/* Input region — anchored to bottom (always) */}
       <div className={`absolute bottom-0 left-0 right-0 flex flex-col items-center pb-8 px-4 ${animClass}`}>
         <div className="w-full max-w-2xl flex flex-col gap-3">
+
+          {/* Compact-nudge bubble — Alt's proactive message rendered just
+              above the input, no top-anchored message region or backdrop. */}
+          {nudgeBubble && (
+            <div className="alt-overlay-msg flex items-start gap-2 self-start max-w-[85%]">
+              <div className="shrink-0 mt-0.5"><PixelSprite size={18} /></div>
+              <div className="text-sm leading-relaxed rounded-lg px-3.5 py-2.5 bg-card border border-border shadow-lg">
+                {nudgeBubble.text}
+              </div>
+            </div>
+          )}
 
           {/* Prompt suggestions — shown when empty */}
           {msgs.length === 0 && !nudgeMessage && (

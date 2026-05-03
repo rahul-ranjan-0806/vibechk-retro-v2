@@ -528,7 +528,9 @@ h1 { letter-spacing: -0.02em; }
   from { opacity: 1; }
   to   { opacity: 0; }
 }
-.alt-overlay-enter { animation: alt-overlay-content-in var(--alt-overlay-enter-dur, 0.2s) var(--alt-overlay-enter-ease, ease-out) forwards; }
+/* Input region waits 100 ms after the overlay starts opening, then fades in.
+   `opacity: 0` keeps it invisible during the delay so it doesn't pop. */
+.alt-overlay-enter { opacity: 0; animation: alt-overlay-content-in var(--alt-overlay-enter-dur, 0.2s) var(--alt-overlay-enter-ease, ease-out) 100ms forwards; }
 .alt-overlay-exit  { animation: alt-overlay-content-out var(--alt-overlay-exit-dur, 0.16s) var(--alt-overlay-exit-ease, cubic-bezier(0.4, 0.0, 0.6, 1)) forwards; }
 
 /* Per-message fade-in / fade-out — plain opacity, no translation or blur. */
