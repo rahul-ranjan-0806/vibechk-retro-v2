@@ -492,7 +492,7 @@ function JDEditorModal({ open, onClose }: { open: boolean; onClose: () => void }
   )
 }
 
-function JobPostingTab({ status, onStatusChange }: { status: "draft"|"live"; onStatusChange: (s: "draft"|"live") => void }) {
+function JobPostingTab({ status, onStatusChange }: { status: "draft"|"live"|"paused"; onStatusChange: (s: "draft"|"live"|"paused") => void }) {
   const [editorOpen, setEditorOpen] = useState(false)
 
   return (
@@ -1062,7 +1062,7 @@ function CandidatesTab({ roleTitle, activeProfile, onProfileOpen, onProfileClose
 function RoleDetail({ role, activeProfile, onProfileOpen, onProfileClose, onBackToList, initialCandidateName, onCandidateConsumed }: { role: Role; activeProfile: string | null; onProfileOpen: (key: string) => void; onProfileClose: () => void; onBackToList?: () => void; initialCandidateName?: string | null; onCandidateConsumed?: () => void }) {
   const defaultTab = role.status === "live" || initialCandidateName ? "candidates" : "job-posting"
   const [activeTab, setActiveTab] = useState(defaultTab)
-  const [status, setStatus] = useState<"draft"|"live">(role.status === "live" ? "live" : "draft")
+  const [status, setStatus] = useState<"draft"|"live"|"paused">(role.status)
 
   const tabs = [
     { id: "job-posting", label: "Job posting" },
@@ -1081,18 +1081,33 @@ function RoleDetail({ role, activeProfile, onProfileOpen, onProfileClose, onBack
           </button>
           <div className="flex items-start justify-between gap-6 mb-5">
             <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-3 mb-1">
+              <div className="flex items-center gap-3 mb-2">
                 <span className="text-2xl">📋</span>
                 <h1 className="text-h1">{role.title}</h1>
+                {/* Status pill — sits next to the title so the lifecycle
+                    state is visible at a glance without opening any tab. */}
+                <div className="flex items-center bg-muted rounded-md overflow-hidden border border-border">
+                  <button onClick={() => setStatus("live")}
+                    className={`text-xs px-2.5 py-1.5 inline-flex items-center gap-1.5 transition-colors ${status === "live" ? "bg-status-success text-status-success-foreground font-medium" : "text-muted-foreground hover:text-foreground"}`}>
+                    <span className={`w-1.5 h-1.5 rounded-full ${status === "live" ? "bg-status-success-dot" : "bg-muted-foreground/40"}`} />
+                    Live
+                  </button>
+                  <button onClick={() => setStatus("draft")}
+                    className={`text-xs px-2.5 py-1.5 inline-flex items-center gap-1.5 transition-colors ${status === "draft" ? "bg-status-warning text-status-warning-foreground font-medium" : "text-muted-foreground hover:text-foreground"}`}>
+                    <span className={`w-1.5 h-1.5 rounded-full ${status === "draft" ? "bg-status-warning-dot" : "bg-muted-foreground/40"}`} />
+                    Draft
+                  </button>
+                  <button onClick={() => setStatus("paused")}
+                    className={`text-xs px-2.5 py-1.5 inline-flex items-center gap-1.5 transition-colors ${status === "paused" ? "bg-status-danger text-status-danger-foreground font-medium" : "text-muted-foreground hover:text-foreground"}`}>
+                    <span className={`w-1.5 h-1.5 rounded-full ${status === "paused" ? "bg-status-danger-dot" : "bg-muted-foreground/40"}`} />
+                    Paused
+                  </button>
+                </div>
               </div>
               <div className="flex items-center gap-3 pl-1">
                 <span className="text-sm text-muted-foreground">{role.department}</span>
                 <span className="text-muted-foreground/50">·</span>
                 <span className="text-sm text-muted-foreground">Created {role.createdAt}</span>
-                <div className="flex items-center bg-muted rounded-sm overflow-hidden">
-                  <button onClick={() => setStatus("draft")} className={`text-xs px-2.5 py-1 transition-colors ${status === "draft" ? "bg-status-warning text-status-warning-foreground" : "text-muted-foreground hover:text-foreground"}`}>Draft</button>
-                  <button onClick={() => setStatus("live")} className={`text-xs px-2.5 py-1 transition-colors ${status === "live" ? "bg-status-success text-status-success-foreground" : "text-muted-foreground hover:text-foreground"}`}>Live</button>
-                </div>
               </div>
             </div>
             <div className="flex items-center gap-1 text-xs text-muted-foreground shrink-0 pt-1">
