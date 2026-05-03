@@ -17,6 +17,7 @@ import {
   ConversationContent,
   ConversationScrollButton,
 } from "@/components/ai-elements/conversation"
+import { CANDIDATES as SEED_CANDIDATES, ROLES as SEED_ROLES, roleTitle } from "@/lib/mockData"
 
 // ── Types ────────────────────────────────────────────────────
 
@@ -164,13 +165,48 @@ function getMockResponse(input: string): MockResponse {
 
 // ── Suggestion chips ─────────────────────────────────────────
 
-const SUGGESTIONS = [
-  "Create a role for 'Senior Product Designer'",
-  "Shortlist Priya Sharma",
-  "Set threshold to 8",
-  "Show me this week's analytics",
-  "Draft a rejection for Tom Walsh",
-]
+// Builds prompt suggestions from the admin's actual current state so the
+// chips read as live affordances rather than canned demo copy. Falls back
+// to a generic prompt if a slot can't be filled (e.g. no pending dilemmas).
+function buildSuggestions(): string[] {
+  const out: string[] = []
+
+  const dilemmas = SEED_CANDIDATES.filter(c => c.status === "pending")
+  const stellar = dilemmas.find(c => c.score >= 9)
+  const weakest = dilemmas.length
+    ? dilemmas.reduce((min, c) => (c.score < min.score ? c : min), dilemmas[0])
+    : null
+
+  if (stellar) {
+    out.push(`Why is ${stellar.name.split(" ")[0]} a ${stellar.score}?`)
+  } else if (dilemmas[0]) {
+    out.push(`Walk me through ${dilemmas[0].name.split(" ")[0]}'s interview`)
+  }
+
+  if (weakest && weakest !== stellar) {
+    out.push(`Draft a rejection for ${weakest.name.split(" ")[0]}`)
+  }
+
+  // Compare candidates within the same role when there are at least two
+  // active candidates for one — the most common admin task.
+  const byRole = new Map<string, number>()
+  SEED_CANDIDATES.forEach(c => byRole.set(c.roleId, (byRole.get(c.roleId) ?? 0) + 1))
+  const busiestRole = [...byRole.entries()].sort((a, b) => b[1] - a[1])[0]
+  if (busiestRole && busiestRole[1] >= 2) {
+    out.push(`Compare top candidates for ${roleTitle(busiestRole[0])}`)
+  }
+
+  // Only suggest creating a role when there's headroom — the original
+  // hardcoded "Create a role for 'Senior Product Designer'" fired even when
+  // that role already existed.
+  if (SEED_ROLES.length < 5) {
+    out.push("Create a new role")
+  }
+
+  out.push("Show me this week's analytics")
+
+  return out.slice(0, 5)
+}
 
 // ── Chat page ────────────────────────────────────────────────
 
@@ -621,7 +657,7 @@ export function ChatPage() {
                     show: { opacity: 1, y: 0, transition: { duration: 0.42, ease: [0.2, 0.8, 0.2, 1] } },
                   }}
                 >
-                  {SUGGESTIONS.map(s => (
+                  {buildSuggestions().map(s => (
                     <button key={s} onClick={() => send(s)}
                       className="text-[11px] px-3 py-1.5 border border-border rounded-lg text-muted-foreground hover:text-foreground hover:border-foreground/40 transition-colors">
                       {s}
