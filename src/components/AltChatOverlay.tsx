@@ -482,12 +482,15 @@ export function AltChatOverlay({ open, onClose, context, nudgeMessage, prefillIn
             </div>
           )}
 
-          {/* Prompt suggestions — shown when empty */}
+          {/* Prompt suggestions — shown when empty. Each chip staggers in
+              with a 60 ms gap between siblings, starting 100 ms after the
+              overlay opens (lands just behind the input fade). */}
           {msgs.length === 0 && !nudgeMessage && (
             <div className="flex flex-wrap gap-1.5 justify-center px-1">
-              {prompts.map(p => (
+              {prompts.map((p, i) => (
                 <button key={p} onClick={() => send(p)}
-                  className="text-[11px] rounded-lg px-3 py-1.5 border border-border bg-card/80 backdrop-blur-sm text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-colors shadow-sm">
+                  style={{ animationDelay: `${100 + i * 60}ms` }}
+                  className="alt-overlay-chip text-[11px] rounded-lg px-3 py-1.5 border border-border bg-card/80 backdrop-blur-sm text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-colors shadow-sm">
                   {p}
                 </button>
               ))}

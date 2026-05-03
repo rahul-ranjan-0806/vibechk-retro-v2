@@ -290,7 +290,12 @@ export default function App() {
       prefillInput={prefillInput}
     />
 
-    {import.meta.env.DEV && (
+    {/* DEV-only tools temporarily disabled while diagnosing the grey-screen
+        issue. agentation renders a `position: fixed; inset: 0; z-index: 99995`
+        overlay with --agd-surface: #141414 — a strong suspect for the wash
+        that persisted across all pages and didn't dismiss on Esc. Re-enable
+        once verified or once a config option is added to keep it dormant. */}
+    {false && import.meta.env.DEV && (
       <>
         <GitGraphOverlay />
         <Agentation

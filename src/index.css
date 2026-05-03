@@ -275,7 +275,9 @@ h1 { letter-spacing: -0.02em; }
 /* Duration + easing are exposed as CSS variables so the Cmd+/ controls panel
    in PixelGridBackdrop can override them at runtime. Defaults match the
    original timings. */
-.alt-overlay-blur-enter { animation: alt-overlay-backdrop-in var(--alt-overlay-enter-dur, 0.2s) var(--alt-overlay-enter-ease, ease-out) forwards; }
+/* Backdrop holds invisible for 100 ms so the chat input appears first,
+   then the dark mask + pixel grid fade in behind it. */
+.alt-overlay-blur-enter { opacity: 0; animation: alt-overlay-backdrop-in var(--alt-overlay-enter-dur, 0.2s) var(--alt-overlay-enter-ease, ease-out) 100ms forwards; }
 .alt-overlay-blur-exit  { animation: alt-overlay-backdrop-out var(--alt-overlay-exit-dur, 0.21s) var(--alt-overlay-exit-ease, cubic-bezier(0.4, 0.0, 0.6, 1)) forwards; }
 
 /* Backdrop — progressive blur + dark tint by default (both fade upward via mask);
@@ -528,9 +530,20 @@ h1 { letter-spacing: -0.02em; }
   from { opacity: 1; }
   to   { opacity: 0; }
 }
-/* Input region waits 100 ms after the overlay starts opening, then fades in.
-   `opacity: 0` keeps it invisible during the delay so it doesn't pop. */
-.alt-overlay-enter { opacity: 0; animation: alt-overlay-content-in var(--alt-overlay-enter-dur, 0.2s) var(--alt-overlay-enter-ease, ease-out) 100ms forwards; }
+/* Input region appears immediately on Cmd+K — the backdrop fades in 100 ms
+   later so the chat lands first and the overlay envelopes it after. */
+.alt-overlay-enter { animation: alt-overlay-content-in var(--alt-overlay-enter-dur, 0.2s) var(--alt-overlay-enter-ease, ease-out) forwards; }
+
+/* Prompt suggestion chips — fade-up stagger. Each chip reads its own
+   animation-delay via inline style based on its index in the list. */
+@keyframes alt-overlay-chip-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.alt-overlay-chip {
+  opacity: 0;
+  animation: alt-overlay-chip-in 0.32s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
 .alt-overlay-exit  { animation: alt-overlay-content-out var(--alt-overlay-exit-dur, 0.16s) var(--alt-overlay-exit-ease, cubic-bezier(0.4, 0.0, 0.6, 1)) forwards; }
 
 /* Per-message fade-in / fade-out — plain opacity, no translation or blur. */
