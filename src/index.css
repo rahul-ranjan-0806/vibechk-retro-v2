@@ -298,9 +298,24 @@ h1 { letter-spacing: -0.02em; }
     background 0.45s ease-in;
 }
 
-/* (Removed: backdrop ::after noise overlay. The 12px blur smooths the
-   mask transition enough on its own — the noise was reading as visible
-   grain instead of invisibly dithering banding.) */
+/* Subtle SVG fractalNoise overlay — dithers away 8-bit alpha banding that's
+   visible at the gradient stops on most displays (especially the MacBook Air
+   panel). Very low opacity + overlay blend so it reads only at step
+   boundaries, never as visible grain. */
+.alt-overlay-backdrop::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.04;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 1 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  background-size: 240px 240px;
+  /* Inherit the same gradient mask the parent uses, so the noise fades up
+     with the backdrop instead of being visible past the mask falloff. */
+  -webkit-mask-image: inherit;
+  mask-image: inherit;
+}
 
 .alt-overlay-backdrop.blurred {
   backdrop-filter: blur(20px);
