@@ -67,7 +67,9 @@ function scoreColor(score: number) {
 
 export function HomePage({ onNavigate, onOpenOverlay, onNavigateToCandidate, onNavigateToRole }: { onNavigate: (p: Page) => void; onOpenOverlay?: (prefill?: string) => void; onNavigateToCandidate?: (name: string, mockRoleId: string) => void; onNavigateToRole?: (mockRoleId: string) => void }) {
   const [setupDismissed, setSetupDismissed] = useState(false)
-  const [autoExpanded, setAutoExpanded] = useState(true)
+  // Handled-by-Alt list defaults collapsed — admins shouldn't have to scroll
+  // past auto-decisions to reach what's actually waiting on them.
+  const [autoExpanded, setAutoExpanded] = useState(false)
   const [logOpen, setLogOpen] = useState(false)
 
   // Derived data
@@ -128,90 +130,106 @@ export function HomePage({ onNavigate, onOpenOverlay, onNavigateToCandidate, onN
             </div>
           </div>
 
+          {/* ── Setup ───────────────────────────────────────
+              Two presentations:
+              · Thin banner (≥60% done) — single line, doesn't compete with
+                dilemmas for the eye.
+              · Full callout (<60% done) — the original card with the
+                progress bar and per-item CTAs.
+              Hidden once dismissed or fully complete either way. */}
+          {!setupComplete && !setupDismissed && setupPercent >= 60 && (
+            <div className="mb-8 flex items-center gap-3 rounded-md bg-muted/40 border border-border px-3.5 py-2">
+              <div className="flex-1 h-1 rounded-full bg-foreground/10 overflow-hidden max-w-[200px]">
+                <div className="h-full rounded-full bg-foreground transition-all" style={{ width: `${setupPercent}%` }} />
+              </div>
+              <p className="text-xs text-muted-foreground tabular-nums">{incomplete.length} setup step{incomplete.length === 1 ? "" : "s"} left · {setupPercent}%</p>
+              <button onClick={() => incomplete[0]?.ctaTarget && onNavigate(incomplete[0].ctaTarget)}
+                className="text-xs px-2.5 py-1 rounded-sm border border-border text-muted-foreground hover:text-foreground hover:border-foreground/40 transition-colors">
+                Resume →
+              </button>
+              <button onClick={() => setSetupDismissed(true)} className="text-muted-foreground hover:text-foreground w-6 h-6 flex items-center justify-center rounded-sm hover:bg-foreground/5 shrink-0">✕</button>
+            </div>
+          )}
+
+          {!setupComplete && !setupDismissed && setupPercent < 60 && (
+            <div className="mb-12">
+              <p className="text-[15px] font-semibold text-foreground mb-3">
+                Finish setup · {setupPercent}%
+              </p>
+              <div className="rounded-md bg-muted/60 px-4 py-3 flex flex-col gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="text-xl shrink-0 leading-none">💡</div>
+                  <div className="flex-1 h-1 rounded-full bg-foreground/10 overflow-hidden">
+                    <div className="h-full rounded-full bg-foreground transition-all" style={{ width: `${setupPercent}%` }} />
+                  </div>
+                  <button onClick={() => setSetupDismissed(true)} className="text-muted-foreground hover:text-foreground w-6 h-6 flex items-center justify-center rounded-sm hover:bg-foreground/5 shrink-0">✕</button>
+                </div>
+                <div className="flex flex-col gap-1">
+                  {incomplete.map(item => {
+                    const dotColor = item.status === "warning" ? "bg-status-warning-dot" : "bg-border"
+                    return (
+                      <div key={item.id} className="flex items-center gap-2 group">
+                        <div className={`w-1.5 h-1.5 rounded-full shrink-0 ${dotColor}`} />
+                        <p className="text-sm text-foreground flex-1 truncate">{item.title}</p>
+                        {item.ctaTarget && (
+                          <button onClick={() => onNavigate(item.ctaTarget!)}
+                            className="text-xs px-2 py-0.5 rounded-sm border border-border text-muted-foreground hover:text-foreground hover:border-foreground/40 hover:bg-muted/40 transition-colors shrink-0">
+                            {item.cta}
+                          </button>
+                        )}
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* ── Dilemmas (action-required) ────────────────── */}
-          {(dilemmas.length > 0 || (!setupComplete && !setupDismissed)) && (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-12 items-stretch [&>*:only-child]:lg:col-span-2">
-              {dilemmas.length > 0 && (
-                <div>
-                  <p className="text-[15px] font-semibold text-foreground mb-3">
-                    Waiting for your decision · {dilemmas.length}
-                  </p>
-                  <div className="flex flex-col gap-3">
-                    {dilemmas.map(c => {
-                      const sc = scoreColor(c.score)
-                      return (
-                        <div key={c.id} className="rounded-md bg-status-warning/30 px-4 py-3 group">
-                          <div className="flex items-start gap-3">
-                            <div className={`w-9 h-9 rounded-sm flex items-center justify-center text-base font-semibold tabular-nums shrink-0 ${sc.bg} ${sc.fg}`}>
-                              {c.score}
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-2 mb-1 flex-wrap">
-                                <p className="text-[15px] font-semibold">{c.name}</p>
-                                <StellarTag score={c.score} />
-                                <span className="text-xs text-muted-foreground">{roleTitle(c.roleId)}</span>
-                                <AltRecPill rec={c.altRec} confidence={c.confidence} />
-                              </div>
-                              <p className="text-sm leading-relaxed text-foreground/80 mb-3">{c.reasoning}</p>
-                              <div className="flex items-center gap-1.5 flex-wrap">
-                                <button className="text-[13px] rounded-sm px-2.5 py-1 bg-status-success text-status-success-foreground hover:opacity-90 transition-opacity">
-                                  Shortlist
-                                </button>
-                                <button className="text-[13px] rounded-sm px-2.5 py-1 bg-status-danger text-status-danger-foreground hover:opacity-90 transition-opacity">
-                                  Reject
-                                </button>
-                                <button onClick={() => onOpenOverlay?.(`Why did you score ${c.name} ${c.score}?`)}
-                                  className="text-[13px] rounded-sm px-2.5 py-1 text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
-                                  Discuss
-                                </button>
-                                <button onClick={() => onNavigate("candidates")}
-                                  className="text-[13px] rounded-sm px-2.5 py-1 text-muted-foreground hover:text-foreground hover:bg-muted transition-colors ml-auto">
-                                  Open →
-                                </button>
-                              </div>
-                            </div>
+          {dilemmas.length > 0 && (
+            <div className="mb-12">
+              <p className="text-[15px] font-semibold text-foreground mb-3">
+                Waiting for your decision · {dilemmas.length}
+              </p>
+              <div className="flex flex-col gap-3">
+                {dilemmas.map(c => {
+                  const sc = scoreColor(c.score)
+                  return (
+                    <div key={c.id} className="rounded-md bg-status-warning/30 px-4 py-3 group">
+                      <div className="flex items-start gap-3">
+                        <div className={`w-9 h-9 rounded-sm flex items-center justify-center text-base font-semibold tabular-nums shrink-0 ${sc.bg} ${sc.fg}`}>
+                          {c.score}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1 flex-wrap">
+                            <p className="text-[15px] font-semibold">{c.name}</p>
+                            <StellarTag score={c.score} />
+                            <span className="text-xs text-muted-foreground">{roleTitle(c.roleId)}</span>
+                            <AltRecPill rec={c.altRec} confidence={c.confidence} />
+                          </div>
+                          <p className="text-sm leading-relaxed text-foreground/80 mb-3">{c.reasoning}</p>
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            <button className="text-[13px] rounded-sm px-2.5 py-1 bg-status-success text-status-success-foreground hover:opacity-90 transition-opacity">
+                              Shortlist
+                            </button>
+                            <button className="text-[13px] rounded-sm px-2.5 py-1 bg-status-danger text-status-danger-foreground hover:opacity-90 transition-opacity">
+                              Reject
+                            </button>
+                            <button onClick={() => onOpenOverlay?.(`Why did you score ${c.name} ${c.score}?`)}
+                              className="text-[13px] rounded-sm px-2.5 py-1 text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
+                              Discuss
+                            </button>
+                            <button onClick={() => onNavigate("candidates")}
+                              className="text-[13px] rounded-sm px-2.5 py-1 text-muted-foreground hover:text-foreground hover:bg-muted transition-colors ml-auto">
+                              Open →
+                            </button>
                           </div>
                         </div>
-                      )
-                    })}
-                  </div>
-                </div>
-              )}
-
-              {/* ── Setup callout ────────────────────────── */}
-              {!setupComplete && !setupDismissed && (
-                <div className="flex flex-col">
-                  <p className="text-[15px] font-semibold text-foreground mb-3">
-                    Finish setup · {setupPercent}%
-                  </p>
-                  <div className="rounded-md bg-muted/60 px-4 py-3 flex flex-col flex-1 justify-between gap-3">
-                    <div className="flex items-center gap-3">
-                      <div className="text-xl shrink-0 leading-none">💡</div>
-                      <div className="flex-1 h-1 rounded-full bg-foreground/10 overflow-hidden">
-                        <div className="h-full rounded-full bg-foreground transition-all" style={{ width: `${setupPercent}%` }} />
                       </div>
-                      <button onClick={() => setSetupDismissed(true)} className="text-muted-foreground hover:text-foreground w-6 h-6 flex items-center justify-center rounded-sm hover:bg-foreground/5 shrink-0">✕</button>
                     </div>
-                    <div className="flex flex-col gap-1">
-                      {incomplete.map(item => {
-                        const dotColor = item.status === "warning" ? "bg-status-warning-dot" : "bg-border"
-                        return (
-                          <div key={item.id} className="flex items-center gap-2 group">
-                            <div className={`w-1.5 h-1.5 rounded-full shrink-0 ${dotColor}`} />
-                            <p className="text-sm text-foreground flex-1 truncate">{item.title}</p>
-                            {item.ctaTarget && (
-                              <button onClick={() => onNavigate(item.ctaTarget!)}
-                                className="text-xs px-2 py-0.5 rounded-sm border border-border text-muted-foreground hover:text-foreground hover:border-foreground/40 hover:bg-muted/40 transition-colors shrink-0">
-                                {item.cta}
-                              </button>
-                            )}
-                          </div>
-                        )
-                      })}
-                    </div>
-                  </div>
-                </div>
-              )}
+                  )
+                })}
+              </div>
             </div>
           )}
 
